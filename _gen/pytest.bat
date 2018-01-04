@@ -1,7 +1,7 @@
 @echo off
 
 cd ..
-if not exist "logs/" mkdir logs
+if not exist "log/" mkdir log
 
 echo " " " " " " " " " " " " " " " " " " " " " " " " " " " " " " " "
 echo "     ____  ____  ______       __      __       __       _____ "

@@ -5,6 +5,7 @@
 \.project
 \.pydevproject
 \.coverage
-logs/
+log/
 
 _docu/
+
