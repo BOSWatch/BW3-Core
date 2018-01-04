@@ -6,3 +6,5 @@
 \.pydevproject
 \.coverage
 logs/
+
+_docu/
