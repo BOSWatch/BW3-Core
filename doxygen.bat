@@ -12,7 +12,7 @@ echo " " " " " " " " " " " " " " " " " " " " " " " " " " " " " " " "
 echo.
 echo Build Doxygen Documentation
 echo.
-_bin\win\doxygen\doxygen.exe "config\doxygen.ini"
+_bin\win\doxygen\doxygen.exe "_config\doxygen.ini"
 echo.
 echo.
 pause
