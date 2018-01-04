@@ -12,6 +12,7 @@ echo " " " " " " " " " " " " " " " " " " " " " " " " " " " " " " " "
 echo.
 echo Run count lines of code ...
 echo.
+cd ..
 _bin\win\cloc_1_72\cloc-1.72.exe . --exclude-lang=HTML,JavaScript,CSS --exclude-dir=_docu,_config,_info
 echo.
 echo.
