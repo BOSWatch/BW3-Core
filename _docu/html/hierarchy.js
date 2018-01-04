@@ -4,6 +4,7 @@ var hierarchy =
       [ "boswatch.network.server.TCPHandler", "classboswatch_1_1network_1_1server_1_1_t_c_p_handler.html", null ]
     ] ],
     [ "boswatch.watchdog.watchdog.BWWatchdog", "classboswatch_1_1watchdog_1_1watchdog_1_1_b_w_watchdog.html", null ],
+    [ "FileHead.ClassName", "class_file_head_1_1_class_name.html", null ],
     [ "boswatch.config.Config", "classboswatch_1_1config_1_1_config.html", [
       [ "boswatch.decoder.decoder.Decoder", "classboswatch_1_1decoder_1_1decoder_1_1_decoder.html", null ]
     ] ],

@@ -1,0 +1,7 @@
+Server- Client Anwendung
+Dokumentation mittels Doxygen
+Unittests mittels pytest (zufällige Reihenfolge durch pytest-randomly)
+Codeabdeckung mittels pytest-cov
+PEP8 Design Kontrolle mittels pytest-pep8
+Logging mittels eigener Konfig-Datei einstellbar
+Multi-Threading

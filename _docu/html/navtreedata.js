@@ -24,8 +24,8 @@ for the JavaScript code in this file
 var NAVTREE =
 [
   [ "BOSWatch 3", "index.html", [
-    [ "Changelog", "md__changelog.html", null ],
-    [ "Format of the BOSWatch packets", "md_information_packet.html", null ],
+    [ "Changelog", "md__info__changelog.html", null ],
+    [ "Format of the BOSWatch packets", "md__info_packet.html", null ],
     [ "BOSWatch", "md__r_e_a_d_m_e.html", null ],
     [ "Todo List", "todo.html", null ],
     [ "Data Structures", "annotated.html", [

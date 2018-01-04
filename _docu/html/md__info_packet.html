@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.14"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>BOSWatch 3: Todo List</title>
+<title>BOSWatch 3: Format of the BOSWatch packets</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -77,7 +77,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('todo.html','');});
+$(document).ready(function(){initNavTree('md__info_packet.html','');});
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -97,17 +97,59 @@ $(document).ready(function(){initNavTree('todo.html','');});
 
 <div class="header">
   <div class="headertitle">
-<div class="title">Todo List </div>  </div>
+<div class="title">Format of the BOSWatch packets </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><dl class="reflist">
-<dt><a class="anchor" id="_todo000001"></a>Global <a class="el" href="classboswatch_1_1decoder_1_1fms_1_1_fms.html#a0b595db897f099237994da17f557451c">boswatch.decoder.fms.Fms.decode</a>  (self, data)</dt>
-<dd>CRC check must be as config flag </dd>
-<dt><a class="anchor" id="_todo000002"></a>Global <a class="el" href="classboswatch_1_1decoder_1_1pocsag_1_1_pocsag.html#ab79c8c5e4eeb10107db544c4c806ef08">boswatch.decoder.pocsag.Pocsag.decode</a>  (self, data)</dt>
-<dd>split complexe decoding in shorter functions </dd>
-<dt><a class="anchor" id="_todo000003"></a>Global <a class="el" href="classboswatch_1_1network_1_1server_1_1_t_c_p_server.html#a59b4eb3e8df63da81d3d5b824f9068b4">boswatch.network.server.TCPServer.clientsConnected</a>  (self)</dt>
-<dd>works not safe atm</dd>
-</dl>
+<div class="textblock"><table class="doxtable">
+<tr>
+<td>field </td><td>fms </td><td>pocsag </td><td>zvei </td><td>description  </td></tr>
+<tr>
+<td>clientName </td><td>X </td><td>X </td><td>X </td><td>name of the boswatch client instance  </td></tr>
+<tr>
+<td>clientVersion </td><td>X </td><td>X </td><td>X </td><td>in case of new version, server can notify  </td></tr>
+<tr>
+<td>inputSource </td><td>X </td><td>X </td><td>X </td><td>(rtl_fm, audio)  </td></tr>
+<tr>
+<td>timestamp </td><td>X </td><td>X </td><td>X </td><td></td></tr>
+<tr>
+<td>frequency </td><td>X </td><td>X </td><td>X </td><td></td></tr>
+<tr>
+<td>type </td><td>X </td><td>X </td><td>X </td><td>(fms, pocsag, zvei)  </td></tr>
+<tr>
+<td>bitrate </td><td></td><td>X </td><td></td><td></td></tr>
+<tr>
+<td>ric </td><td></td><td>X </td><td></td><td></td></tr>
+<tr>
+<td>subric </td><td></td><td>X </td><td></td><td>(1, 2, 3, 4)  </td></tr>
+<tr>
+<td>subricText </td><td></td><td>X </td><td></td><td>(a, b, c, d)  </td></tr>
+<tr>
+<td>message </td><td></td><td>X </td><td></td><td></td></tr>
+<tr>
+<td>tone </td><td></td><td></td><td>X </td><td>5-tone sequence  </td></tr>
+<tr>
+<td>fms </td><td>X </td><td></td><td></td><td></td></tr>
+<tr>
+<td>service </td><td>X </td><td></td><td></td><td></td></tr>
+<tr>
+<td>country </td><td>X </td><td></td><td></td><td></td></tr>
+<tr>
+<td>location </td><td>X </td><td></td><td></td><td></td></tr>
+<tr>
+<td>vehicle </td><td>X </td><td></td><td></td><td></td></tr>
+<tr>
+<td>status </td><td>X </td><td></td><td></td><td></td></tr>
+<tr>
+<td>direction </td><td>X </td><td></td><td></td><td></td></tr>
+<tr>
+<td>dirextionText </td><td>X </td><td></td><td></td><td>(Fhz-&gt;Lst, Lst-&gt;Fhz)  </td></tr>
+<tr>
+<td>tacticalInfo </td><td>X </td><td></td><td></td><td>(I, II, III, IV)  </td></tr>
+<tr>
+<td>descriptionShort </td><td>X </td><td>X </td><td>X </td><td>loaded from optional CSV file  </td></tr>
+<tr>
+<td>descriptionLong </td><td>X </td><td>X </td><td>X </td><td>loaded from optional CSV file  </td></tr>
+</table>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

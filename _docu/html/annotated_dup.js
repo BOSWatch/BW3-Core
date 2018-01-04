@@ -32,5 +32,8 @@ var annotated_dup =
           [ "BWWatchdog", "classboswatch_1_1watchdog_1_1watchdog_1_1_b_w_watchdog.html", "classboswatch_1_1watchdog_1_1watchdog_1_1_b_w_watchdog" ]
         ] ]
       ] ]
+    ] ],
+    [ "FileHead", null, [
+      [ "ClassName", "class_file_head_1_1_class_name.html", "class_file_head_1_1_class_name" ]
     ] ]
 ];

@@ -1,14 +1,8 @@
-
+*.pyc
 \.cache/
-
 \.idea/
-
 \.settings/
-
 \.project
-
 \.pydevproject
-
 \.coverage
-
 logs/
