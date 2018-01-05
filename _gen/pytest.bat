@@ -28,7 +28,7 @@ if "%test%" == "" (
 
 :start
 echo.
-python -m pytest -c "_config/pytest.ini" -v --pep8 --cov --cov-report=term-missing
+python -m pytest -c "_gen/pytest.ini" -v --pep8 --cov --cov-report=term-missing
 echo.
 echo --- Hit any key to repeat ---
 pause
@@ -37,7 +37,7 @@ goto start
 
 :start_spec
 echo.
-python -m pytest test/test_%test%.py -c "_config/pytest.ini" -v --pep8 --cov --cov-report=term-missing
+python -m pytest test/test_%test%.py -c "_gen/pytest.ini" -v --pep8 --cov --cov-report=term-missing
 echo.
 echo --- Hit any key to repeat ---
 pause
