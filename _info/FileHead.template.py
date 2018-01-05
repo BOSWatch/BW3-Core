@@ -12,14 +12,14 @@
 @file:        test_ServerClient.py
 @date:        ##.##.2018
 @author:      Bastian Schroll
-@description: Thats the FileHead that should be used for all files
+@description: That is the FileHead that should be used for all files
 """
 import logging
 
 import boswatch.module
 
 
-class ClassName():
+class ClassName:
     """!General class comment"""
 
     def __init__(self):

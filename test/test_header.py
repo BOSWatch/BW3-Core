@@ -15,12 +15,13 @@
 @description: Unittests for BOSWatch. File must be run as "pytest" unittest
 """
 
-import pytest  # impot the pytest framework
+
+import pytest  # import the pytest framework
 
 import boswatch.utils.header
 
 
-class Test_Header():
+class Test_Header:
     """!Unittests for the header"""
 
     def test_logoToLog(self):
