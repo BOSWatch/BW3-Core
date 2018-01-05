@@ -16,7 +16,7 @@
 """
 
 
-import pytest  # import the pytest framework
+# import pytest  # import the pytest framework
 
 import boswatch.utils.header
 
