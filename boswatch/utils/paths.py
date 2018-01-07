@@ -18,10 +18,9 @@ import logging
 import os
 import sys
 
-
 logging.debug("- %s loaded", __name__)
 
-ROOT_PATH = os.path.dirname(sys.modules['__main__'].__file__)
+ROOT_PATH = os.path.dirname(sys.modules['boswatch'].__file__).replace("\\boswatch", "").replace("\\", "/")
 LOG_PATH = ROOT_PATH + "/log/"
 CONFIG_PATH = ROOT_PATH + "/config/"
 CSV_PATH = ROOT_PATH + "/csv/"
