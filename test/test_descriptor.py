@@ -15,21 +15,53 @@
 @description: Unittests for BOSWatch. File must be run as "pytest" unittest
 """
 
-
 # import pytest  # import the pytest framework
 
 from boswatch.descriptor import descriptor
+from boswatch.packet import packet
 
 
 class Test_Descriptor:
     """!Unittests for the descriptor"""
 
     def test_loadCSVnotExist(self):
-        """!read CSV file where not exist"""
-        descList = descriptor.DescriptionList("boswatch")
-        assert bool(descList._getFullList()) is False
+        """!read CSV file where not exist direct per DescriptionList class"""
+        descList = descriptor.DescriptionList()
+        assert descList.loadCSV("boswatch") is False
 
     def test_loadCSV(self):
+        """!read CSV file direct per DescriptionList class"""
+        descList = descriptor.DescriptionList()
+        assert descList.loadCSV("zvei") is True
+
+    def test_descriptorLoadFailed(self):
+        """!read CSV file where not exist"""
+        bwDescriptor = descriptor.Descriptor()
+        assert bwDescriptor.loadDescription("boswatch") is False
+
+    def test_descriptorLoad(self):
         """!read CSV file"""
-        descList = descriptor.DescriptionList("zvei")
-        assert bool(descList._getFullList()) is True
+        bwDescriptor = descriptor.Descriptor()
+        assert bwDescriptor.loadDescription("zvei") is True
+
+    def test_loadDescriptionsNotSet(self):
+        """!load descriptions where not set to an bwPacket"""
+        bwDescriptor = descriptor.Descriptor()
+        assert bwDescriptor.loadDescription("zvei") is True
+        bwPacket = packet.Packet()
+        bwPacket.setField("mode", "zvei")
+        bwPacket.setField("zvei", "54321")
+        assert bwDescriptor.addDescriptions(bwPacket) is True
+        assert bwPacket.getField("shortDescription") is ""
+        assert bwPacket.getField("longDescription") is ""
+
+    def test_loadDescriptions(self):
+        """!load descriptions to an bwPacket"""
+        bwDescriptor = descriptor.Descriptor()
+        assert bwDescriptor.loadDescription("zvei") is True
+        bwPacket = packet.Packet()
+        bwPacket.setField("mode", "zvei")
+        bwPacket.setField("zvei", "12345")
+        assert bwDescriptor.addDescriptions(bwPacket) is True
+        assert bwPacket.getField("shortDescription") is not ""
+        assert bwPacket.getField("longDescription") is not ""

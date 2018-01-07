@@ -34,29 +34,40 @@ class Descriptor:
     def loadDescription(self, csvType):
         """!Build a new description list
 
-        @param csvType: Name of the CSV file without `.csv`"""
-        self._lists[csvType] = DescriptionList(csvType)
+        @param csvType: Name of the CSV file without `.csv`
+        @return True or False"""
+        bwDescriptionList = DescriptionList()
+        if bwDescriptionList.loadCSV(csvType):
+            self._lists[csvType] = bwDescriptionList
+            return True
+        return False
 
     def addDescriptions(self, bwPacket):
         """!Add the short and long description to a bwPacket
 
-        @param bwPacket: bwPacket instance to add descriptions"""
+        @param bwPacket: bwPacket instance to add descriptions
+        @return True or False"""
         logging.debug("add descriptions to bwPacket")
-        bwPacket.setField("shortDescription",
-                          self._lists[bwPacket.getField("mode")].getShortDescription(bwPacket.getField(bwPacket.getField("mode"))))
+        try:
+            bwPacket.setField("shortDescription",
+                              self._lists[bwPacket.getField("mode")].getShortDescription(bwPacket.getField(bwPacket.getField("mode"))))
 
-        bwPacket.setField("longDescription",
-                          self._lists[bwPacket.getField("mode")].getLongDescription(bwPacket.getField(bwPacket.getField("mode"))))
+            bwPacket.setField("longDescription",
+                              self._lists[bwPacket.getField("mode")].getLongDescription(bwPacket.getField(bwPacket.getField("mode"))))
+            return True
+        except:
+            logging.exception("error while adding descriptions")
+            return False
 
 
 class DescriptionList:
-    def __init__(self, csvType):
+    def __init__(self):  # , csvType):
         """!Loads the given CSV file into internal list
 
         @param csvType: Name of the CSV file without `.csv`"""
         logging.debug("create new descriptionList")
         self._descriptionList = {}
-        self._loadCSV(csvType)
+        # self.loadCSV(csvType)
 
     def getShortDescription(self, id):
         """!Returns the short description of given id
@@ -76,13 +87,7 @@ class DescriptionList:
         except:
             return ""
 
-    def _getFullList(self):
-        """!Returns the full intern _descriptionList
-
-        @return descriptionList as dict"""
-        return self._descriptionList
-
-    def _loadCSV(self, csvType):
+    def loadCSV(self, csvType):
         """!Load descriptions from an csv file
 
         @param csvType: Name of the CSV file without `.csv`
