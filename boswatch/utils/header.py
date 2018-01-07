@@ -19,6 +19,8 @@ import platform  # for python version nr
 
 import boswatch.version
 
+logging.debug("- %s loaded", __name__)
+
 
 def logoToLog():
     """!Prints the BOSWatch logo to the log at debug level

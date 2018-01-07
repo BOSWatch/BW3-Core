@@ -9,7 +9,7 @@
                 German BOS Information Script
                      by Bastian Schroll
 
-@file:        test_ServerClient.py
+@file:        FileHead.template.py
 @date:        ##.##.2018
 @author:      Bastian Schroll
 @description: That is the FileHead that should be used for all files
@@ -17,6 +17,8 @@
 import logging
 
 import boswatch.module
+
+logging.debug("- %s loaded", __name__)
 
 
 class ClassName:

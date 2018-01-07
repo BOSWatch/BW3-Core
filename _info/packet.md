@@ -16,6 +16,13 @@
 <td>name of the boswatch client instance</td>
 </tr>
 <tr>
+<td>clientIP</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td></td>
+</tr>
+<tr>
 <td>clientVersion</td>
 <td>X</td>
 <td>X</td>
@@ -27,7 +34,7 @@
 <td>X</td>
 <td>X</td>
 <td>X</td>
-<td>(rtl_fm, audio)</td>
+<td>(stick, audio)</td>
 </tr>
 <tr>
 <td>timestamp</td>
@@ -44,11 +51,25 @@
 <td></td>
 </tr>
 <tr>
-<td>type</td>
+<td>mode</td>
 <td>X</td>
 <td>X</td>
 <td>X</td>
 <td>(fms, pocsag, zvei)</td>
+</tr>
+<tr>
+<td>descriptionShort</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>loaded from optional CSV file</td>
+</tr>
+<tr>
+<td>descriptionLong</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>loaded from optional CSV file</td>
 </tr>
 <tr>
 <td>bitrate</td>
@@ -154,19 +175,5 @@
 <td></td>
 <td></td>
 <td>(I, II, III, IV)</td>
-</tr>
-<tr>
-<td>descriptionShort</td>
-<td>X</td>
-<td>X</td>
-<td>X</td>
-<td>loaded from optional CSV file</td>
-</tr>
-<tr>
-<td>descriptionLong</td>
-<td>X</td>
-<td>X</td>
-<td>X</td>
-<td>loaded from optional CSV file</td>
 </tr>
 </table>

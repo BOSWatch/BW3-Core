@@ -14,6 +14,9 @@
 @author:      Bastian Schroll
 @description: Version numbers, branch and release date of BOSWatch
 """
+import logging
+
+logging.debug("- %s loaded", __name__)
 
 client = {"major": 3, "minor": 0, "patch": 0}
 server = {"major": 3, "minor": 0, "patch": 0}
