@@ -16,7 +16,7 @@
 """
 import logging
 
-import boswatch.module
+# from boswatch.module import file
 
 logging.debug("- %s loaded", __name__)
 
