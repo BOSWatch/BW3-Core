@@ -18,7 +18,7 @@
 from boswatch.decoder import decoder
 
 
-class Test_decoder:
+class Test_Decoder:
     """!Unittests for the decoder"""
 
     def test_decoder_no_data(self):
