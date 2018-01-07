@@ -32,7 +32,7 @@ class Descriptor:
         self._lists = {}
 
     def loadDescription(self, csvType):
-        """!Build a new description list
+        """!Build a new description list from DescriptionList class
 
         @param csvType: Name of the CSV file without `.csv`
         @return True or False"""
@@ -55,7 +55,7 @@ class Descriptor:
             bwPacket.setField("longDescription",
                               self._lists[bwPacket.getField("mode")].getLongDescription(bwPacket.getField(bwPacket.getField("mode"))))
             return True
-        except:
+        except:  # pragma: no cover
             logging.exception("error while adding descriptions")
             return False
 

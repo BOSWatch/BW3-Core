@@ -32,7 +32,10 @@ def createIfNotExist(dirPath):
 
     @param dirName: Path of the directory
     @return Path of the directory"""
-    if not os.path.exists(dirPath):
-        os.mkdir(dirPath)
-        logging.debug("directory created: %s", dirPath)
+    try:
+        if not os.path.exists(dirPath):
+            os.mkdir(dirPath)
+            logging.debug("directory created: %s", dirPath)
+    except:
+        logging.exception("error by creating a directory: %s", dirPath)
     return dirPath
