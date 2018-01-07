@@ -10,10 +10,10 @@ echo "                German BOS Information Script                 "
 echo "                     by Bastian Schroll                       "
 echo " " " " " " " " " " " " " " " " " " " " " " " " " " " " " " " "
 echo.
-echo Run count lines of code ...
+echo Run 'count lines of code' ...
 echo.
 cd ..
-_bin\win\cloc_1_72\cloc-1.72.exe . --exclude-lang=HTML,JavaScript,CSS --exclude-dir=_docu,_config,_info
+_bin\win\cloc_1_72\cloc-1.72.exe . --exclude-lang=XML --exclude-dir=_docu,_config,_info,doxygen.ini --by-file-by-lang
 echo.
 echo.
 pause

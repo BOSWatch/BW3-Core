@@ -33,7 +33,7 @@ class Packet:
             logging.debug("create new bwPacket")
             self._packet = {"timestamp": time.time()}
         else:
-            logging.debug("create bwPacket")
+            logging.debug("create bwPacket from string")
             self._packet = eval(bwPacket)
 
     def __str__(self):
