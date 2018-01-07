@@ -21,7 +21,6 @@
 from boswatch.descriptor import descriptor
 
 
-
 class Test_Descriptor:
     """!Unittests for the descriptor
 
