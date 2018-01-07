@@ -24,7 +24,10 @@ class TCPClient:
     """!TCP client class"""
 
     def __init__(self, timeout=3):
-        """!Create a new instance"""
+        """!Create a new instance
+
+        Create a new instance of an TCP Client.
+        And set the timeout"""
         try:
             self._sock = None
             self._timeout = timeout
@@ -67,7 +70,7 @@ class TCPClient:
             return False
 
     def transmit(self, data):
-        """!Send a data packet.py to the server
+        """!Send a data packet to the server
 
         @param data: data to send to the server
         @return True or False"""

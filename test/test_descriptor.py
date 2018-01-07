@@ -24,7 +24,7 @@ from boswatch.descriptor import descriptor
 class Test_Descriptor:
     """!Unittests for the descriptor
 
-    @todo Error because path's in paths.py are false"""
+    @todo Error because path's in paths.py are false when start over pytest"""
 
     def test_loadCSVnotExist(self):
         """!read CSV file where not exist"""
