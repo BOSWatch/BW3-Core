@@ -1,0 +1,12 @@
+id,shortDescription,longDescription
+#
+# BOSWatch CSV file for describing FMS-Addresses
+#
+# For each FMS-Address you could set a description-text
+# Use the structure: fms,"Description-Text"
+#
+# !!! DO NOT delete the first line !!!
+#
+12345678,"FMS testdata äöüß"
+56487234,"Test Nummer 18",""
+68734123,"Und noch einer ganz schnell",""
