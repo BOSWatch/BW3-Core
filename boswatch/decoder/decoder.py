@@ -45,8 +45,13 @@ class DummyDecoder:
     an getDecoder() with false data, we must return a decoder
     object with an decode() method to prevent an error"""
     def __init__(self):
+        """!Do nothing"""
         pass
 
     @staticmethod
     def decode(data):
+        """!Dummy decode() method
+
+        @param data: data to decode
+        @return ALWAYS None"""
         return None
