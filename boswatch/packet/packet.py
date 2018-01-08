@@ -16,7 +16,7 @@
 """
 import logging
 import time
-from boswatch import config
+from boswatch.config import Config
 from boswatch import version
 
 logging.debug("- %s loaded", __name__)
@@ -69,13 +69,14 @@ class Packet:
         - clientBranch
         - inputSource
         - frequency"""
+        config = Config()
         logging.debug("add client data to bwPacket")
-        self.setField("clientName", config.getConfig("Client", "Name"))
+        self.setField("clientName", config.getConfig("Client", "Name", "clientConfig"))
         self.setField("clientVersion", version.client)
         self.setField("clientBuildDate", version.date)
         self.setField("clientBranch", version.branch)
-        self.setField("inputSource", config.getConfig("Server", "InputSource"))
-        self.setField("frequency", config.getConfig("Stick", "Frequency"))
+        self.setField("inputSource", config.getConfig("Server", "InputSource", "clientConfig"))
+        self.setField("frequency", config.getConfig("Stick", "Frequency", "clientConfig"))
 
     def addServerData(self):
         """!Add the server information to the decoded data
@@ -85,8 +86,9 @@ class Packet:
         - serverVersion
         - serverBuildDate
         - serverBranch"""
+        config = Config()
         logging.debug("add server data to bwPacket")
-        self.setField("serverName", config.getConfig("Server", "Name"))
+        self.setField("serverName", config.getConfig("Server", "Name", "serverConfig"))
         self.setField("serverVersion", version.server)
         self.setField("serverBuildDate", version.date)
         self.setField("serverBranch", version.branch)
