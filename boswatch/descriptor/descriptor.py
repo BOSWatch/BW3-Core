@@ -61,10 +61,8 @@ class Descriptor:
 
 
 class DescriptionList:
-    def __init__(self):  # , csvType):
-        """!Loads the given CSV file into internal list
-
-        @param csvType: Name of the CSV file without `.csv`"""
+    def __init__(self):
+        """!Loads the given CSV file into internal list"""
         logging.debug("create new descriptionList")
         self._descriptionList = {}
         # self.loadCSV(csvType)

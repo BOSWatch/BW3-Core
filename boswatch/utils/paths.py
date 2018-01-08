@@ -30,7 +30,7 @@ BIN_PATH = ROOT_PATH + "/_bin/"
 def createIfNotExist(dirPath):
     """!Checks if an directory is existing and create it if not
 
-    @param dirName: Path of the directory
+    @param dirPath: Path of the directory
     @return Path of the directory"""
     try:
         if not os.path.exists(dirPath):
