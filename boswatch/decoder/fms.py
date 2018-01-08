@@ -35,7 +35,7 @@ class Fms:
         logging.debug("FMS decoder started")
 
     @staticmethod
-    def decode(self, data):
+    def decode(data):
         """!Decodes FMS
 
         @param data: FMS for decoding

@@ -35,7 +35,7 @@ class Pocsag:
         logging.debug("POCSAG decoder started")
 
     @staticmethod
-    def decode(self, data):
+    def decode(data):
         """!Decodes POCSAG
 
         @param data: POCSAG for decoding

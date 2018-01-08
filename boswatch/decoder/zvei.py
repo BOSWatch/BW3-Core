@@ -36,7 +36,7 @@ class Zvei:
         logging.debug("ZVEI decoder started")
 
     @staticmethod
-    def decode(self, data):
+    def decode(data):
         """!Decodes ZVEI
 
         @param data: ZVEI for decoding
@@ -46,7 +46,7 @@ class Zvei:
 
             bwPacket = packet.Packet()
             bwPacket.setField("mode", "zvei")
-            bwPacket.setField("zvei", self._solveDoubleTone(data[7:12]))
+            bwPacket.setField("zvei", Zvei._solveDoubleTone(data[7:12]))
 
             logging.debug(bwPacket)
             return bwPacket
