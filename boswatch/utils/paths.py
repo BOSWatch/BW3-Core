@@ -25,6 +25,7 @@ LOG_PATH = ROOT_PATH + "/log/"
 CONFIG_PATH = ROOT_PATH + "/config/"
 CSV_PATH = ROOT_PATH + "/csv/"
 BIN_PATH = ROOT_PATH + "/_bin/"
+TEST_PATH = ROOT_PATH + "/test/"
 
 
 def createIfNotExist(dirPath):

@@ -61,18 +61,19 @@ class Config:
     def __init__(self, configPath="", shareName=""):
         """!Create a new config object and load the ini file directly
 
-        @param configPath: Path to the ini file
-        @param shareName: Name for the global share point (empty is only local)"""
-        self._config = None
-        self._loadConfigFile(configPath)
-        if shareName:
-            self._shareConfig(shareName)
+        @param configPath: If you like to load a ini file
+        @param shareName: If you like to share the config"""
+        self._config = configparser.ConfigParser()
+        if configPath:
+            self._loadConfigFile(configPath)
+            if shareName:
+                self._shareConfig(shareName)
 
     def _loadConfigFile(self, configPath):
         """!loads a given configuration in the class wide config variable
 
         @param configPath: Path to the config file
-        @return status of loading"""
+        @return True or False"""
         logging.debug("load config file from: %s", configPath)
         try:
             self._config.read(configPath, "utf-8")
@@ -85,14 +86,16 @@ class Config:
         """!Shares the configuration
 
         Shares the local _config to teh class wide global _sharedConfig
-        @param shareName: Name of the global share point"""
+        @param shareName: Name of the global share point
+        @return True or False"""
         try:
             bool(self._sharedConfig[shareName])
+            logging.error("cannot share config - name is always in use: %s", shareName)
+            return False
+        except:
             self._sharedConfig[shareName] = self._config
             logging.debug("shared configuration as: %s", shareName)
-        except:
-            logging.error("cannot share config because the name is always in use: %s", shareName)
-
+            return True
 
     def getConfig(self, section, key, shareName=""):
         """!Method to read a single config entry
@@ -100,12 +103,27 @@ class Config:
         @param section: Section to read from
         @param key: Value to read
         @param shareName: Name of the global config share (empty is only local)
-        @return The value from config file"""
-        try:
-            if shareName:
+        @return The value or None"""
+        if shareName:
+            try:
                 return self._sharedConfig[shareName].get(section, key)
-            else:
+            except KeyError:
+                logging.error("no shared config named: %s", shareName)
+            except configparser.NoSectionError:
+                logging.error("no shared config section: %s", section)
+            except configparser.NoOptionError:
+                logging.error("no shared config option: %s", key)
+            except:  # pragma: no cover
+                logging.exception("error while reading shared config")
+            return None
+
+        else:
+            try:
                 return self._config.get(section, key)
-        except:  # pragma: no cover
-            logging.exception("Error while reading a config entry")
+            except configparser.NoSectionError:
+                logging.error("no local config section: %s", section)
+            except configparser.NoOptionError:
+                logging.error("no local config option: %s", key)
+            except:  # pragma: no cover
+                logging.exception("error while reading local config")
             return None
