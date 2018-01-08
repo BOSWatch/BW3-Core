@@ -12,7 +12,7 @@
 @file:        test_ServerClient.py
 @date:        10.12.2017
 @author:      Bastian Schroll
-@description: Unittests for BOSWatch. File must be run as "pytest" unittest
+@description: Unittests for BOSWatch. File must be _run as "pytest" unittest
 """
 
 import pytest  # import the pytest framework

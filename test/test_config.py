@@ -12,7 +12,7 @@
 @file:        test_config.py
 @date:        08.01.2017
 @author:      Bastian Schroll
-@description: Unittests for BOSWatch. File must be run as "pytest" unittest
+@description: Unittests for BOSWatch. File must be _run as "pytest" unittest
 """
 
 # import pytest  # import the pytest framework
@@ -34,16 +34,16 @@ class Test_Config:
         """!get values from local config file"""
         bwConfig = Config()
         bwConfig.loadConfigFile(paths.TEST_PATH + "test.ini")
-        assert bwConfig.getConfig("test", "one") == "1"
-        assert bwConfig.getConfig("test", "two") == "two"
-        assert bwConfig.getConfig("testcase", "test") == "ok"
+        assert bwConfig.get("test", "one") == "1"
+        assert bwConfig.get("test", "two") == "two"
+        assert bwConfig.get("testcase", "test") == "ok"
 
     def test_getLocalConfigFailed(self):
         """!fail while get values from local config file"""
         bwConfig = Config()
         bwConfig.loadConfigFile(paths.TEST_PATH + "test.ini")
-        assert bwConfig.getConfig("test", "abc") is None
-        assert bwConfig.getConfig("abc", "test") is None
+        assert bwConfig.get("test", "abc") is None
+        assert bwConfig.get("abc", "test") is None
 
     def test_shareConfig(self):
         """!load local config file and share it"""
@@ -65,8 +65,8 @@ class Test_Config:
         """!try to get values from shared config where not exists"""
         bwConfig = Config()
         bwConfig.loadConfigFile(paths.TEST_PATH + "test.ini")
-        assert bwConfig.getConfig("test", "one") == "1"
-        assert bwConfig.getConfig("test", "one", "NotSetSharedConfig") is None
+        assert bwConfig.get("test", "one") == "1"
+        assert bwConfig.get("test", "one", "NotSetSharedConfig") is None
 
     def test_getSharedConfig(self):
         """!get values from shared config file"""
@@ -75,8 +75,8 @@ class Test_Config:
         assert bwConfig1._sharePoints["test_getSharedConfig"] is not None
 
         bwConfig2 = Config()
-        assert bwConfig2.getConfig("test", "one") is None
-        assert bwConfig2.getConfig("test", "one", "test_getSharedConfig") == "1"
+        assert bwConfig2.get("test", "one") is None
+        assert bwConfig2.get("test", "one", "test_getSharedConfig") == "1"
 
     def test_getSharedConfigFailed(self):
         """!fail while get values from shared config file"""
@@ -85,5 +85,5 @@ class Test_Config:
         assert bwConfig1._sharePoints["test_getSharedConfigFailed"] is not None
 
         bwConfig2 = Config()
-        assert bwConfig2.getConfig("test", "abc", "test_getSharedConfigFailed") is None
-        assert bwConfig2.getConfig("abc", "test", "test_getSharedConfigFailed") is None
+        assert bwConfig2.get("test", "abc", "test_getSharedConfigFailed") is None
+        assert bwConfig2.get("abc", "test", "test_getSharedConfigFailed") is None

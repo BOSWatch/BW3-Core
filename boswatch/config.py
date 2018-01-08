@@ -56,10 +56,10 @@ class Config:
             return False
         except:
             self._sharePoints[sharePoint] = self._config
-            logging.debug("shared configuration as: %s", sharePoint)
+            logging.debug("configuration sharePoint: %s", sharePoint)
             return True
 
-    def getConfig(self, section, key, sharePoint=""):
+    def get(self, section, key, sharePoint=""):
         """!Method to read a single config entry
 
         @param section: Section to read from
@@ -70,7 +70,7 @@ class Config:
             try:
                 return self._sharePoints[sharePoint].get(section, key)
             except KeyError:
-                logging.error("no shared config named: %s", sharePoint)
+                logging.error("no sharePoint named: %s", sharePoint)
             except configparser.NoSectionError:
                 logging.error("no shared config section: %s", section)
             except configparser.NoOptionError:
