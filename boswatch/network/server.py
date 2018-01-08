@@ -109,7 +109,7 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
             return False
 
     @staticmethod
-    def clientsConnected(self):  # pragma: no cover
+    def clientsConnected():
         """!Number of currently connected Clients
 
         @todo works not safe atm
@@ -121,7 +121,7 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
             return 0
 
     @staticmethod
-    def getData(self):
+    def getData():
         """!Function to get the data packages from server
         must be polled by main program
 
@@ -133,7 +133,7 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
         return None
 
     @staticmethod
-    def flushData(self):
+    def flushData():
         """!To flush all existing data in queue"""
         logging.debug("Flush client data queue")
         _clients.clear()
