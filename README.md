@@ -1,5 +1,8 @@
 # BOSWatch
 
+![BOSWatch](logo/bw3.png "BOSWatch 3 Logo")
+
+
 **Es wird darauf hingewiesen, dass für die Teilnahme am BOS-Funk nur nach den Technischen Richtlinien der BOS zugelassene Funkanlagen verwendet werden dürfen.**
 **Der BOS-Funk ist ein nichtöffentlicher mobiler Landfunk. Privatpersonen gehören nicht zum Kreis der berechtigten Funkteilnehmer.** _(Quelle: TR-BOS)_
 
