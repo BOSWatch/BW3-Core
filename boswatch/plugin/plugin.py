@@ -17,8 +17,6 @@
 import logging
 import time
 
-# from boswatch.module import file
-
 logging.debug("- %s loaded", __name__)
 
 
@@ -54,41 +52,42 @@ class Plugin:
         self._pluginsActive -= 1
         self.onUnload()
 
-        logging.debug("%s statistics:", self._pluginName)
+        logging.debug("[%s] statistics:", self._pluginName)
         logging.debug("- runs            %d", self._runCount)
         logging.debug("- setup errors    %d", self._setupErrorCount)
         logging.debug("- alarm errors    %d", self._alarmErrorCount)
         logging.debug("- teardown errors %d", self._teardownErrorCount)
 
-    def run(self, bwPacket):
+    def _run(self, bwPacket):
         self._runCount += 1
+        logging.debug("[%s] run #%s", self._pluginName, self._runCount)
 
         self._setupTime = time.time()
         try:
-            logging.debug("setup %s", self._pluginName)
+            logging.debug("[%s] setup", self._pluginName)
             self.setup()
         except:
             self._setupErrorCount += 1
-            logging.exception("error in setup %s", self._pluginName)
+            logging.exception("[%s] error in setup", self._pluginName)
 
         self._alarmTime = time.time()
         try:
-            logging.debug("alarm %s", self._pluginName)
+            logging.debug("[%s] alarm", self._pluginName)
             self.alarm(bwPacket)
         except:
             self._alarmErrorCount += 1
-            logging.exception("error in alarm %s", self._pluginName)
+            logging.exception("[%s] error in alarm", self._pluginName)
 
         self._teardownTime = time.time()
         try:
-            logging.debug("teardown %s", self._pluginName)
+            logging.debug("[%s] teardown", self._pluginName)
             self.teardown()
         except:
             self._teardownErrorCount += 1
-            logging.exception("error in teardown %s", self._pluginName)
+            logging.exception("[%s] error in teardown", self._pluginName)
 
         self._endTime = time.time()
-        logging.debug("%s took %0.2f seconds", self._pluginName, self._endTime - self._setupTime)
+        logging.debug("[%s] took %0.2f seconds", self._pluginName, self._endTime - self._setupTime)
         logging.debug("- setup:    %0.2f sec.", self._alarmTime - self._setupTime)
         logging.debug("- alarm:    %0.2f sec.", self._teardownTime - self._alarmTime)
         logging.debug("- teardown: %0.2f sec.", self._endTime - self._teardownTime)

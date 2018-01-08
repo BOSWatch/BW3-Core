@@ -65,7 +65,6 @@ class DescriptionList:
         """!Loads the given CSV file into internal list"""
         logging.debug("create new descriptionList")
         self._descriptionList = {}
-        # self.loadCSV(csvType)
 
     def getShortDescription(self, id):
         """!Returns the short description of given id
