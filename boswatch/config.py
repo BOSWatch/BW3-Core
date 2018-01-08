@@ -19,96 +19,58 @@ import configparser
 
 logging.debug("- %s loaded", __name__)
 
-_configFile = configparser.ConfigParser()
-
-
-def loadConfig(configFile):
-    """!loads a given configuration in the class wide config variable
-
-    @param configFile: Path to the config file
-    @return status of loading"""
-    logging.debug("load config file from: %s", configFile)
-    try:
-        _configFile.read(configFile, "utf-8")
-        return True
-    except:  # pragma: no cover
-        logging.exception("cannot load config file")
-        return False
-
-
-def getConfig(section, key):
-    """!Method to read a single config entry
-
-    @param section: Section to read from
-    @param key: Value to read
-    @return The value from config file"""
-    try:
-        return _configFile.get(section, key)
-    except:  # pragma: no cover
-        logging.exception("Error while reading a config entry")
-        return None
-
-#
-#
-#
-#
-
 
 class Config:
 
-    _sharedConfig = {}
+    _sharePoints = {}
 
-    def __init__(self, configPath="", shareName=""):
-        """!Create a new config object and load the ini file directly
-
-        @param configPath: If you like to load a ini file
-        @param shareName: If you like to share the config"""
+    def __init__(self):
+        """!Create a new config object and load the ini file directly"""
         self._config = configparser.ConfigParser()
-        if configPath:
-            self._loadConfigFile(configPath)
-            if shareName:
-                self._shareConfig(shareName)
 
-    def _loadConfigFile(self, configPath):
+    def loadConfigFile(self, configPath, sharePoint=""):
         """!loads a given configuration in the class wide config variable
 
         @param configPath: Path to the config file
+        @param sharePoint: If you like to share the config
         @return True or False"""
         logging.debug("load config file from: %s", configPath)
         try:
             self._config.read(configPath, "utf-8")
+            if sharePoint:
+                self._shareConfig(sharePoint)
             return True
         except:  # pragma: no cover
             logging.exception("cannot load config file")
             return False
 
-    def _shareConfig(self, shareName):
+    def _shareConfig(self, sharePoint):
         """!Shares the configuration
 
         Shares the local _config to teh class wide global _sharedConfig
-        @param shareName: Name of the global share point
+        @param sharePoint: Name of the global share point
         @return True or False"""
         try:
-            bool(self._sharedConfig[shareName])
-            logging.error("cannot share config - name is always in use: %s", shareName)
+            bool(self._sharePoints[sharePoint])
+            logging.error("cannot share config - name is always in use: %s", sharePoint)
             return False
         except:
-            self._sharedConfig[shareName] = self._config
-            logging.debug("shared configuration as: %s", shareName)
+            self._sharePoints[sharePoint] = self._config
+            logging.debug("shared configuration as: %s", sharePoint)
             return True
 
-    def getConfig(self, section, key, shareName=""):
+    def getConfig(self, section, key, sharePoint=""):
         """!Method to read a single config entry
 
         @param section: Section to read from
         @param key: Value to read
-        @param shareName: Name of the global config share (empty is only local)
+        @param sharePoint: Name of the global config share (empty is only local)
         @return The value or None"""
-        if shareName:
+        if sharePoint:
             try:
-                return self._sharedConfig[shareName].get(section, key)
+                return self._sharePoints[sharePoint].get(section, key)
             except KeyError:
-                logging.error("no shared config named: %s", shareName)
+                logging.error("no shared config named: %s", sharePoint)
             except configparser.NoSectionError:
                 logging.error("no shared config section: %s", section)
             except configparser.NoOptionError:
