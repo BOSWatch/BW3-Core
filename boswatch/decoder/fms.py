@@ -51,7 +51,7 @@ class Fms:
             tacticalInfo = data[114:117]
             fms_id = service + country + location + vehicle + status + direction
 
-            if re.search("[0-9a-f]{8}[0-9a-f]{1}[01]{1}", fms_id):
+            if re.search("[0-9a-f]{8}[0-9a-f][01]", fms_id):
                 logging.debug("found valid FMS")
 
                 bwPacket = packet.Packet()

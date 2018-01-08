@@ -12,7 +12,7 @@
 @file:        descriptor.py
 @date:        07.01.2018
 @author:      Bastian Schroll
-@description:
+@description: Descriptor to load Descriptions from csv files
 """
 import logging
 import csv

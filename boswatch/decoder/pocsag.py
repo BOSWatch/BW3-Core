@@ -42,10 +42,10 @@ class Pocsag:
         @return BOSWatch POCSAG packet or None"""
         bitrate, ric, subric = Pocsag._getBitrateRicSubric(data)
 
-        if re.search("[0-9]{7}", ric) and re.search("[1-4]{1}", subric):
+        if re.search("[0-9]{7}", ric) and re.search("[1-4]", subric):
             if "Alpha:" in data:
                 message = data.split('Alpha:   ')[1].strip()
-                message = message.replace('<NUL><NUL>', '').replace('<NUL>', '').replace('<NUL', '').replace('< NUL>', '').replace('<EOT>', '').strip()
+                message = message.replace('<NUL>', '').replace('<NUL', '').replace('< NUL>', '').replace('<EOT>', '').strip()
             else:
                 message = ""
             subricText = subric.replace("1", "a").replace("2", "b").replace("3", "c").replace("4", "d")

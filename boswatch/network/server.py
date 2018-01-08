@@ -108,6 +108,7 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
             logging.exception("cannot stop the server")
             return False
 
+    @staticmethod
     def clientsConnected(self):  # pragma: no cover
         """!Number of currently connected Clients
 
@@ -119,6 +120,7 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
         else:
             return 0
 
+    @staticmethod
     def getData(self):
         """!Function to get the data packages from server
         must be polled by main program
@@ -130,6 +132,7 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
             return message
         return None
 
+    @staticmethod
     def flushData(self):
         """!To flush all existing data in queue"""
         logging.debug("Flush client data queue")
