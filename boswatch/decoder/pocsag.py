@@ -34,29 +34,13 @@ class Pocsag:
         """!Create a new instance"""
         logging.debug("POCSAG decoder started")
 
+    @staticmethod
     def decode(self, data):
         """!Decodes POCSAG
 
         @param data: POCSAG for decoding
         @return BOSWatch POCSAG packet or None"""
-        bitrate = None
-        ric = None
-        subric = None
-
-        if "POCSAG512:" in data:
-            bitrate = 512
-            ric = data[20:27].replace(" ", "").zfill(7)
-            subric = str(int(data[39]) + 1)
-
-        elif "POCSAG1200:" in data:
-            bitrate = 1200
-            ric = data[21:28].replace(" ", "").zfill(7)
-            subric = str(int(data[40]) + 1)
-
-        elif "POCSAG2400:" in data:
-            bitrate = 2400
-            ric = data[21:28].replace(" ", "").zfill(7)
-            subric = str(int(data[40]) + 1)
+        bitrate, ric, subric = Pocsag._getBitrateRicSubric(data)
 
         if re.search("[0-9]{7}", ric) and re.search("[1-4]{1}", subric):
             if "Alpha:" in data:
@@ -81,3 +65,30 @@ class Pocsag:
 
         logging.warning("no valid data")
         return None
+
+    @staticmethod
+    def _getBitrateRicSubric(data):
+        """!Gets the Bitrate, Ric and Subric from data
+
+        @param data: POCSAG data string
+        @return bitrate
+        @return ric
+        @return subric"""
+        bitrate, ric, subric = 0, 0, 0
+
+        if "POCSAG512:" in data:
+            bitrate = 512
+            ric = data[20:27].replace(" ", "").zfill(7)
+            subric = str(int(data[39]) + 1)
+
+        elif "POCSAG1200:" in data:
+            bitrate = 1200
+            ric = data[21:28].replace(" ", "").zfill(7)
+            subric = str(int(data[40]) + 1)
+
+        elif "POCSAG2400:" in data:
+            bitrate = 2400
+            ric = data[21:28].replace(" ", "").zfill(7)
+            subric = str(int(data[40]) + 1)
+
+        return bitrate, ric, subric

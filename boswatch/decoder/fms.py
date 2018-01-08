@@ -34,6 +34,7 @@ class Fms:
         """!Create a new instance"""
         logging.debug("FMS decoder started")
 
+    @staticmethod
     def decode(self, data):
         """!Decodes FMS
 

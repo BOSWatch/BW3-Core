@@ -35,6 +35,7 @@ class Zvei:
         """!Create a new instance"""
         logging.debug("ZVEI decoder started")
 
+    @staticmethod
     def decode(self, data):
         """!Decodes ZVEI
 
