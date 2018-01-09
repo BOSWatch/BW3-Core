@@ -49,11 +49,11 @@ class Descriptor:
         @return True or False"""
         logging.debug("add descriptions to bwPacket")
         try:
-            bwPacket.setField("shortDescription",
-                              self._lists[bwPacket.getField("mode")].getShortDescription(bwPacket.getField(bwPacket.getField("mode"))))
+            bwPacket.set("shortDescription",
+                         self._lists[bwPacket.get("mode")].getShortDescription(bwPacket.get(bwPacket.get("mode"))))
 
-            bwPacket.setField("longDescription",
-                              self._lists[bwPacket.getField("mode")].getLongDescription(bwPacket.getField(bwPacket.getField("mode"))))
+            bwPacket.set("longDescription",
+                         self._lists[bwPacket.get("mode")].getLongDescription(bwPacket.get(bwPacket.get("mode"))))
             return True
         except:  # pragma: no cover
             logging.exception("error while adding descriptions")

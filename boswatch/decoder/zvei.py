@@ -45,8 +45,8 @@ class Zvei:
             logging.debug("found valid ZVEI")
 
             bwPacket = packet.Packet()
-            bwPacket.setField("mode", "zvei")
-            bwPacket.setField("zvei", Zvei._solveDoubleTone(data[7:12]))
+            bwPacket.set("mode", "zvei")
+            bwPacket.set("zvei", Zvei._solveDoubleTone(data[7:12]))
 
             logging.debug(bwPacket)
             return bwPacket

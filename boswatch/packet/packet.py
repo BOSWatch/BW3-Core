@@ -40,14 +40,14 @@ class Packet:
         """!Return the intern _packet dict as string"""
         return str(self._packet)
 
-    def setField(self, fieldName, value):
+    def set(self, fieldName, value):
         """!Set a field in the intern _packet dict
 
         @param fieldName: Name of the data to set
         @param value: Value to set"""
         self._packet[fieldName] = str(value)
 
-    def getField(self, fieldName):
+    def get(self, fieldName):
         """!Returns the value from a single field.
         If field not existing `None` is returned
 
@@ -71,12 +71,12 @@ class Packet:
         - frequency"""
         config = Config()
         logging.debug("add client data to bwPacket")
-        self.setField("clientName", config.get("Client", "Name", "clientConfig"))
-        self.setField("clientVersion", version.client)
-        self.setField("clientBuildDate", version.date)
-        self.setField("clientBranch", version.branch)
-        self.setField("inputSource", config.get("Server", "InputSource", "clientConfig"))
-        self.setField("frequency", config.get("Stick", "Frequency", "clientConfig"))
+        self.set("clientName", config.get("Client", "Name", "clientConfig"))
+        self.set("clientVersion", version.client)
+        self.set("clientBuildDate", version.date)
+        self.set("clientBranch", version.branch)
+        self.set("inputSource", config.get("Server", "InputSource", "clientConfig"))
+        self.set("frequency", config.get("Stick", "Frequency", "clientConfig"))
 
     def addServerData(self):
         """!Add the server information to the decoded data
@@ -88,7 +88,7 @@ class Packet:
         - serverBranch"""
         config = Config()
         logging.debug("add server data to bwPacket")
-        self.setField("serverName", config.get("Server", "Name", "serverConfig"))
-        self.setField("serverVersion", version.server)
-        self.setField("serverBuildDate", version.date)
-        self.setField("serverBranch", version.branch)
+        self.set("serverName", config.get("Server", "Name", "serverConfig"))
+        self.set("serverVersion", version.server)
+        self.set("serverBuildDate", version.date)
+        self.set("serverBranch", version.branch)

@@ -49,19 +49,19 @@ class Test_Descriptor:
         bwDescriptor = descriptor.Descriptor()
         assert bwDescriptor.loadDescription("zvei") is True
         bwPacket = packet.Packet()
-        bwPacket.setField("mode", "zvei")
-        bwPacket.setField("zvei", "54321")
+        bwPacket.set("mode", "zvei")
+        bwPacket.set("zvei", "54321")
         assert bwDescriptor.addDescriptions(bwPacket) is True
-        assert bwPacket.getField("shortDescription") is ""
-        assert bwPacket.getField("longDescription") is ""
+        assert bwPacket.get("shortDescription") is ""
+        assert bwPacket.get("longDescription") is ""
 
     def test_loadDescriptions(self):
         """!load descriptions to an bwPacket"""
         bwDescriptor = descriptor.Descriptor()
         assert bwDescriptor.loadDescription("zvei") is True
         bwPacket = packet.Packet()
-        bwPacket.setField("mode", "zvei")
-        bwPacket.setField("zvei", "12345")
+        bwPacket.set("mode", "zvei")
+        bwPacket.set("zvei", "12345")
         assert bwDescriptor.addDescriptions(bwPacket) is True
-        assert bwPacket.getField("shortDescription") is not ""
-        assert bwPacket.getField("longDescription") is not ""
+        assert bwPacket.get("shortDescription") is not ""
+        assert bwPacket.get("longDescription") is not ""

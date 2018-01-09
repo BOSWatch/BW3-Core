@@ -53,12 +53,12 @@ class Pocsag:
             logging.debug("found valid POCSAG")
 
             bwPacket = packet.Packet()
-            bwPacket.setField("mode", "pocsag")
-            bwPacket.setField("bitrate", bitrate)
-            bwPacket.setField("ric", ric)
-            bwPacket.setField("subric", subric)
-            bwPacket.setField("subricText", subricText)
-            bwPacket.setField("message", message)
+            bwPacket.set("mode", "pocsag")
+            bwPacket.set("bitrate", bitrate)
+            bwPacket.set("ric", ric)
+            bwPacket.set("subric", subric)
+            bwPacket.set("subricText", subricText)
+            bwPacket.set("message", message)
 
             logging.debug(bwPacket)
             return bwPacket
