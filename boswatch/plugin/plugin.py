@@ -52,11 +52,11 @@ class Plugin:
         self._pluginsActive -= 1
         self.onUnload()
 
-        logging.debug("[%s] statistics:", self._pluginName)
-        logging.debug("- runs            %d", self._runCount)
-        logging.debug("- setup errors    %d", self._setupErrorCount)
-        logging.debug("- alarm errors    %d", self._alarmErrorCount)
-        logging.debug("- teardown errors %d", self._teardownErrorCount)
+        # logging.debug("[%s] statistics:", self._pluginName)
+        # logging.debug("- runs            %d", self._runCount)
+        # logging.debug("- setup errors    %d", self._setupErrorCount)
+        # logging.debug("- alarm errors    %d", self._alarmErrorCount)
+        # logging.debug("- teardown errors %d", self._teardownErrorCount)
 
     def _loadConfig(self):
         pass
@@ -96,9 +96,9 @@ class Plugin:
 
         self._endTime = time.time()
         logging.debug("[%s] took %0.3f seconds", self._pluginName, self._sumTime)
-        logging.debug("- setup:    %0.2f sec.", self._setupTime)
-        logging.debug("- alarm:    %0.2f sec.", self._alarmTime)
-        logging.debug("- teardown: %0.2f sec.", self._teardownTime)
+        # logging.debug("- setup:    %0.2f sec.", self._setupTime)
+        # logging.debug("- alarm:    %0.2f sec.", self._alarmTime)
+        # logging.debug("- teardown: %0.2f sec.", self._teardownTime)
 
     def _getStatistics(self):
         """!Returns statistical information's from last plugin run

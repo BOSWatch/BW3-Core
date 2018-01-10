@@ -47,24 +47,24 @@ def infoToLog():
     @return True or False on error"""
     try:
         logging.debug("BOSWatch and environment information")
-        logging.debug("- Client version:    %d.%d.%d",
+        logging.debug("- Client version:   %d.%d.%d",
                       boswatch.version.client["major"],
                       boswatch.version.client["minor"],
                       boswatch.version.client["patch"])
-        logging.debug("- Server version:    %d.%d.%d",
+        logging.debug("- Server version:   %d.%d.%d",
                       boswatch.version.server["major"],
                       boswatch.version.server["minor"],
                       boswatch.version.server["patch"])
-        logging.debug("- Branch:              %s",
+        logging.debug("- Branch:           %s",
                       boswatch.version.branch)
-        logging.debug("- Release date:        %02d.%02d.%4d",
+        logging.debug("- Release date:     %02d.%02d.%4d",
                       boswatch.version.date["day"],
                       boswatch.version.date["month"],
                       boswatch.version.date["year"])
-        logging.debug("- Python version:      " + platform.python_version())
-        logging.debug("- Python build:        " + str(platform.python_build()))
-        logging.debug("- System:              " + platform.system())
-        logging.debug("- OS Version:          " + platform.platform())
+        logging.debug("- Python version:   " + platform.python_version())
+        logging.debug("- Python build:     " + str(platform.python_build()))
+        logging.debug("- System:           " + platform.system())
+        logging.debug("- OS Version:       " + platform.platform())
         logging.debug("")
         return True
     except:  # pragma: no cover
