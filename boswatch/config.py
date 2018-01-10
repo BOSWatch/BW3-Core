@@ -66,9 +66,9 @@ class Config:
         @param key: Value to read
         @param sharePoint: Name of the global config share (empty is only local)
         @return The value or None"""
-        value = int(self._get(section, key, sharePoint))
+        value = self._get(section, key, sharePoint)
         if value is None:
-            return 0
+            return int(0)
         return int(value)
 
     def getBool(self, section, key, sharePoint=""):
