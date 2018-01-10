@@ -52,16 +52,15 @@ class Plugin:
         self._pluginsActive -= 1
         self.onUnload()
 
-        # logging.debug("[%s] statistics:", self._pluginName)
-        # logging.debug("- runs            %d", self._runCount)
-        # logging.debug("- setup errors    %d", self._setupErrorCount)
-        # logging.debug("- alarm errors    %d", self._alarmErrorCount)
-        # logging.debug("- teardown errors %d", self._teardownErrorCount)
-
     def _loadConfig(self):
         pass
 
     def _run(self, bwPacket):
+        """!start an complete running turnus of an plugin.
+        Calls setup(), alarm() and teardown() in this order.
+        The alarm() method serves the BOSWatch packet to the plugin.
+
+        @param bwPacket: A BOSWatch packet instance"""
         self._runCount += 1
         logging.debug("[%s] run #%d", self._pluginName, self._runCount)
 
