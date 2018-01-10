@@ -71,12 +71,12 @@ class Packet:
         - frequency"""
         config = Config()
         logging.debug("add client data to bwPacket")
-        self.set("clientName", config.get("Client", "Name", "clientConfig"))
+        self.set("clientName", config.getStr("Client", "Name", "clientConfig"))
         self.set("clientVersion", version.client)
         self.set("clientBuildDate", version.date)
         self.set("clientBranch", version.branch)
-        self.set("inputSource", config.get("Server", "InputSource", "clientConfig"))
-        self.set("frequency", config.get("Stick", "Frequency", "clientConfig"))
+        self.set("inputSource", config.getStr("Server", "InputSource", "clientConfig"))
+        self.set("frequency", config.getStr("Stick", "Frequency", "clientConfig"))
 
     def addServerData(self):
         """!Add the server information to the decoded data
@@ -88,7 +88,7 @@ class Packet:
         - serverBranch"""
         config = Config()
         logging.debug("add server data to bwPacket")
-        self.set("serverName", config.get("Server", "Name", "serverConfig"))
+        self.set("serverName", config.getStr("Server", "Name", "serverConfig"))
         self.set("serverVersion", version.server)
         self.set("serverBuildDate", version.date)
         self.set("serverBranch", version.branch)
