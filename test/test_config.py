@@ -59,7 +59,7 @@ class Test_Config:
 
         bwConfig2 = Config()
         bwConfig2.loadConfigFile(paths.TEST_PATH + "test.ini")
-        assert bwConfig2._shareConfig("test_shareConfigUsed") is False
+        assert not bwConfig2._shareConfig("test_shareConfigUsed")
 
     def test_getNotSetSharedConfig(self):
         """!try to get values from shared config where not exists"""

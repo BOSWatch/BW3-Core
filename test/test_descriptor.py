@@ -27,41 +27,41 @@ class Test_Descriptor:
     def test_loadCSVnotExist(self):
         """!read CSV file where not exist direct per DescriptionList class"""
         descList = descriptor.DescriptionList()
-        assert descList.loadCSV("boswatch") is False
+        assert not descList.loadCSV("boswatch")
 
     def test_loadCSV(self):
         """!read CSV file direct per DescriptionList class"""
         descList = descriptor.DescriptionList()
-        assert descList.loadCSV("zvei") is True
+        assert descList.loadCSV("zvei")
 
     def test_descriptorLoadFailed(self):
         """!read CSV file where not exist"""
         bwDescriptor = descriptor.Descriptor()
-        assert bwDescriptor.loadDescription("boswatch") is False
+        assert not bwDescriptor.loadDescription("boswatch")
 
     def test_descriptorLoad(self):
         """!read CSV file"""
         bwDescriptor = descriptor.Descriptor()
-        assert bwDescriptor.loadDescription("zvei") is True
+        assert bwDescriptor.loadDescription("zvei")
 
     def test_loadDescriptionsNotSet(self):
         """!load descriptions where not set to an bwPacket"""
         bwDescriptor = descriptor.Descriptor()
-        assert bwDescriptor.loadDescription("zvei") is True
+        assert bwDescriptor.loadDescription("zvei")
         bwPacket = packet.Packet()
         bwPacket.set("mode", "zvei")
         bwPacket.set("zvei", "54321")
-        assert bwDescriptor.addDescriptions(bwPacket) is True
+        assert bwDescriptor.addDescriptions(bwPacket)
         assert bwPacket.get("shortDescription") is ""
         assert bwPacket.get("longDescription") is ""
 
     def test_loadDescriptions(self):
         """!load descriptions to an bwPacket"""
         bwDescriptor = descriptor.Descriptor()
-        assert bwDescriptor.loadDescription("zvei") is True
+        assert bwDescriptor.loadDescription("zvei")
         bwPacket = packet.Packet()
         bwPacket.set("mode", "zvei")
         bwPacket.set("zvei", "12345")
-        assert bwDescriptor.addDescriptions(bwPacket) is True
+        assert bwDescriptor.addDescriptions(bwPacket)
         assert bwPacket.get("shortDescription") is not ""
         assert bwPacket.get("longDescription") is not ""
