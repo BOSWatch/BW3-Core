@@ -17,38 +17,39 @@
 
 # import pytest  # import the pytest framework
 
-from boswatch.descriptor import descriptor
-from boswatch.packet import packet
+from boswatch.descriptor.descriptor import Descriptor
+from boswatch.descriptor.descriptor import DescriptionList
+from boswatch.packet.packet import Packet
 
 
 class Test_Descriptor:
     """!Unittests for the descriptor"""
 
-    def test_loadCSVnotExist(self):
+    def test_loadCsvNotExist(self):
         """!read CSV file where not exist direct per DescriptionList class"""
-        descList = descriptor.DescriptionList()
+        descList = DescriptionList()
         assert not descList.loadCSV("boswatch")
 
-    def test_loadCSV(self):
+    def test_loadCsv(self):
         """!read CSV file direct per DescriptionList class"""
-        descList = descriptor.DescriptionList()
+        descList = DescriptionList()
         assert descList.loadCSV("zvei")
 
     def test_descriptorLoadFailed(self):
         """!read CSV file where not exist"""
-        bwDescriptor = descriptor.Descriptor()
+        bwDescriptor = Descriptor()
         assert not bwDescriptor.loadDescription("boswatch")
 
     def test_descriptorLoad(self):
         """!read CSV file"""
-        bwDescriptor = descriptor.Descriptor()
+        bwDescriptor = Descriptor()
         assert bwDescriptor.loadDescription("zvei")
 
     def test_loadDescriptionsNotSet(self):
         """!load descriptions where not set to an bwPacket"""
-        bwDescriptor = descriptor.Descriptor()
+        bwDescriptor = Descriptor()
         assert bwDescriptor.loadDescription("zvei")
-        bwPacket = packet.Packet()
+        bwPacket = Packet()
         bwPacket.set("mode", "zvei")
         bwPacket.set("zvei", "54321")
         assert bwDescriptor.addDescriptions(bwPacket)
@@ -57,9 +58,9 @@ class Test_Descriptor:
 
     def test_loadDescriptions(self):
         """!load descriptions to an bwPacket"""
-        bwDescriptor = descriptor.Descriptor()
+        bwDescriptor = Descriptor()
         assert bwDescriptor.loadDescription("zvei")
-        bwPacket = packet.Packet()
+        bwPacket = Packet()
         bwPacket.set("mode", "zvei")
         bwPacket.set("zvei", "12345")
         assert bwDescriptor.addDescriptions(bwPacket)

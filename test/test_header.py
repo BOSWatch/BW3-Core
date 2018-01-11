@@ -18,7 +18,7 @@
 
 # import pytest  # import the pytest framework
 
-import boswatch.utils.header
+from boswatch.utils import header
 
 
 class Test_Header:
@@ -26,12 +26,12 @@ class Test_Header:
 
     def test_logoToLog(self):
         """!Test logo to log"""
-        assert boswatch.utils.header.logoToLog()
+        assert header.logoToLog()
 
     def test_infoToLog(self):
         """!Test info to log"""
-        assert boswatch.utils.header.infoToLog()
+        assert header.infoToLog()
 
     def test_logoToScreen(self):
         """!Test logo to screen"""
-        assert boswatch.utils.header.logoToScreen()
+        assert header.logoToScreen()

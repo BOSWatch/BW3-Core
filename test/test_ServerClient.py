@@ -18,8 +18,8 @@
 import pytest  # import the pytest framework
 import time
 
-import boswatch.network.server
-import boswatch.network.client
+from boswatch.network.server import TCPServer
+from boswatch.network.client import TCPClient
 
 
 class Test_ServerClient:
@@ -28,73 +28,73 @@ class Test_ServerClient:
     @pytest.fixture(scope="function")
     def useServer(self):
         """!Start and serve the sever for each functions where useServer is given"""
-        self.testServer = boswatch.network.server.TCPServer()
+        self.testServer = TCPServer()
         assert self.testServer.start()
         time.sleep(0.1)  # wait for server
         yield self.testServer  # server to all test where useServer is given
         assert self.testServer.stop()
         time.sleep(0.1)  # wait for server
 
-    def test_client_failed_connect(self):
+    def test_clientConnectFailed(self):
         """!Connect to a non available server"""
-        self.testClient = boswatch.network.client.TCPClient()
+        self.testClient = TCPClient()
         assert not self.testClient.connect()
 
-    def test_client_failed_disconnect(self):
+    def test_clientDisconnectFailed(self):
         """!Disconnect while no connection is established"""
-        self.testClient = boswatch.network.client.TCPClient()
+        self.testClient = TCPClient()
         assert not self.testClient.disconnect()
 
-    def test_client_failed_transmit(self):
+    def test_clientTransmitFailed(self):
         """!Transmit while no connection is established"""
-        self.testClient = boswatch.network.client.TCPClient()
+        self.testClient = TCPClient()
         assert not self.testClient.transmit("test")
 
-    def test_client_failed_receive(self):
+    def test_clientReceiveFailed(self):
         """!Receive while no connection is established"""
-        self.testClient = boswatch.network.client.TCPClient()
+        self.testClient = TCPClient()
         assert not self.testClient.receive()
 
-    def test_client_success_connect(self, useServer):
+    def test_clientConnect(self, useServer):
         """!Connect to a server"""
-        self.testClient = boswatch.network.client.TCPClient()
+        self.testClient = TCPClient()
         assert self.testClient.connect()
         assert self.testClient.disconnect()
 
-    def test_client_reconnect(self, useServer):
+    def test_clientReconnect(self, useServer):
         """!Try a reconnect after a established connection"""
-        self.testClient = boswatch.network.client.TCPClient()
+        self.testClient = TCPClient()
         assert self.testClient.connect()
         assert self.testClient.disconnect()
         assert self.testClient.connect()
         assert self.testClient.disconnect()
 
-    def test_multi_connect(self, useServer):
+    def test_clientMultiConnect(self, useServer):
         """!Connect with 2 clients to the server"""
-        self.testClient1 = boswatch.network.client.TCPClient()
+        self.testClient1 = TCPClient()
         assert self.testClient1.connect()
-        self.testClient2 = boswatch.network.client.TCPClient()
+        self.testClient2 = TCPClient()
         assert self.testClient2.connect()
         # disconnect all
         assert self.testClient1.disconnect()
         assert self.testClient2.disconnect()
 
-    def test_client_communicate(self, useServer):
+    def test_clientCommunicate(self, useServer):
         """!Try to send data to the server and check on '[ack]'"""
-        self.testClient = boswatch.network.client.TCPClient()
+        self.testClient = TCPClient()
         assert self.testClient.connect()
         assert self.testClient.transmit("test")
         assert self.testClient.receive() == "[ack]"
         assert self.testClient.disconnect()
 
-    def test_client_multi_communicate(self, useServer):
+    def test_clientMultiCommunicate(self, useServer):
         """!Try to send data to the server with 3 clients and check on '[ack]'"""
         # connect all
-        self.testClient1 = boswatch.network.client.TCPClient()
+        self.testClient1 = TCPClient()
         assert self.testClient1.connect()
-        self.testClient2 = boswatch.network.client.TCPClient()
+        self.testClient2 = TCPClient()
         assert self.testClient2.connect()
-        self.testClient3 = boswatch.network.client.TCPClient()
+        self.testClient3 = TCPClient()
         assert self.testClient3.connect()
         # send all
         assert self.testClient1.transmit("test")
@@ -109,34 +109,34 @@ class Test_ServerClient:
         assert self.testClient2.disconnect()
         assert self.testClient3.disconnect()
 
-    def test_server_restart(self):
+    def test_serverRestart(self):
         """!Test a restart of the server"""
-        self.testServer = boswatch.network.server.TCPServer()
+        self.testServer = TCPServer()
         assert self.testServer.start()
         assert self.testServer.stop()
         assert self.testServer.start()
         assert self.testServer.stop()
 
-    def test_server_failed_stop(self):
+    def test_serverStopFailed(self):
         """!Test to start the server twice"""
-        self.testServer = boswatch.network.server.TCPServer()
+        self.testServer = TCPServer()
         assert not self.testServer.stop()
 
-    def test_server_doubleStart(self):
+    def test_serverDoubleStart(self):
         """!Test to start the server twice"""
-        self.testServer1 = boswatch.network.server.TCPServer()
-        self.testServer2 = boswatch.network.server.TCPServer()
+        self.testServer1 = TCPServer()
+        self.testServer2 = TCPServer()
         assert self.testServer1.start()
         assert not self.testServer2.start()
         assert self.testServer1.stop()
         assert not self.testServer2.stop()
 
-    def test_server_output(self, useServer):
+    def test_serverGetOutput(self, useServer):
         """!Send data to server with 2 clients, check '[ack]' and data on server queue"""
         # connect all
-        self.testClient1 = boswatch.network.client.TCPClient()
+        self.testClient1 = TCPClient()
         assert self.testClient1.connect()
-        self.testClient2 = boswatch.network.client.TCPClient()
+        self.testClient2 = TCPClient()
         assert self.testClient2.connect()
         # send all
         useServer.flushData()
