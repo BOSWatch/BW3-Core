@@ -30,7 +30,7 @@ class Test_Packet:
         bwPacket = Packet()
         yield bwPacket
 
-    def test_crearePacket(self):
+    def test_createPacket(self):
         """!Create a packet"""
         bwPacket = Packet()
         assert bwPacket is not ""
