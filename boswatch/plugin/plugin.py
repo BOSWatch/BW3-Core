@@ -28,7 +28,6 @@ class Plugin:
     def __init__(self, pluginName):
         """!init preload some needed locals and then call onLoad() directly"""
         self._pluginName = pluginName
-        logging.debug("load %s", self._pluginName)
         self._pluginsActive += 1
 
         # for time counting
@@ -44,52 +43,52 @@ class Plugin:
         self._alarmErrorCount = 0
         self._teardownErrorCount = 0
 
+        logging.debug("[%s] onLoad()", pluginName)
         self.onLoad()
 
     def __del__(self):
         """!Destructor calls onUnload() directly"""
-        logging.debug("unload %s", self._pluginName)
+        logging.debug("[%s] onUnload()", self._pluginName)
         self._pluginsActive -= 1
         self.onUnload()
-
-        # logging.debug("[%s] statistics:", self._pluginName)
-        # logging.debug("- runs            %d", self._runCount)
-        # logging.debug("- setup errors    %d", self._setupErrorCount)
-        # logging.debug("- alarm errors    %d", self._alarmErrorCount)
-        # logging.debug("- teardown errors %d", self._teardownErrorCount)
 
     def _loadConfig(self):
         pass
 
     def _run(self, bwPacket):
+        """!start an complete running turn of an plugin.
+        Calls setup(), alarm() and teardown() in this order.
+        The alarm() method serves the BOSWatch packet to the plugin.
+
+        @param bwPacket: A BOSWatch packet instance"""
         self._runCount += 1
-        logging.debug("[%s] run #%s", self._pluginName, self._runCount)
+        logging.debug("[%s] run #%d", self._pluginName, self._runCount)
 
         self._tmpTime = time.time()
         try:
-            logging.debug("[%s] setup", self._pluginName)
+            logging.debug("[%s] setup()", self._pluginName)
             self.setup()
         except:
             self._setupErrorCount += 1
-            logging.exception("[%s] error in setup", self._pluginName)
+            logging.exception("[%s] error in setup()", self._pluginName)
 
         self._setupTime = time.time() - self._tmpTime
         self._tmpTime = time.time()
         try:
-            logging.debug("[%s] alarm", self._pluginName)
+            logging.debug("[%s] alarm()", self._pluginName)
             self.alarm(bwPacket)
         except:
             self._alarmErrorCount += 1
-            logging.exception("[%s] error in alarm", self._pluginName)
+            logging.exception("[%s] error in alarm()", self._pluginName)
 
         self._alarmTime = time.time() - self._tmpTime
         self._tmpTime = time.time()
         try:
-            logging.debug("[%s] teardown", self._pluginName)
+            logging.debug("[%s] teardown()", self._pluginName)
             self.teardown()
         except:
             self._teardownErrorCount += 1
-            logging.exception("[%s] error in teardown", self._pluginName)
+            logging.exception("[%s] error in teardown()", self._pluginName)
 
         self._teardownTime = time.time() - self._tmpTime
         self._sumTime = self._setupTime + self._alarmTime + self._teardownTime
