@@ -66,21 +66,21 @@ class DescriptionList:
         logging.debug("create new descriptionList")
         self._descriptionList = {}
 
-    def getShortDescription(self, id):
+    def getShortDescription(self, checkId):
         """!Returns the short description of given id
 
         @return short description or empty string"""
         try:
-            return self._descriptionList[str(id)]["shortDescription"]
+            return self._descriptionList[str(checkId)]["shortDescription"]
         except:
             return ""
 
-    def getLongDescription(self, id):
+    def getLongDescription(self, checkId):
         """!Returns the long description of given id
 
         @return long description or empty string"""
         try:
-            return self._descriptionList[str(id)]["longDescription"]
+            return self._descriptionList[str(checkId)]["longDescription"]
         except:
             return ""
 

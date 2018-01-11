@@ -63,7 +63,7 @@ class Fms:
                 bwPacket.set("vehicle", vehicle)
                 bwPacket.set("status", status)
                 bwPacket.set("direction", direction)
-                bwPacket.set("cirectionText", directionText)
+                bwPacket.set("directionText", directionText)
                 bwPacket.set("tacticalInfo", tacticalInfo)
 
                 logging.debug(bwPacket)

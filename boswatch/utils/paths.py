@@ -29,15 +29,20 @@ BIN_PATH = ROOT_PATH + "/_bin/"
 TEST_PATH = ROOT_PATH + "/test/"
 
 
-def createIfNotExist(dirPath):
+def ifFileExist(filePath):
+    pass
+
+
+def makeDirIfNotExist(dirPath):
     """!Checks if an directory is existing and create it if not
 
     @param dirPath: Path of the directory
-    @return Path of the directory"""
+    @return Path of the directory or False"""
     try:
         if not os.path.exists(dirPath):
             os.mkdir(dirPath)
             logging.debug("directory created: %s", dirPath)
+        return dirPath
     except:
         logging.exception("error by creating a directory: %s", dirPath)
-    return dirPath
+        return False

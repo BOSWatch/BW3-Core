@@ -82,6 +82,9 @@ class TCPClient:
         except AttributeError:
             logging.error("cannot transmit - no connection established")
             return False
+        except ConnectionResetError:
+            logging.error("cannot transmit - host closed connection")
+            return False
         except:  # pragma: no cover
             logging.exception("error while transmitting")
             return False
