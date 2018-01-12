@@ -1,4 +1,4 @@
-## Generatoren
+﻿## Generatoren
 Im Verzeichnis `_gen/` befinden sich Windows Batch-Scripte um bestimmt Aufgaben zu
 vereinfachen und zu automatisieren.
 
@@ -26,6 +26,8 @@ Die Konfigurations Datei für Doxygen findet sich unter `_gen/doxygen.ini`
 pytest ist ein Python Testframework
 
 Damit ist es möglich, automatisierte Tests laufen zu lassen.
+Vorher müssen die benötigten Plugins welche unter `_info/requirements.txt` gelistet sind
+mittels `pip` installiert werden.
 
 Nach dem Start kann man mit einem Druck auf `[ENTER]` direkt alle bekannten Tests
 laufen lassen, oder durch die Eingabe eines spezifischen Tests auch nur diesen
