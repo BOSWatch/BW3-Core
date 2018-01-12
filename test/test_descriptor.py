@@ -14,8 +14,7 @@
 @author:      Bastian Schroll
 @description: Unittests for BOSWatch. File must be _run as "pytest" unittest
 """
-
-# import pytest  # import the pytest framework
+import logging
 
 from boswatch.descriptor.descriptor import Descriptor
 from boswatch.descriptor.descriptor import DescriptionList
@@ -24,6 +23,9 @@ from boswatch.packet.packet import Packet
 
 class Test_Descriptor:
     """!Unittests for the descriptor"""
+
+    def setup_method(self, method):
+        logging.debug("[TEST] %s.%s" % (type(self).__name__, method.__name__))
 
     def test_loadCsvNotExist(self):
         """!read CSV file where not exist direct per DescriptionList class"""

@@ -14,8 +14,8 @@
 @author:      Bastian Schroll
 @description: Unittests for BOSWatch. File must be _run as "pytest" unittest
 """
-
-import pytest  # import the pytest framework
+import pytest
+import logging
 import time
 
 from boswatch.network.server import TCPServer
@@ -24,6 +24,9 @@ from boswatch.network.client import TCPClient
 
 class Test_ServerClient:
     """!Unittest for the server/client environment"""
+
+    def setup_method(self, method):
+        logging.debug("[TEST] %s.%s" % (type(self).__name__, method.__name__))
 
     @pytest.fixture(scope="function")
     def useServer(self):

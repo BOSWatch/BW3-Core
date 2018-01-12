@@ -14,12 +14,17 @@
 @author:      Bastian Schroll
 @description: Unittests for BOSWatch. File must be _run as "pytest" unittest
 """
+import logging
 
 from boswatch.decoder import decoder
 
 
 class Test_Decoder:
     """!Unittests for the decoder"""
+
+    def setup_method(self, method):
+        logging.debug("[TEST] %s.%s" % (type(self).__name__, method.__name__))
+        logging.
 
     def test_decoderNoData(self):
         """!Test a empty string"""

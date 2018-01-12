@@ -14,15 +14,17 @@
 @author:      Bastian Schroll
 @description: Unittests for BOSWatch. File must be _run as "pytest" unittest
 """
-
-
-import pytest  # import the pytest framework
+import pytest
+import logging
 
 from boswatch.packet.packet import Packet
 
 
 class Test_Packet:
     """!Unittests for the BOSWatch packet"""
+
+    def setup_method(self, method):
+        logging.debug("[TEST] %s.%s" % (type(self).__name__, method.__name__))
 
     @pytest.fixture(scope="function")
     def buildPacket(self):

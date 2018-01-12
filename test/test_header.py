@@ -14,15 +14,16 @@
 @author:      Bastian Schroll
 @description: Unittests for BOSWatch. File must be _run as "pytest" unittest
 """
-
-
-# import pytest  # import the pytest framework
+import logging
 
 from boswatch.utils import header
 
 
 class Test_Header:
     """!Unittests for the header"""
+
+    def setup_method(self, method):
+        logging.debug("[TEST] %s.%s" % (type(self).__name__, method.__name__))
 
     def test_logoToLog(self):
         """!Test logo to log"""
