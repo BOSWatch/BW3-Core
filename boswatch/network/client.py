@@ -97,6 +97,8 @@ class TCPClient:
             received = str(self._sock.recv(1024), "utf-8")
             logging.debug("received: " + received)
             return received
+        except socket.timeout:
+            logging.warning("cannot receive - timeout after %s sec", self._timeout)
         except AttributeError:
             logging.error("cannot receive - no connection established")
             return False
