@@ -24,7 +24,6 @@ class Test_Decoder:
 
     def setup_method(self, method):
         logging.debug("[TEST] %s.%s" % (type(self).__name__, method.__name__))
-        logging.
 
     def test_decoderNoData(self):
         """!Test a empty string"""
