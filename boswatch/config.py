@@ -65,10 +65,10 @@ class Config:
         @param section: Section to read from
         @param key: Value to read
         @param sharePoint: Name of the global config share (empty is only local)
-        @return The value or None"""
+        @return An Integer or 0"""
         value = self._get(section, key, sharePoint)
         if value is None:
-            return int(0)
+            return 0
         return int(value)
 
     def getBool(self, section, key, sharePoint=""):
@@ -77,8 +77,10 @@ class Config:
         @param section: Section to read from
         @param key: Value to read
         @param sharePoint: Name of the global config share (empty is only local)
-        @return The value or None"""
-        return bool(self._get(section, key, sharePoint))
+        @return True or False"""
+        if self._get(section, key, sharePoint).lower() in ["1", "true", "yes"]:
+            return True
+        return False
 
     def getStr(self, section, key, sharePoint=""):
         """!Method to read a single config entry as string
