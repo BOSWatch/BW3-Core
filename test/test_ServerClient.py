@@ -147,8 +147,8 @@ class Test_ServerClient:
         assert self.testClient1.receive() == "[ack]"
         assert self.testClient2.receive() == "[ack]"
         # check server output data
-        assert useServer.getData() == ("127.0.0.1", "test1")
-        assert useServer.getData() == ("127.0.0.1", "test2")
+        assert useServer.getData()[1] == "test1"
+        assert useServer.getData()[1] == "test2"
         assert useServer.getData() is None  # Last check must be None
         # disconnect all
         assert self.testClient1.disconnect()
