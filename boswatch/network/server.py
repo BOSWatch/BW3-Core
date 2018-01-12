@@ -142,6 +142,13 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
         return None
 
     @staticmethod
+    def countPacketsInQueue():
+        """!Get packets waiting in queue
+
+        @return Packets in queue"""
+        return len(_clients)
+
+    @staticmethod
     def flushData():
         """!To flush all existing data in queue"""
         logging.debug("Flush data queue")
