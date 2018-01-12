@@ -59,7 +59,6 @@ class Test_Config:
         bwConfig1 = Config()
         bwConfig1.loadConfigFile(paths.TEST_PATH + "test.ini", "test_shareConfigUsed")
         assert bwConfig1._sharePoints["test_shareConfigUsed"] is not None
-
         bwConfig2 = Config()
         bwConfig2.loadConfigFile(paths.TEST_PATH + "test.ini")
         assert not bwConfig2._shareConfig("test_shareConfigUsed")
@@ -90,3 +89,19 @@ class Test_Config:
         bwConfig2 = Config()
         assert bwConfig2.getStr("test", "abc", "test_getSharedConfigFailed") == "None"
         assert bwConfig2.getStr("abc", "test", "test_getSharedConfigFailed") == "None"
+
+    def test_getDataTypes(self):
+        bwConfig = Config()
+        bwConfig.loadConfigFile(paths.TEST_PATH + "test.ini")
+        assert bwConfig.getStr("testcase", "test") == "ok"
+        assert bwConfig.getInt("test", "one") == 1
+        assert bwConfig.getInt("boolTest", "three") == 0
+        assert bwConfig.getBool("boolTest", "one")
+        assert bwConfig.getBool("boolTest", "two")
+        assert not bwConfig.getBool("boolTest", "three")
+        assert not bwConfig.getBool("boolTest", "four")
+
+    def test_getAllSharepoints(self):
+        bwConfig = Config()
+        bwConfig.loadConfigFile(paths.TEST_PATH + "test.ini", "test_shareConfig")
+        assert bwConfig.getAllSharepoints() is not None
