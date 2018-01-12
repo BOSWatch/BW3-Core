@@ -33,7 +33,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
 
         Insert a request in the clients[] list and send a [ack]"""
         data = 1
-        cur_thread = threading.current_thread()
+        cur_thread = threading.current_thread().name
         req_name = str(cur_thread) + " " + self.client_address[0]
 
         try:

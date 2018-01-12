@@ -102,15 +102,11 @@ class Plugin:
     def _getStatistics(self):
         """!Returns statistical information's from last plugin run
 
-        @return Count of runs complete
-        @return time of last complete run
-        @return time of last setup
-        @return time of last alarm
-        @return time of last teardown
-        @return count of setup errors complete
-        @return count of alarm errors complete
-        @return count of teardown errors complete"""
-        return self._runCount, self._sumTime, self._setupTime, self._alarmTime, self._teardownTime, self._setupErrorCount, self._alarmErrorCount, self._teardownErrorCount
+        @return Statistics as pyton dict"""
+        stats = {"runCount": self._runCount, "sumTime": self._sumTime, "cumTime": self._runCount + self._sumTime,
+                 "setupTime": self._setupTime, "alarmTime": self._alarmTime, "teardownTime": self._teardownTime,
+                 "setupErrorCount": self._setupErrorCount, "alarmErrorCount": self._alarmErrorCount, "teardownErrorCount": self._teardownErrorCount}
+        return stats
 
     def onLoad(self):
         """!Called by import of the plugin
