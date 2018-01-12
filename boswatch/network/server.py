@@ -22,7 +22,7 @@ import time
 logging.debug("- %s loaded", __name__)
 
 _clients = []  # module wide global list for received data sets
-
+lock = threading.Lock()
 
 class TCPHandler(socketserver.BaseRequestHandler):
     """!RequestHandler class for our TCPServer class."""
@@ -31,7 +31,6 @@ class TCPHandler(socketserver.BaseRequestHandler):
         """!Handles the request from an single client in a own thread
 
         Insert a request in the clients[] list and send a [ack]"""
-        clientsLock = threading.Lock()  # todo check if needed
         data = 1
         cur_thread = threading.current_thread()
         req_name = str(cur_thread) + " " + self.client_address[0]
@@ -44,9 +43,9 @@ class TCPHandler(socketserver.BaseRequestHandler):
 
                     # add a new entry at first position (index 0) with client IP
                     # and the decoded data dict as an string in utf-8
-                    clientsLock.acquire()  # todo check if needed - only append not modify data
+                    lock.acquire()  # todo check if needed - only append not modify data
                     _clients.insert(0, (self.client_address[0], data, time.time()))  # time() to calc time in queue
-                    clientsLock.release()  # todo check if needed
+                    lock.release()  # todo check if needed
                     logging.debug("Add data to queue")
 
                     logging.debug(req_name + " send: [ack]")
@@ -132,10 +131,9 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
         @return Next data packet.py from intern queue"""
         if _clients:
-            clientsLock = threading.Lock()  # todo check if needed
-            clientsLock.acquire()  # todo check if needed - only append not modify data
+            lock.acquire()  # todo check if needed - only append not modify data
             message = _clients.pop()
-            clientsLock.release()  # todo check if needed
+            lock.release()  # todo check if needed
             logging.debug("Get data from queue")
             return message
         return None
@@ -144,7 +142,6 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     def flushData():
         """!To flush all existing data in queue"""
         logging.debug("Flush client data queue")
-        clientsLock = threading.Lock()  # todo check if needed
-        clientsLock.acquire()  # todo check if needed - here is a modify?
+        lock.acquire()  # todo check if needed - here is a modify?
         _clients.clear()
-        clientsLock.release()  # todo check if needed
+        lock.release()  # todo check if needed
