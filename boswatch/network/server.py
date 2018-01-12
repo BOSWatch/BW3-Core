@@ -22,7 +22,8 @@ import time
 logging.debug("- %s loaded", __name__)
 
 _clients = []  # module wide global list for received data sets
-lock = threading.Lock()
+_lockClients = threading.Lock()
+
 
 class TCPHandler(socketserver.BaseRequestHandler):
     """!RequestHandler class for our TCPServer class."""
@@ -43,9 +44,10 @@ class TCPHandler(socketserver.BaseRequestHandler):
 
                     # add a new entry at first position (index 0) with client IP
                     # and the decoded data dict as an string in utf-8
-                    lock.acquire()  # todo check if needed - only append not modify data
-                    _clients.insert(0, (self.client_address[0], data, time.time()))  # time() to calc time in queue
-                    lock.release()  # todo check if needed
+                    # lock.acquire()  # todo check if needed - only append not modify data
+                    with _lockClients:
+                        _clients.insert(0, (self.client_address[0], data, time.time()))  # time() to calc time in queue
+                    # lock.release()  # todo check if needed
                     logging.debug("Add data to queue")
 
                     logging.debug(req_name + " send: [ack]")
@@ -131,9 +133,10 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
         @return Next data packet.py from intern queue"""
         if _clients:
-            lock.acquire()  # todo check if needed - only append not modify data
-            message = _clients.pop()
-            lock.release()  # todo check if needed
+            # lock.acquire()  # todo check if needed - only append not modify data
+            with _lockClients:
+                message = _clients.pop()
+            # lock.release()  # todo check if needed
             logging.debug("Get data from queue")
             return message
         return None
@@ -141,7 +144,8 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     @staticmethod
     def flushData():
         """!To flush all existing data in queue"""
-        logging.debug("Flush client data queue")
-        lock.acquire()  # todo check if needed - here is a modify?
-        _clients.clear()
-        lock.release()  # todo check if needed
+        logging.debug("Flush data queue")
+        # lock.acquire()  # todo check if needed - here is a modify?
+        with _lockClients:
+            _clients.clear()
+        # lock.release()  # todo check if needed
