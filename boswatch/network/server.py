@@ -80,7 +80,7 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
         @return True or False"""
         try:
-            self._server = socketserver.ThreadingTCPServer(("localhost", port), TCPHandler)
+            self._server = socketserver.ThreadingTCPServer(("", port), TCPHandler)
             self._server.timeout = self._timeout
 
             self.flushData()

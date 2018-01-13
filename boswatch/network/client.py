@@ -47,11 +47,13 @@ class TCPClient:
 
             logging.debug("connected to " + str(host) + ":" + str(port))
             return True
+        except socket.timeout:
+            logging.warning("cannot connect to %s:%s - timeout after %s sec", str(host), str(port), self._timeout)
         except ConnectionRefusedError:
-            logging.error("cannot connect - connection refused")
+            logging.error("cannot connect to %s:%s - connection refused", str(host), str(port))
             return False
         except:  # pragma: no cover
-            logging.exception("cannot connect to " + str(host) + ":" + str(port))
+            logging.exception("cannot connect to %s:%s", str(host), str(port))
             return False
 
     def disconnect(self):
