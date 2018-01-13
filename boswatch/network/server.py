@@ -43,7 +43,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
                     logging.debug(req_name + " recv: " + data)
 
                     # add a new entry at first position (index 0) with client IP
-                    # and the decoded data dict as an string in utf-8
+                    # and the decoded data dict as an string in utf-8 and an timestamp
                     # lock.acquire()  # todo check if needed - only append not modify data
                     with _lockClients:
                         _clients.insert(0, (self.client_address[0], data, time.time()))  # time() to calc time in queue
@@ -133,7 +133,7 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
         @return Next data packet.py from intern queue"""
         if _clients:
-            # lock.acquire()  # todo check if needed - only append not modify data
+            # lock.acquire()  # todo check if needed - here is a modify of the list?
             with _lockClients:
                 message = _clients.pop()
             # lock.release()  # todo check if needed
@@ -146,7 +146,7 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
         """!Get packets waiting in queue
 
         @return Packets in queue"""
-        return len(_clients)
+        return len(_clients)  # no lock needed - only reading
 
     @staticmethod
     def flushData():

@@ -99,4 +99,4 @@ class Packet:
         @todo not complete yet - must be edit to print nice formatted messages on console
 
         @param bwPacket: BOSWatch packet instance"""
-        logging.info("%s packet received", self.get("mode"))
+        logging.info("[%s]", self.get("mode"))

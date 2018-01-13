@@ -102,6 +102,9 @@ class TCPClient:
         except AttributeError:
             logging.error("cannot receive - no connection established")
             return False
+        except ConnectionResetError:
+            logging.error("cannot receive - host closed connection")
+            return False
         except:  # pragma: no cover
             logging.exception("error while receiving")
             return False

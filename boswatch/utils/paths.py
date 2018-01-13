@@ -20,13 +20,13 @@ import sys
 
 logging.debug("- %s loaded", __name__)
 
-ROOT_PATH = os.path.dirname(sys.modules['boswatch'].__file__).replace("\\boswatch", "").replace("\\", "/")
-LOG_PATH = ROOT_PATH + "/log/"
-CONFIG_PATH = ROOT_PATH + "/config/"
-PLUGIN_PATH = ROOT_PATH + "/plugins/"
-CSV_PATH = ROOT_PATH + "/csv/"
-BIN_PATH = ROOT_PATH + "/_bin/"
-TEST_PATH = ROOT_PATH + "/test/"
+ROOT_PATH = os.path.dirname(sys.modules['boswatch'].__file__).replace("\\", "/") + "/../"
+LOG_PATH = ROOT_PATH + "log/"
+CONFIG_PATH = ROOT_PATH + "config/"
+PLUGIN_PATH = ROOT_PATH + "plugins/"
+CSV_PATH = ROOT_PATH + "csv/"
+BIN_PATH = ROOT_PATH + "_bin/"
+TEST_PATH = ROOT_PATH + "test/"
 
 
 def ifFileExist(filePath):
