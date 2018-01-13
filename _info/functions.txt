@@ -11,4 +11,5 @@ Beschreibung aus CSV File
 Konfigurationsdateien Modulweit teilbar über "Sharepoints"
 Alarm-Daten Übermittlung per definierten bwPacket-Paket
 Plugin Statistiken sowie Ausführungszeiten
+Plugin Priorisierung
 Funktionaler und dynamischer Pluginloader

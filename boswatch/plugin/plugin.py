@@ -103,7 +103,7 @@ class Plugin:
         """!Returns statistical information's from last plugin run
 
         @return Statistics as pyton dict"""
-        stats = {"runCount": self._runCount, "sumTime": self._sumTime, "cumTime": self._runCount + self._sumTime,
+        stats = {"runCount": self._runCount, "sumTime": self._sumTime, "cumTime": self._runCount * self._sumTime,
                  "setupTime": self._setupTime, "alarmTime": self._alarmTime, "teardownTime": self._teardownTime,
                  "setupErrorCount": self._setupErrorCount, "alarmErrorCount": self._alarmErrorCount, "teardownErrorCount": self._teardownErrorCount}
         return stats
