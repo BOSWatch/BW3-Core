@@ -17,6 +17,9 @@
 import logging
 import time
 
+from boswatch.utils import paths
+from boswatch.config import Config
+
 logging.debug("- %s loaded", __name__)
 
 
@@ -42,6 +45,10 @@ class Plugin:
         self._setupErrorCount = 0
         self._alarmErrorCount = 0
         self._teardownErrorCount = 0
+
+        if paths.FileExist(paths.PLUGIN_PATH + pluginName + "/" + pluginName + ".ini"):
+            self.config = Config()
+            self.config.loadConfigFile(paths.PLUGIN_PATH + pluginName + "/" + pluginName + ".ini", pluginName)
 
         logging.debug("[%s] onLoad()", pluginName)
         self.onLoad()

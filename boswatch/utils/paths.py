@@ -29,8 +29,8 @@ BIN_PATH = ROOT_PATH + "_bin/"
 TEST_PATH = ROOT_PATH + "test/"
 
 
-def ifFileExist(filePath):
-    pass
+def FileExist(filePath):
+    return os.path.exists(filePath)
 
 
 def makeDirIfNotExist(dirPath):

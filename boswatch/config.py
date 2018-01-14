@@ -51,12 +51,12 @@ class Config:
         @param sharePoint: Name of the global share point
         @return True or False"""
         try:
-            bool(self._sharePoints[sharePoint])
+            bool(self._sharePoints[sharePoint])  # todo not a nice method to check
             logging.error("cannot share config - name is always in use: %s", sharePoint)
             return False
         except:
             self._sharePoints[sharePoint] = self._config
-            logging.debug("configuration sharePoint: %s", sharePoint)
+            logging.debug("add config sharePoint: %s", sharePoint)
             return True
 
     def getInt(self, section, key, sharePoint=""):
