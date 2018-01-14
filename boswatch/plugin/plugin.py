@@ -48,7 +48,9 @@ class Plugin:
 
         if paths.FileExist(paths.PLUGIN_PATH + pluginName + "/" + pluginName + ".ini"):
             self.config = Config()
-            self.config.loadConfigFile(paths.PLUGIN_PATH + pluginName + "/" + pluginName + ".ini", pluginName)
+            self.config.loadConfigFile(paths.PLUGIN_PATH + pluginName + "/" + pluginName + ".ini")
+        else:
+            logging.debug("no config for %s found", pluginName)
 
         logging.debug("[%s] onLoad()", pluginName)
         self.onLoad()
@@ -82,11 +84,19 @@ class Plugin:
         self._setupTime = time.time() - self._tmpTime
         self._tmpTime = time.time()
         try:
-            logging.debug("[%s] alarm()", self._pluginName)
-            self.alarm(bwPacket)
+
+            if bwPacket.get("mode") is "fms":
+                logging.debug("[%s] fms()", self._pluginName)
+                self.fms(bwPacket)
+            if bwPacket.get("mode") is "pocsag":
+                logging.debug("[%s] pocsag()", self._pluginName)
+                self.pocsag(bwPacket)
+            if bwPacket.get("mode") is "zvei":
+                logging.debug("[%s] zvei()", self._pluginName)
+                self.zvei(bwPacket)
         except:
             self._alarmErrorCount += 1
-            logging.exception("[%s] error in alarm()", self._pluginName)
+            logging.exception("[%s] alarm error", self._pluginName)
 
         self._alarmTime = time.time() - self._tmpTime
         self._tmpTime = time.time()
@@ -125,12 +135,26 @@ class Plugin:
         Must be inherit"""
         pass
 
-    def alarm(self, bwPacket):
-        """!Called on alarm
+    def fms(self, bwPacket):
+        """!Called on FMS alarm
         Must be inherit
 
         @param bwPacket: bwPacket instance"""
-        pass
+        logging.warning("ZVEI not implemented in %s", self._pluginName)
+
+    def pocsag(self, bwPacket):
+        """!Called on POCSAG alarm
+        Must be inherit
+
+        @param bwPacket: bwPacket instance"""
+        logging.warning("POCSAG not implemented in %s", self._pluginName)
+
+    def zvei(self, bwPacket):
+        """!Called on ZVEI alarm
+        Must be inherit
+
+        @param bwPacket: bwPacket instance"""
+        logging.warning("ZVEI not implemented in %s", self._pluginName)
 
     def teardown(self):
         """!Called after alarm

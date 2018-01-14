@@ -32,7 +32,7 @@ class Config:
         """!loads a given configuration in the class wide config variable
 
         @param configPath: Path to the config file
-        @param sharePoint: If you like to share the config
+        @param sharePoint: If you want to share the config set name here
         @return True or False"""
         logging.debug("load config file from: %s", configPath)
         try:
@@ -47,7 +47,7 @@ class Config:
     def _shareConfig(self, sharePoint):
         """!Shares the configuration
 
-        Shares the local _config to teh class wide global _sharedConfig
+        Shares the local _config to the class wide global _sharedConfig
         @param sharePoint: Name of the global share point
         @return True or False"""
         try:
@@ -65,10 +65,10 @@ class Config:
         @param section: Section to read from
         @param key: Value to read
         @param sharePoint: Name of the global config share (empty is only local)
-        @return An Integer or 0"""
+        @return An Integer or None"""
         value = self._get(section, key, sharePoint)
         if value is None:
-            return 0
+            return None
         return int(value)
 
     def getBool(self, section, key, sharePoint=""):

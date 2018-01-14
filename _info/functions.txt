@@ -3,10 +3,9 @@ Dokumentation mittels Doxygen
 Unittests mittels pytest (zufällige Reihenfolge durch pytest-randomly)
 Codeabdeckung mittels pytest-cov
 PEP8 Design Kontrolle mittels pytest-pep8
-Logging mittels eigener Konfig-Datei einstellbar
+Logging mittels eigener Config-Datei einstellbar
 Multi-Threading Server
 Komfortables Plugin System
-Ausführliche Plugin Statistiken
 Beschreibung aus CSV File
 Konfigurationsdateien Modulweit teilbar über "Sharepoints"
 Alarm-Daten Übermittlung per definierten bwPacket-Paket

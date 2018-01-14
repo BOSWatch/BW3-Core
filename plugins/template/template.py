@@ -21,6 +21,7 @@ logging.debug("- %s loaded", __name__)
 
 
 class BoswatchPlugin(Plugin):
+    """!Description of the Plugin"""
     def __init__(self):
         """!Do not change anything here except the PLUGIN NAME in the super() call"""
         # PLEASE SET YOU PLUGIN NAME HERE !!!!
@@ -28,25 +29,34 @@ class BoswatchPlugin(Plugin):
 
     def onLoad(self):
         """!Called by import of the plugin"""
-        logging.debug("onLoad")
+        pass
 
     def setup(self):
         """!Called before alarm"""
-        logging.info(self.config.getStr("Example", "String"))
+        pass
 
-    def alarm(self, bwPacket):
-        """!Called on alarm
+    def fms(self, bwPacket):
+        """!Called on FMS alarm
 
         @param bwPacket: bwPacket instance"""
-        logging.info(bwPacket)
-        logging.info(self.config.getBool("Example", "bool"))
+        pass
+
+    def pocsag(self, bwPacket):
+        """!Called on POCSAG alarm
+
+        @param bwPacket: bwPacket instance"""
+        pass
+
+    def zvei(self, bwPacket):
+        """!Called on ZVEI alarm
+
+        @param bwPacket: bwPacket instance"""
+        pass
 
     def teardown(self):
-        """!Called after alarm
-        Must be inherit"""
-        logging.info(self.config.getInt("Example", "integer"))
+        """!Called after alarm"""
+        pass
 
     def onUnload(self):
-        logging.debug("onUnload")
         """!Called by destruction of the plugin"""
         pass
