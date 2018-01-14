@@ -34,7 +34,11 @@ class Packet:
             self._packet = {"timestamp": time.time()}
         else:
             logging.debug("create bwPacket from string")
-            self._packet = eval(bwPacket)
+            try:
+                self._packet = eval(bwPacket.strip())
+            except:
+                # todo can we repair teh packet anyway?
+                logging.exception("error while create packet from string")
 
     def __str__(self):
         """!Return the intern _packet dict as string"""

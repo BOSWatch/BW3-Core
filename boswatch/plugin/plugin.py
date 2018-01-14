@@ -35,6 +35,7 @@ class Plugin:
 
         # for time counting
         self._sumTime = 0
+        self._cumTime = 0
         self._setupTime = 0
         self._alarmTime = 0
         self._teardownTime = 0
@@ -109,6 +110,7 @@ class Plugin:
 
         self._teardownTime = time.time() - self._tmpTime
         self._sumTime = self._setupTime + self._alarmTime + self._teardownTime
+        self._cumTime += self._sumTime
 
         self._endTime = time.time()
         logging.debug("[%s] took %0.3f seconds", self._pluginName, self._sumTime)
@@ -120,9 +122,15 @@ class Plugin:
         """!Returns statistical information's from last plugin run
 
         @return Statistics as pyton dict"""
-        stats = {"runCount": self._runCount, "sumTime": self._sumTime, "cumTime": self._runCount * self._sumTime,
-                 "setupTime": self._setupTime, "alarmTime": self._alarmTime, "teardownTime": self._teardownTime,
-                 "setupErrorCount": self._setupErrorCount, "alarmErrorCount": self._alarmErrorCount, "teardownErrorCount": self._teardownErrorCount}
+        stats = {"runCount": self._runCount,
+                 "sumTime": self._sumTime,
+                 "cumTime": self._cumTime,
+                 "setupTime": self._setupTime,
+                 "alarmTime": self._alarmTime,
+                 "teardownTime": self._teardownTime,
+                 "setupErrorCount": self._setupErrorCount,
+                 "alarmErrorCount": self._alarmErrorCount,
+                 "teardownErrorCount": self._teardownErrorCount}
         return stats
 
     def onLoad(self):
