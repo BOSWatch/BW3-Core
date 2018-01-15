@@ -89,7 +89,10 @@ class Config:
         @param key: Value to read
         @param sharePoint: Name of the global config share (empty is only local)
         @return The value or None"""
-        return str(self._get(section, key, sharePoint))
+        value = self._get(section, key, sharePoint)
+        if value is None:
+            return None
+        return str(value)
 
     def _get(self, section, key, sharePoint=""):
         """!Method to read a single config entry

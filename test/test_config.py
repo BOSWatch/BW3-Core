@@ -45,8 +45,8 @@ class Test_Config:
         """!fail while get values from local config file"""
         bwConfig = Config()
         bwConfig.loadConfigFile(paths.TEST_PATH + "test.ini")
-        assert bwConfig.getStr("test", "abc") == "None"
-        assert bwConfig.getStr("abc", "test") == "None"
+        assert bwConfig.getStr("test", "abc") is None
+        assert bwConfig.getStr("abc", "test") is None
 
     def test_shareConfig(self):
         """!load local config file and share it"""
@@ -68,7 +68,7 @@ class Test_Config:
         bwConfig = Config()
         bwConfig.loadConfigFile(paths.TEST_PATH + "test.ini")
         assert bwConfig.getInt("test", "one") == 1
-        assert bwConfig.getInt("test", "one", "NotSetSharedConfig") == 0
+        assert bwConfig.getInt("test", "one", "NotSetSharedConfig") is None
 
     def test_getSharedConfig(self):
         """!get values from shared config file"""
@@ -77,7 +77,7 @@ class Test_Config:
         assert bwConfig1._sharePoints["test_getSharedConfig"] is not None
 
         bwConfig2 = Config()
-        assert bwConfig2.getStr("test", "one") == "None"
+        assert bwConfig2.getStr("test", "one") is None
         assert bwConfig2.getInt("test", "one", "test_getSharedConfig") == 1
 
     def test_getSharedConfigFailed(self):
@@ -87,8 +87,8 @@ class Test_Config:
         assert bwConfig1._sharePoints["test_getSharedConfigFailed"] is not None
 
         bwConfig2 = Config()
-        assert bwConfig2.getStr("test", "abc", "test_getSharedConfigFailed") == "None"
-        assert bwConfig2.getStr("abc", "test", "test_getSharedConfigFailed") == "None"
+        assert bwConfig2.getStr("test", "abc", "test_getSharedConfigFailed") is None
+        assert bwConfig2.getStr("abc", "test", "test_getSharedConfigFailed") is None
 
     def test_getDataTypes(self):
         bwConfig = Config()
