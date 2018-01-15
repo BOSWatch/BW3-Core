@@ -1,6 +1,6 @@
 ## Eigene Plugins schreiben
 
-Um ein eigenes Plugin zu schrieben, sollte man sich am besten zuerst einmal das Plugin `template` ansehen.
+Um ein eigenes Plugin zu schreiben, sollte man sich am besten zuerst einmal das Plugin `template` ansehen.
 Dies kann als Vorlage für das eigene Plugin genutzt werden.
 
 ### 1.) Informationen anpassen
@@ -11,9 +11,9 @@ Dies kann als Vorlage für das eigene Plugin genutzt werden.
 Die Plugin Basisklasse bietet einige Methoden, welche vom Plugin überschrieben werden können.
 - `onLoad()` wird direkt beim Import des Plugins ausgeführt
 - `setup()` wird vor jeder Ausführung gerufen
-- `fms()` wird bei einem FMS Paket ausgeführt
-- `pocsag()` wird bei einem POCSAG Paket ausgeführt
-- `zvei()` wird bei einem ZVEI Packet ausgeführt
+- `fms(bwPacket)` wird bei einem FMS Paket ausgeführt
+- `pocsag(bwPacket)` wird bei einem POCSAG Paket ausgeführt
+- `zvei(bwPacket)` wird bei einem ZVEI Packet ausgeführt
 - `teardown()` wird nach jeder Ausführung gerufen
 - `onUnload()` wird beim Zerstören der Plugin Instanz zum Programmende ausgeführt
 
@@ -26,3 +26,11 @@ welche exakt so wie das Plugin heißt, kann deren Inhalt
 - `self.config.getStr(SECTION, KEY)`
 
 abgerufen werden.
+
+### 4.) Daten aus dem BOSWatch Paket lesen
+An die Alarm Funktionen FMS, POCSAG und ZVEI wird eine Instanz eines
+BOSWatch-Packet Objketes übergeben.
+
+Aus dieser kann mittels `bwPacket.get(FELDNAME)` das entsprechende Feld
+ausgelesen werden. Eine Auflistung der bereitgestellten Informationen
+findet sich im entsprechenden BOSWatch-Packet Dokument.
