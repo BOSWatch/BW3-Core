@@ -34,21 +34,26 @@ class DoubleFilter:
         self._scanWord = scanWord
 
     def check(self, bwPacket):
-        for listPacket in self._filterList:
-            if listPacket.get("timestamp") < (time.time() - self._config.getInt("doubleFilter", "IgnoreTime", "serverConfig")):
-                self._filterList.remove(listPacket)
-                logging.debug("entry to old remove")
-                continue
 
+        self._deleteTooOld()
+
+        for listPacket in self._filterList:
             if listPacket.get(self._scanWord) is bwPacket.get(self._scanWord):
                 self._filterList.remove(listPacket)
-                logging.debug("found a same and remove the old one")
+                logging.debug("found duplicate: %s", bwPacket.get(self._scanWord))
 
         self._filterList.insert(0, bwPacket)
         self._deleteTooMuch()
-        logging.debug(self._filterList)
+
+    def _deleteTooOld(self):
+        counter = 0
+        for listPacket in self._filterList:
+            if listPacket.get("timestamp") < (time.time() - self._config.getInt("doubleFilter", "IgnoreTime", "serverConfig")):
+                self._filterList.remove(listPacket)
+                counter += 1
+        if counter:
+            logging.debug("%d old entry removed", counter)
 
     def _deleteTooMuch(self):
         if len(self._filterList) > self._config.getInt("doubleFilter", "MaxEntry", "serverConfig"):
-            logging.debug("list full, delete one")
             self._filterList.pop()
