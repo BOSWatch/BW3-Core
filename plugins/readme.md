@@ -17,3 +17,12 @@ Die Plugin Basisklasse bietet einige Methoden, welche vom Plugin überschrieben 
 - `teardown()` wird nach jeder Ausführung gerufen
 - `onUnload()` wird beim Zerstören der Plugin Instanz zum Programmende ausgeführt
 
+### 3.) Zugriff auf Config Datei
+Wenn sich im Ordner des Plugins eine ini-Datei befindet,
+welche exakt so wie das Plugin heißt, kann deren Inhalt
+über die lokale Config-Reader Instanz
+- `self.config.getBool(SECTION, KEY)`
+- `self.config.getInt(SECTION, KEY)`
+- `self.config.getStr(SECTION, KEY)`
+
+abgerufen werden.
