@@ -37,7 +37,7 @@ class Packet:
             try:
                 self._packet = eval(bwPacket.strip())
             except:
-                # todo can we repair teh packet anyway?
+                # todo can we repair the packet anyway?
                 logging.exception("error while create packet from string")
 
     def __str__(self):
@@ -97,7 +97,7 @@ class Packet:
         self.set("serverBuildDate", version.date)
         self.set("serverBranch", version.branch)
 
-    def infoToLog(self):
+    def printInfo(self):
         """!Print a info message to the log on INFO level.
         Contains the most useful info about this packet.
         @todo not complete yet - must be edit to print nice formatted messages on console

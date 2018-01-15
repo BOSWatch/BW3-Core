@@ -62,9 +62,6 @@ class Plugin:
         self._pluginsActive -= 1
         self.onUnload()
 
-    def _loadConfig(self):
-        pass
-
     def _run(self, bwPacket):
         """!start an complete running turn of an plugin.
         Calls setup(), alarm() and teardown() in this order.
