@@ -1,4 +1,4 @@
-#!/usr/bin/python
+ #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """!
     ____  ____  ______       __      __       __       _____
@@ -29,6 +29,7 @@ def replace(text, bwPacket):
     text.replace("%LPAR%", "(").replace("%RPAR%", ")")
 
     # packet replacements
+    # todo use regex to filter directly for the packet fields? ( %fieldName% )
     text.replace("%MODE%", bwPacket.getField("mode"))
     text.replace("%FREQ%", bwPacket.getField("frequency"))
 

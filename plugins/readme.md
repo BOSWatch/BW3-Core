@@ -29,7 +29,7 @@ abgerufen werden.
 
 ### 4.) Daten aus dem BOSWatch Paket lesen
 An die Alarm Funktionen FMS, POCSAG und ZVEI wird eine Instanz eines
-BOSWatch-Packet Objketes übergeben.
+BOSWatch-Packet Objekts übergeben.
 
 Aus dieser kann mittels `bwPacket.get(FELDNAME)` das entsprechende Feld
 ausgelesen werden. Eine Auflistung der bereitgestellten Informationen
