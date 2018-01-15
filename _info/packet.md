@@ -9,6 +9,34 @@
 <td>description</td>
 </tr>
 <tr>
+<td>serverName</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>name of the boswatch server instance</td>
+</tr>
+<tr>
+<td>serverVersion</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>in case of new version, server can notify</td>
+</tr>
+<tr>
+<td>serverBuildDate</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td></td>
+</tr>
+<tr>
+<td>serverBranch</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td></td>
+</tr>
+<tr>
 <td>clientName</td>
 <td>X</td>
 <td>X</td>
@@ -28,6 +56,20 @@
 <td>X</td>
 <td>X</td>
 <td>in case of new version, server can notify</td>
+</tr>
+<tr>
+<td>clientBuildDate</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td></td>
+</tr>
+<tr>
+<td>clientBranch</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td></td>
 </tr>
 <tr>
 <td>inputSource</td>
