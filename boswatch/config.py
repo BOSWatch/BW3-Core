@@ -50,11 +50,10 @@ class Config:
         Shares the local _config to the class wide global _sharedConfig
         @param sharePoint: Name of the global share point
         @return True or False"""
-        try:
-            bool(self._sharePoints[sharePoint])  # todo not a nice method to check
+        if sharePoint in self._sharePoints:
             logging.error("cannot share config - name is always in use: %s", sharePoint)
             return False
-        except:
+        else:
             self._sharePoints[sharePoint] = self._config
             logging.debug("add config sharePoint: %s", sharePoint)
             return True
