@@ -21,17 +21,35 @@ import logging
 
 logging.debug("- %s loaded", __name__)
 
+# todo insert all wildcards and delete testcode under the function
 
-def replace(text, bwPacket):
 
-    # static replacements
-    text.replace("%BR%", "\r\n")
-    text.replace("%LPAR%", "(").replace("%RPAR%", ")")
+def replaceWildcards(message): #, bwPacket):
+    _wildcards = {
+        # formatting wildcards
+        "%BR%": "\r\n",
+        "%LPAR%": "(",
+        "%RPAR%": ")",
 
-    # packet replacements
-    # todo use regex to filter directly for the packet fields? ( %fieldName% )
-    text.replace("%MODE%", bwPacket.getField("mode"))
-    text.replace("%FREQ%", bwPacket.getField("frequency"))
+        # boswatch wildcards
+        "%MODE%": "",# bwPacket.getField("mode"),
+        "%FREQ% ": "",# bwPacket.getField("frequency")
 
-    # mode specific replacements
-    # if bwPacket
+        # fms wildcards
+        # pocsag wildcards
+        # zvei wildcards
+    }
+    message.replace("nett", "test")
+
+    for wildcard in _wildcards:
+        try:
+            message = message.replace(wildcard, _wildcards[wildcard])
+        except:
+            logging.exception("error in wildcard replacement")
+
+    return message
+
+
+ttext = "das ist ein test %BR% der echt gut %TEST% ist weil %LPAR% er es ust."
+print(ttext)
+print(replaceWildcards(ttext))
