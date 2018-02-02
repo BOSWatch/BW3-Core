@@ -20,6 +20,7 @@ import sys
 
 logging.debug("- %s loaded", __name__)
 
+# todo searching for root part is not a nice solution atm
 ROOT_PATH = os.path.dirname(sys.modules['boswatch'].__file__).replace("\\", "/") + "/../"
 LOG_PATH = ROOT_PATH + "log/"
 CONFIG_PATH = ROOT_PATH + "config/"

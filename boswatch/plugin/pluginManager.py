@@ -36,7 +36,7 @@ class PluginManager:
         self._config = Config()
         self._pluginList = []
 
-    def getPluginList(self):
+    def searchPluginDir(self):
         logging.debug("search for plugins in: %s", paths.PLUGIN_PATH)
         for name in os.listdir(paths.PLUGIN_PATH):
             location = os.path.join(paths.PLUGIN_PATH, name)
