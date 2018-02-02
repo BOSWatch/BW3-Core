@@ -21,7 +21,10 @@ import time
 
 logging.debug("- %s loaded", __name__)
 
-_clients = []  # module wide global list for received data sets
+_dataPackets = []  # module wide global list for received data sets
+_lockDataPackets = threading.Lock()
+
+_clients = {}
 _lockClients = threading.Lock()
 
 
@@ -32,7 +35,11 @@ class TCPHandler(socketserver.BaseRequestHandler):
         """!Handles the request from an single client in a own thread
 
         Insert a request in the clients[] list and send a [ack]"""
-        data = 1
+        with _lockClients:
+            _clients[threading.current_thread().name] = {"address": self.client_address[0], "timestamp": time.time()}
+
+        logging.info("Client connected: %s", self.client_address[0])
+        data = 1  # to enter while loop
         cur_thread = threading.current_thread().name
         req_name = str(cur_thread) + " " + self.client_address[0]
 
@@ -44,10 +51,8 @@ class TCPHandler(socketserver.BaseRequestHandler):
 
                     # add a new entry at first position (index 0) with client IP
                     # and the decoded data dict as an string in utf-8 and an timestamp
-                    # lock.acquire()  # todo check if needed - only append not modify data
-                    with _lockClients:
-                        _clients.insert(0, (self.client_address[0], data, time.time()))  # time() to calc time in queue
-                    # lock.release()  # todo check if needed
+                    with _lockDataPackets:
+                        _dataPackets.insert(0, (self.client_address[0], data, time.time()))  # time() to calc time in queue
                     logging.debug("Add data to queue")
 
                     logging.debug(req_name + " send: [ack]")
@@ -58,6 +63,10 @@ class TCPHandler(socketserver.BaseRequestHandler):
             logging.debug(req_name + " connection closed")
         except:  # pragma: no cover
             logging.exception(req_name + " error while receiving")
+        finally:
+            with _lockClients:
+                del _clients[threading.current_thread().name]
+            logging.info("Client disconnected: %s", self.client_address[0])
 
 
 class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
@@ -115,16 +124,18 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
             return False
 
     @staticmethod
-    def clientsConnected():
+    def countClientsConnected():
         """!Number of currently connected Clients
 
-        @todo works not safe atm
         @return Connected clients"""
-        if threading.active_count() > 2:
-            # must subtract the server() and the serve() Thread
-            return threading.active_count() - 2
-        else:
-            return 0
+        with _lockClients:
+            return len(_clients)
+
+    @staticmethod
+    def getClientsConnected():
+        # todo insert comment
+        # todo return full list or write a print/debug method?
+        return _clients
 
     @staticmethod
     def getData():
@@ -132,11 +143,9 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
         must be polled by main program
 
         @return Next data packet.py from intern queue"""
-        if _clients:
-            # lock.acquire()  # todo check if needed - here is a modify of the list?
-            with _lockClients:
-                message = _clients.pop()
-            # lock.release()  # todo check if needed
+        if _dataPackets:
+            with _lockDataPackets:
+                message = _dataPackets.pop()
             logging.debug("Get data from queue")
             return message
         return None
@@ -146,13 +155,11 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
         """!Get packets waiting in queue
 
         @return Packets in queue"""
-        return len(_clients)  # no lock needed - only reading
+        return len(_dataPackets)  # no lock needed - only reading
 
     @staticmethod
     def flushData():
         """!To flush all existing data in queue"""
         logging.debug("Flush data queue")
-        # lock.acquire()  # todo check if needed - here is a modify?
-        with _lockClients:
-            _clients.clear()
-        # lock.release()  # todo check if needed
+        with _lockDataPackets:
+            _dataPackets.clear()
