@@ -27,7 +27,7 @@ class Zvei:
     """!ZVEI decoder class
 
     This class decodes ZVEI data.
-    First step is to validate the data and check if the format is correct.
+    First step is to validate the data and _check if the format is correct.
     After that the double-tone-sign 'E' is replaced.
     In the last step a valid BOSWatch packet is created and returned"""
 

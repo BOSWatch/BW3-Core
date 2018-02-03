@@ -36,7 +36,7 @@ class Packet:
             logging.debug("create bwPacket from string")
             try:
                 self._packet = eval(str(bwPacket.strip()))
-            except:
+            except:  # pragma: no cover
                 # todo can we repair the packet anyway?
                 logging.exception("error while create packet from string")
 

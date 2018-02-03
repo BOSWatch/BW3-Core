@@ -27,7 +27,7 @@ class Fms:
     """!FMS decoder class
 
     This class decodes FMS data.
-    First step is to validate the data and check if the format is correct.
+    First step is to validate the data and _check if the format is correct.
     In the last step a valid BOSWatch packet is created and returned"""
 
     def __init__(self):

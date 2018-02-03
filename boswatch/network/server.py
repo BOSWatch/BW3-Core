@@ -21,10 +21,12 @@ import time
 
 logging.debug("- %s loaded", __name__)
 
-_dataPackets = []  # module wide global list for received data sets
+# module wide global list for received data sets
+_dataPackets = []
 _lockDataPackets = threading.Lock()
 
-_clients = {}
+# module wide global list for all currently connected clients
+_clients = {}  # _clients[ThreadName] = {"address", "timestamp"}
 _lockClients = threading.Lock()
 
 
@@ -138,7 +140,7 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
         return _clients
 
     @staticmethod
-    def getData():
+    def getDataFromQueue():
         """!Function to get the data packages from server
         must be polled by main program
 

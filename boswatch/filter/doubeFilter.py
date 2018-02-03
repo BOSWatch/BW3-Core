@@ -53,9 +53,9 @@ class DoubleFilter:
 
         logging.debug("scanWord for '%s' is '%s'", bwPacket.get("mode"), scanWord)
 
-        return self.check(bwPacket, scanWord)
+        return self._check(bwPacket, scanWord)
 
-    def check(self, bwPacket, scanWord):
+    def _check(self, bwPacket, scanWord):
         self._filterLists[bwPacket.get("mode")].insert(0, bwPacket)
 
         # delete entrys that are to old

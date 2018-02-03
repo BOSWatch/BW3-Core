@@ -149,10 +149,10 @@ class Test_ServerClient:
         # recv all
         assert self.testClient1.receive() == "[ack]"
         assert self.testClient2.receive() == "[ack]"
-        # check server output data
-        assert useServer.getData()[1] == "test1"
-        assert useServer.getData()[1] == "test2"
-        assert useServer.getData() is None  # Last check must be None
+        # _check server output data
+        assert useServer.getDataFromQueue()[1] == "test1"
+        assert useServer.getDataFromQueue()[1] == "test2"
+        assert useServer.getDataFromQueue() is None  # Last _check must be None
         # disconnect all
         assert self.testClient1.disconnect()
         assert self.testClient2.disconnect()
