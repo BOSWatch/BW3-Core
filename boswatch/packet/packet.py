@@ -35,7 +35,7 @@ class Packet:
         else:
             logging.debug("create bwPacket from string")
             try:
-                self._packet = eval(bwPacket.strip())
+                self._packet = eval(str(bwPacket.strip()))
             except:
                 # todo can we repair the packet anyway?
                 logging.exception("error while create packet from string")
@@ -49,7 +49,7 @@ class Packet:
 
         @param fieldName: Name of the data to set
         @param value: Value to set"""
-        self._packet[fieldName] = str(value)
+        self._packet[fieldName] = value
 
     def get(self, fieldName):
         """!Returns the value from a single field.

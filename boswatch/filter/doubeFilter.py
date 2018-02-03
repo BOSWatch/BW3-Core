@@ -27,33 +27,56 @@ logging.debug("- %s loaded", __name__)
 class DoubleFilter:
     """!Double Filter Class"""
 
-    def __init__(self, scanWord):
+    def __init__(self):
         """!init"""
         self._config = Config()
-        self._filterList = []
-        self._scanWord = scanWord
+        self._filterLists = {}
 
-    def check(self, bwPacket):
+    def filter(self, bwPacket):
 
-        self._deleteTooOld()
+        if bwPacket.get("mode") is "fms":
+            scanWord = "fms"
+        elif bwPacket.get("mode") is "pocsag":
+            scanWord = "ric"
+        elif bwPacket.get("mode") is "zvei":
+            scanWord = "zvei"
+        else:
+            logging.error("No Filter for '%s'", bwPacket)
+            return False
 
-        for listPacket in self._filterList:
-            if listPacket.get(self._scanWord) is bwPacket.get(self._scanWord):
-                self._filterList.remove(listPacket)
-                logging.debug("found duplicate: %s", bwPacket.get(self._scanWord))
+        if not bwPacket.get("mode") in self._filterLists:
+            logging.debug("create new doubleFilter list for '%s'", bwPacket.get("mode"))
+            self._filterLists[bwPacket.get("mode")] = []
 
-        self._filterList.insert(0, bwPacket)
-        self._deleteTooMuch()
+        # for debug
+        print(len(self._filterLists[bwPacket.get("mode")]))
 
-    def _deleteTooOld(self):
+        logging.debug("scanWord for '%s' is '%s'", bwPacket.get("mode"), scanWord)
+
+        return self.check(bwPacket, scanWord)
+
+    def check(self, bwPacket, scanWord):
+        self._filterLists[bwPacket.get("mode")].insert(0, bwPacket)
+
+        # delete entrys that are to old
         counter = 0
-        for listPacket in self._filterList:
+        for listPacket in self._filterLists[bwPacket.get("mode")][1:]:  # [1:] skip first entry, thats the new one
+            print(str(listPacket.get("timestamp")), str(time.time() - self._config.getInt("doubleFilter", "IgnoreTime", "serverConfig")))
             if listPacket.get("timestamp") < (time.time() - self._config.getInt("doubleFilter", "IgnoreTime", "serverConfig")):
-                self._filterList.remove(listPacket)
-                counter += 1
+                    self._filterLists[bwPacket.get("mode")].remove(listPacket)
+                    counter += 1
         if counter:
-            logging.debug("%d old entry removed", counter)
+            logging.debug("%d old entry(s) removed", counter)
 
-    def _deleteTooMuch(self):
-        if len(self._filterList) > self._config.getInt("doubleFilter", "MaxEntry", "serverConfig"):
-            self._filterList.pop()
+        # delete last entry if list is to big
+        if len(self._filterLists[bwPacket.get("mode")]) > self._config.getInt("doubleFilter", "MaxEntry", "serverConfig"):
+            logging.debug("MaxEntry reached - delete oldest")
+            self._filterLists[bwPacket.get("mode")].pop()
+
+        for listPacket in self._filterLists[bwPacket.get("mode")][1:]:  # [1:] skip first entry, thats the new one
+            if listPacket.get(scanWord) is bwPacket.get(scanWord):
+                logging.debug("found duplicate: %s", bwPacket.get(scanWord))
+                return False
+
+        print("OK!")
+        return True
