@@ -48,9 +48,6 @@ class DoubleFilter:
             logging.debug("create new doubleFilter list for '%s'", bwPacket.get("mode"))
             self._filterLists[bwPacket.get("mode")] = []
 
-        # for debug
-        print(len(self._filterLists[bwPacket.get("mode")]))
-
         logging.debug("scanWord for '%s' is '%s'", bwPacket.get("mode"), scanWord)
 
         return self._check(bwPacket, scanWord)
@@ -58,10 +55,9 @@ class DoubleFilter:
     def _check(self, bwPacket, scanWord):
         self._filterLists[bwPacket.get("mode")].insert(0, bwPacket)
 
-        # delete entrys that are to old
+        # delete entries that are to old
         counter = 0
         for listPacket in self._filterLists[bwPacket.get("mode")][1:]:  # [1:] skip first entry, thats the new one
-            print(str(listPacket.get("timestamp")), str(time.time() - self._config.getInt("doubleFilter", "IgnoreTime", "serverConfig")))
             if listPacket.get("timestamp") < (time.time() - self._config.getInt("doubleFilter", "IgnoreTime", "serverConfig")):
                     self._filterLists[bwPacket.get("mode")].remove(listPacket)
                     counter += 1
@@ -78,5 +74,5 @@ class DoubleFilter:
                 logging.debug("found duplicate: %s", bwPacket.get(scanWord))
                 return False
 
-        print("OK!")
+        logging.debug("doubleFilter ok")
         return True
