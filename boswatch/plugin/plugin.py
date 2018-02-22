@@ -92,6 +92,9 @@ class Plugin:
             if bwPacket.get("mode") is "zvei":
                 logging.debug("[%s] zvei()", self._pluginName)
                 self.zvei(bwPacket)
+            if bwPacket.get("mode") is "msg":
+                logging.debug("[%s] msg()", self._pluginName)
+                self.msg(bwPacket)
         except:
             self._alarmErrorCount += 1
             logging.exception("[%s] alarm error", self._pluginName)
@@ -160,6 +163,13 @@ class Plugin:
 
         @param bwPacket: bwPacket instance"""
         logging.warning("ZVEI not implemented in %s", self._pluginName)
+
+    def msg(self, bwPacket):
+        """!Called on MSG packet
+        Must be inherit
+
+        @param bwPacket: bwPacket instance"""
+        logging.warning("MSG not implemented in %s", self._pluginName)
 
     def teardown(self):
         """!Called after alarm
