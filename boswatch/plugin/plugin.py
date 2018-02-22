@@ -47,7 +47,7 @@ class Plugin:
         self._alarmErrorCount = 0
         self._teardownErrorCount = 0
 
-        if paths.FileExist(paths.PLUGIN_PATH + pluginName + "/" + pluginName + ".ini"):
+        if paths.fileExist(paths.PLUGIN_PATH + pluginName + "/" + pluginName + ".ini"):
             self.config = Config()
             self.config.loadConfigFile(paths.PLUGIN_PATH + pluginName + "/" + pluginName + ".ini")
         else:

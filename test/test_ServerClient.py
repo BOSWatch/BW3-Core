@@ -78,6 +78,9 @@ class Test_ServerClient:
         assert self.testClient1.connect()
         self.testClient2 = TCPClient()
         assert self.testClient2.connect()
+        time.sleep(0.1)  # wait for all clients connected
+        # check connected clients
+        assert useServer.countClientsConnected() == 2
         # disconnect all
         assert self.testClient1.disconnect()
         assert self.testClient2.disconnect()
@@ -107,6 +110,8 @@ class Test_ServerClient:
         assert self.testClient3.receive() == "[ack]"
         assert self.testClient2.receive() == "[ack]"
         assert self.testClient1.receive() == "[ack]"
+        # check server msg queue
+        assert useServer.countPacketsInQueue() == 3
         # disconnect all
         assert self.testClient1.disconnect()
         assert self.testClient2.disconnect()
@@ -150,6 +155,7 @@ class Test_ServerClient:
         assert self.testClient1.receive() == "[ack]"
         assert self.testClient2.receive() == "[ack]"
         # _check server output data
+        assert useServer.countPacketsInQueue() == 2
         assert useServer.getDataFromQueue()[1] == "test1"
         assert useServer.getDataFromQueue()[1] == "test2"
         assert useServer.getDataFromQueue() is None  # Last _check must be None

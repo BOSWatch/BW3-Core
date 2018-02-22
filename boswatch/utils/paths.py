@@ -30,7 +30,7 @@ BIN_PATH = ROOT_PATH + "_bin/"
 TEST_PATH = ROOT_PATH + "test/"
 
 
-def FileExist(filePath):
+def fileExist(filePath):
     return os.path.exists(filePath)
 
 
@@ -44,6 +44,6 @@ def makeDirIfNotExist(dirPath):
             os.mkdir(dirPath)
             logging.debug("directory created: %s", dirPath)
         return dirPath
-    except:
+    except:  # pragma: no cover
         logging.exception("error by creating a directory: %s", dirPath)
         return False

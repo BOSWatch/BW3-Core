@@ -47,10 +47,11 @@ class TCPClient:
 
             logging.debug("connected to " + str(host) + ":" + str(port))
             return True
-        except socket.timeout:
-            logging.warning("cannot connect to %s:%s - timeout after %s sec", str(host), str(port), self._timeout)
         except ConnectionRefusedError:
             logging.error("cannot connect to %s:%s - connection refused", str(host), str(port))
+            return False
+        except socket.timeout:  # pragma: no cover
+            logging.warning("cannot connect to %s:%s - timeout after %s sec", str(host), str(port), self._timeout)
             return False
         except:  # pragma: no cover
             logging.exception("cannot connect to %s:%s", str(host), str(port))
@@ -99,13 +100,14 @@ class TCPClient:
             received = str(self._sock.recv(1024), "utf-8")
             logging.debug("received: " + received)
             return received
-        except socket.timeout:
-            logging.warning("cannot receive - timeout after %s sec", self._timeout)
         except AttributeError:
             logging.error("cannot receive - no connection established")
             return False
         except ConnectionResetError:
             logging.error("cannot receive - host closed connection")
+            return False
+        except socket.timeout:  # pragma: no cover
+            logging.warning("cannot receive - timeout after %s sec", self._timeout)
             return False
         except:  # pragma: no cover
             logging.exception("error while receiving")
