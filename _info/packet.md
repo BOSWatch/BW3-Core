@@ -14,7 +14,7 @@
 <td>X</td>
 <td>X</td>
 <td>X</td>
-<td></td>
+<td>X</td>
 <td>name of the boswatch server instance</td>
 </tr>
 <tr>
@@ -22,7 +22,7 @@
 <td>X</td>
 <td>X</td>
 <td>X</td>
-<td></td>
+<td>X</td>
 <td>in case of new version, server can notify</td>
 </tr>
 <tr>
@@ -30,7 +30,7 @@
 <td>X</td>
 <td>X</td>
 <td>X</td>
-<td></td>
+<td>X</td>
 <td></td>
 </tr>
 <tr>
@@ -38,7 +38,7 @@
 <td>X</td>
 <td>X</td>
 <td>X</td>
-<td></td>
+<td>X</td>
 <td></td>
 </tr>
 <tr>
@@ -46,7 +46,7 @@
 <td>X</td>
 <td>X</td>
 <td>X</td>
-<td></td>
+<td>X</td>
 <td>name of the boswatch client instance</td>
 </tr>
 <tr>
@@ -54,7 +54,7 @@
 <td>X</td>
 <td>X</td>
 <td>X</td>
-<td></td>
+<td>X</td>
 <td></td>
 </tr>
 <tr>
@@ -62,7 +62,7 @@
 <td>X</td>
 <td>X</td>
 <td>X</td>
-<td></td>
+<td>X</td>
 <td>in case of new version, server can notify</td>
 </tr>
 <tr>
@@ -70,7 +70,7 @@
 <td>X</td>
 <td>X</td>
 <td>X</td>
-<td></td>
+<td>X</td>
 <td></td>
 </tr>
 <tr>
@@ -78,7 +78,7 @@
 <td>X</td>
 <td>X</td>
 <td>X</td>
-<td></td>
+<td>X</td>
 <td></td>
 </tr>
 <tr>
@@ -86,7 +86,7 @@
 <td>X</td>
 <td>X</td>
 <td>X</td>
-<td></td>
+<td>X</td>
 <td>(stick, audio)</td>
 </tr>
 <tr>
@@ -94,7 +94,7 @@
 <td>X</td>
 <td>X</td>
 <td>X</td>
-<td></td>
+<td>X</td>
 <td></td>
 </tr>
 <tr>
@@ -102,7 +102,7 @@
 <td>X</td>
 <td>X</td>
 <td>X</td>
-<td></td>
+<td>X</td>
 <td></td>
 </tr>
 <tr>
@@ -110,8 +110,8 @@
 <td>X</td>
 <td>X</td>
 <td>X</td>
-<td></td>
-<td>(fms, pocsag, zvei)</td>
+<td>X</td>
+<td>(fms, pocsag, zvei, msg)</td>
 </tr>
 <tr>
 <td>descriptionShort</td>
@@ -166,7 +166,7 @@
 <td></td>
 <td>X</td>
 <td></td>
-<td></td>
+<td>X</td>
 <td></td>
 </tr>
 <tr>
