@@ -1,10 +1,14 @@
-﻿Server- Client Anwendung
+﻿Facts:
 Dokumentation mittels Doxygen
 Unittests mittels pytest (zufällige Reihenfolge durch pytest-randomly)
 Codeabdeckung mittels pytest-cov
 PEP8 Design Kontrolle mittels pytest-pep8
 Logging mittels eigener Config-Datei einstellbar
 Multi-Threading Server
+
+Fuktionen:
+Server- Client Anwendung
+Verarbeitung von FMS, POCSAG und ZVEI
 Komfortables Plugin System
 Beschreibung aus CSV File
 Konfigurationsdateien Modulweit teilbar über "Sharepoints"
@@ -12,3 +16,5 @@ Alarm-Daten Übermittlung per definierten bwPacket-Paket
 Plugin Statistiken sowie Ausführungszeiten
 Plugin Priorisierung
 Funktionaler und dynamischer Pluginloader
+Automatische Wildcard-Ersetzung in Plugins
+Verschiedene Filterfunktionen (doubleFilter, )
