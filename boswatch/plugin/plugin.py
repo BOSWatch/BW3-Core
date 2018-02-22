@@ -19,6 +19,7 @@ import time
 
 from boswatch.utils import paths
 from boswatch.config import Config
+from boswatch.utils import wildcard
 
 logging.debug("- %s loaded", __name__)
 
@@ -32,6 +33,9 @@ class Plugin:
         """!init preload some needed locals and then call onLoad() directly"""
         self._pluginName = pluginName
         self._pluginsActive += 1
+
+        # to save the packet while alarm is running for other functions
+        self._bwPacket = None
 
         # for time counting
         self._sumTime = 0
@@ -111,8 +115,8 @@ class Plugin:
         self._teardownTime = time.time() - self._tmpTime
         self._sumTime = self._setupTime + self._alarmTime + self._teardownTime
         self._cumTime += self._sumTime
-
         self._endTime = time.time()
+
         logging.debug("[%s] took %0.3f seconds", self._pluginName, self._sumTime)
         # logging.debug("- setup:    %0.2f sec.", self._setupTime)
         # logging.debug("- alarm:    %0.2f sec.", self._alarmTime)
@@ -180,3 +184,10 @@ class Plugin:
         """!Called by destruction of the plugin
         Must be inherit"""
         pass
+
+    def parseWildcards(self, msg):
+        """!Return the message with parsed wildcards
+
+        todo self._bwPacket is set nowehere!!!!
+        """
+        return wildcard.replaceWildcards(self._bwPacket, msg)

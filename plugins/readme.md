@@ -5,7 +5,7 @@ Dies kann als Vorlage für das eigene Plugin genutzt werden.
 
 ### 1.) Informationen anpassen
 - Dateikopf anpassen
-- Namen des Plugins vergeben in der __init__ Methode `super().__init__("template")`
+- Namen des Plugins vergeben in der `__init__` Methode `super().__init__("template")`
 
 ### 2.) Benötigte Methode überschreiben
 Die Plugin Basisklasse bietet einige Methoden, welche vom Plugin überschrieben werden können.
@@ -14,6 +14,7 @@ Die Plugin Basisklasse bietet einige Methoden, welche vom Plugin überschrieben 
 - `fms(bwPacket)` wird bei einem FMS Paket ausgeführt
 - `pocsag(bwPacket)` wird bei einem POCSAG Paket ausgeführt
 - `zvei(bwPacket)` wird bei einem ZVEI Packet ausgeführt
+- `msg(bwPacket)` wird bei einem Nachrichten Packet ausgeführt
 - `teardown()` wird nach jeder Ausführung gerufen
 - `onUnload()` wird beim Zerstören der Plugin Instanz zum Programmende ausgeführt
 
@@ -34,3 +35,7 @@ BOSWatch-Packet Objekts übergeben.
 Aus dieser kann mittels `bwPacket.get(FELDNAME)` das entsprechende Feld
 ausgelesen werden. Eine Auflistung der bereitgestellten Informationen
 findet sich im entsprechenden BOSWatch-Packet Dokument.
+
+### 5.) Wildcards parsen
+Das parsen der Wildcars funktioniert komfortabel über die interne Methode `self.parseWildcards(MSG)`.
+Die Platzhalter für die Wildcards findet man in `boswatch/utils/wildcard.py`

@@ -16,31 +16,65 @@
 @todo not completed yet
 """
 import logging
+import time
 
 # from boswatch.module import file
 
 logging.debug("- %s loaded", __name__)
 
-# todo insert all wildcards and delete testcode under the function
+# todo check function and document + write an test
 
 
-def replaceWildcards(message): #, bwPacket):
+def replaceWildcards(message, bwPacket):
     _wildcards = {
         # formatting wildcards
-        "%BR%": "\r\n",
-        "%LPAR%": "(",
-        "%RPAR%": ")",
+        "{BR}": "\r\n",
+        "{LPAR}": "(",
+        "{RPAR}": ")",
+
+        # info wildcards
+        "{SNAME}": bwPacket.getField("serverName"),
+        "{SVERS}": bwPacket.getField("serverVersion"),
+        "{SDATE}": bwPacket.getField("serverBuildDate"),
+        "{SBRCH}": bwPacket.getField("serverBranch"),
+        "{CNAME}": bwPacket.getField("clientName"),
+        "{CIP}":   bwPacket.getField("clientIP"),
+        "{CVERS}": bwPacket.getField("clientVersion"),
+        "{CDATE}": bwPacket.getField("clientBuildDate"),
+        "{CBRCH}": bwPacket.getField("clientBranch"),
 
         # boswatch wildcards
-        "%MODE%": "",# bwPacket.getField("mode"),
-        "%FREQ% ": "",# bwPacket.getField("frequency")
+        "{MODE}": bwPacket.getField("mode"),
+        "{FREQ}": bwPacket.getField("frequency"),
+        "{DESCS}": bwPacket.getField("descriptionShort"),
+        "{DESCL}": bwPacket.getField("descriptionLong"),
+        "{INSRC}": bwPacket.getField("mode"),
+        "{TIME}": time.time(),
+        "{TIMES}": bwPacket.getField("mode"),
 
         # fms wildcards
-        # pocsag wildcards
-        # zvei wildcards
-    }
-    message.replace("nett", "test")
+        "{FMS}": bwPacket.getField("fms"),
+        "{SERV}": bwPacket.getField("service"),
+        "{COUNT}": bwPacket.getField("country"),
+        "{LOC}": bwPacket.getField("location"),
+        "{VEHC}": bwPacket.getField("vehicle"),
+        "{STAT}": bwPacket.getField("status"),
+        "{DIR}": bwPacket.getField("direction"),
+        "{DIRT}": bwPacket.getField("dirextionText"),
+        "{TACI}": bwPacket.getField("tacticalInfo"),
 
+        # pocsag wildcards
+        "{BIT}": bwPacket.getField("bitrate"),
+        "{RIC}": bwPacket.getField("ric"),
+        "{SRIC}": bwPacket.getField("subric"),
+        "{SRICT}": bwPacket.getField("subricText"),
+        "{MSG}": bwPacket.getField("message"),
+
+        # zvei wildcards
+        "{TONE}": bwPacket.getField("tone"),
+
+        # message for MSG packet is done in poc
+    }
     for wildcard in _wildcards:
         try:
             message = message.replace(wildcard, _wildcards[wildcard])
@@ -48,8 +82,3 @@ def replaceWildcards(message): #, bwPacket):
             logging.exception("error in wildcard replacement")
 
     return message
-
-
-ttext = "das ist ein test %BR% der echt gut %TEST% ist weil %LPAR% er es ust."
-print(ttext)
-print(replaceWildcards(ttext))
