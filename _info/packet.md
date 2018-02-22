@@ -6,6 +6,7 @@
 <td>fms</td>
 <td>pocsag</td>
 <td>zvei</td>
+<td>msg</td>
 <td>description</td>
 </tr>
 <tr>
@@ -13,6 +14,7 @@
 <td>X</td>
 <td>X</td>
 <td>X</td>
+<td></td>
 <td>name of the boswatch server instance</td>
 </tr>
 <tr>
@@ -20,6 +22,7 @@
 <td>X</td>
 <td>X</td>
 <td>X</td>
+<td></td>
 <td>in case of new version, server can notify</td>
 </tr>
 <tr>
@@ -28,6 +31,7 @@
 <td>X</td>
 <td>X</td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td>serverBranch</td>
@@ -35,12 +39,14 @@
 <td>X</td>
 <td>X</td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td>clientName</td>
 <td>X</td>
 <td>X</td>
 <td>X</td>
+<td></td>
 <td>name of the boswatch client instance</td>
 </tr>
 <tr>
@@ -49,12 +55,14 @@
 <td>X</td>
 <td>X</td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td>clientVersion</td>
 <td>X</td>
 <td>X</td>
 <td>X</td>
+<td></td>
 <td>in case of new version, server can notify</td>
 </tr>
 <tr>
@@ -63,6 +71,7 @@
 <td>X</td>
 <td>X</td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td>clientBranch</td>
@@ -70,12 +79,14 @@
 <td>X</td>
 <td>X</td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td>inputSource</td>
 <td>X</td>
 <td>X</td>
 <td>X</td>
+<td></td>
 <td>(stick, audio)</td>
 </tr>
 <tr>
@@ -84,6 +95,7 @@
 <td>X</td>
 <td>X</td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td>frequency</td>
@@ -91,12 +103,14 @@
 <td>X</td>
 <td>X</td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td>mode</td>
 <td>X</td>
 <td>X</td>
 <td>X</td>
+<td></td>
 <td>(fms, pocsag, zvei)</td>
 </tr>
 <tr>
@@ -104,6 +118,7 @@
 <td>X</td>
 <td>X</td>
 <td>X</td>
+<td></td>
 <td>loaded from optional CSV file</td>
 </tr>
 <tr>
@@ -111,12 +126,14 @@
 <td>X</td>
 <td>X</td>
 <td>X</td>
+<td></td>
 <td>loaded from optional CSV file</td>
 </tr>
 <tr>
 <td>bitrate</td>
 <td></td>
 <td>X</td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
@@ -126,11 +143,13 @@
 <td>X</td>
 <td></td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td>subric</td>
 <td></td>
 <td>X</td>
+<td></td>
 <td></td>
 <td>(1, 2, 3, 4)</td>
 </tr>
@@ -138,6 +157,7 @@
 <td>subricText</td>
 <td></td>
 <td>X</td>
+<td></td>
 <td></td>
 <td>(a, b, c, d)</td>
 </tr>
@@ -147,17 +167,20 @@
 <td>X</td>
 <td></td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td>tone</td>
 <td></td>
 <td></td>
 <td>X</td>
+<td></td>
 <td>5-tone sequence</td>
 </tr>
 <tr>
 <td>fms</td>
 <td>X</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -168,10 +191,12 @@
 <td></td>
 <td></td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td>country</td>
 <td>X</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -182,10 +207,12 @@
 <td></td>
 <td></td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td>vehicle</td>
 <td>X</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -196,10 +223,12 @@
 <td></td>
 <td></td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td>direction</td>
 <td>X</td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -209,11 +238,13 @@
 <td>X</td>
 <td></td>
 <td></td>
+<td></td>
 <td>(Fhz-&gt;Lst, Lst-&gt;Fhz)</td>
 </tr>
 <tr>
 <td>tacticalInfo</td>
 <td>X</td>
+<td></td>
 <td></td>
 <td></td>
 <td>(I, II, III, IV)</td>
