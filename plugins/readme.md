@@ -38,4 +38,4 @@ findet sich im entsprechenden BOSWatch-Packet Dokument.
 
 ### 5.) Wildcards parsen
 Das parsen der Wildcars funktioniert komfortabel über die interne Methode `self.parseWildcards(MSG)`.
-Die Platzhalter für die Wildcards findet man in `boswatch/utils/wildcard.py`
+Die Platzhalter für die Wildcards findet man in `boswatch/utils/wildcard.py` oder in der `packet.md`-
