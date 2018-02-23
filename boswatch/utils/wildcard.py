@@ -31,6 +31,7 @@ def replaceWildcards(message, bwPacket):
         "{BR}": "\r\n",
         "{LPAR}": "(",
         "{RPAR}": ")",
+        "{TIME}": time.time(),
 
         # info wildcards
         "{SNAME}": bwPacket.getField("serverName"),
@@ -44,13 +45,12 @@ def replaceWildcards(message, bwPacket):
         "{CBRCH}": bwPacket.getField("clientBranch"),
 
         # boswatch wildcards
-        "{MODE}": bwPacket.getField("mode"),
+        "{INSRC}": bwPacket.getField("mode"),
+        "{TIMES}": bwPacket.getField("mode"),
         "{FREQ}": bwPacket.getField("frequency"),
+        "{MODE}": bwPacket.getField("mode"),
         "{DESCS}": bwPacket.getField("descriptionShort"),
         "{DESCL}": bwPacket.getField("descriptionLong"),
-        "{INSRC}": bwPacket.getField("mode"),
-        "{TIME}": time.time(),
-        "{TIMES}": bwPacket.getField("mode"),
 
         # fms wildcards
         "{FMS}": bwPacket.getField("fms"),

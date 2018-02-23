@@ -17,6 +17,11 @@
 import logging
 from boswatch.plugin.plugin import Plugin
 
+# ###################### #
+# Custom plugin includes #
+
+# ###################### #
+
 logging.debug("- %s loaded", __name__)
 
 

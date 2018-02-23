@@ -75,6 +75,8 @@ class Plugin:
         self._runCount += 1
         logging.debug("[%s] run #%d", self._pluginName, self._runCount)
 
+        self._bwPacket = bwPacket
+
         self._tmpTime = time.time()
         try:
             logging.debug("[%s] setup()", self._pluginName)
@@ -116,6 +118,8 @@ class Plugin:
         self._sumTime = self._setupTime + self._alarmTime + self._teardownTime
         self._cumTime += self._sumTime
         self._endTime = time.time()
+
+        self._bwPacket = None
 
         logging.debug("[%s] took %0.3f seconds", self._pluginName, self._sumTime)
         # logging.debug("- setup:    %0.2f sec.", self._setupTime)
@@ -186,8 +190,8 @@ class Plugin:
         pass
 
     def parseWildcards(self, msg):
-        """!Return the message with parsed wildcards
-
-        todo self._bwPacket is set nowehere!!!!
-        """
+        """!Return the message with parsed wildcards"""
+        if self._bwPacket is None:
+            logging.warning("wildcard replacing not allowed - no bwPacket set")
+            return msg
         return wildcard.replaceWildcards(self._bwPacket, msg)
