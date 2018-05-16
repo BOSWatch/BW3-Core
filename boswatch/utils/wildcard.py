@@ -1,4 +1,4 @@
- #!/usr/bin/python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 """!
     ____  ____  ______       __      __       __       _____
@@ -39,7 +39,7 @@ def replaceWildcards(message, bwPacket):
         "{SDATE}": bwPacket.getField("serverBuildDate"),
         "{SBRCH}": bwPacket.getField("serverBranch"),
         "{CNAME}": bwPacket.getField("clientName"),
-        "{CIP}":   bwPacket.getField("clientIP"),
+        "{CIP}": bwPacket.getField("clientIP"),
         "{CVERS}": bwPacket.getField("clientVersion"),
         "{CDATE}": bwPacket.getField("clientBuildDate"),
         "{CBRCH}": bwPacket.getField("clientBranch"),
