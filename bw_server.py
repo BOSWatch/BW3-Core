@@ -106,8 +106,8 @@ try:
     #     global serverPaused
     #     serverPaused = False
     def drei():
-         global serverStop
-         serverStop = True
+        global serverStop
+        serverStop = True
     #
     # t1 = threading.Timer(1, eins)
     # t2 = threading.Timer(5, zwei)
