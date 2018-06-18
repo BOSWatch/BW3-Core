@@ -24,8 +24,7 @@ logging.debug("- %s loaded", __name__)
 
 
 class Descriptor:
-    """!CSV Descriptor class to load specific
-    descriptions from CSV files, manage and serve them"""
+    """!CSV Descriptor class to load specific descriptions from CSV files, manage and serve them"""
 
     def __init__(self):
         """!Initialise a private list for the DescriptionList objects"""

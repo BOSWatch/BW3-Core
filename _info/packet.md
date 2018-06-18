@@ -283,7 +283,7 @@
 
 <br><br>
 ### Other possible wildcards:
-- {BR} - Line break (\r\n)
+- {BR} - Line break (\\r\\n)
 - {LPAR} - Left parenthesis (
 - {RPAR} - Right parenthesis )
 - {TIME} - Actual timestamp
