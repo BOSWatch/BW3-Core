@@ -37,4 +37,4 @@ def decode(data):
         return ZveiDecoder.decode(data)
     else:
         logging.error("no decoder found for: %s", data)
-        return False
+        return None
