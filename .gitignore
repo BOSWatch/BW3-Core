@@ -8,7 +8,10 @@
 
 log/
 _docu/
+_bin/
 
+# Logo Photoshop file
+*.psd
 
 # Coverage Report
 \.coverage
@@ -24,4 +27,8 @@ _docu/
 \.settings/
 \.project
 \.pydevproject
+
+
+
+
 
