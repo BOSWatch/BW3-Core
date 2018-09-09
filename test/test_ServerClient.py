@@ -147,7 +147,7 @@ class Test_ServerClient:
         self.testClient2 = TCPClient()
         assert self.testClient2.connect()
         # send all
-        useServer.flushData()
+        useServer.flushQueue()
         assert self.testClient1.transmit("test1")
         time.sleep(0.1)  # wait for recv to prevent fail of false order
         assert self.testClient2.transmit("test2")

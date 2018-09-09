@@ -94,7 +94,7 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
             self._server = socketserver.ThreadingTCPServer(("", port), TCPHandler)
             self._server.timeout = self._timeout
 
-            self.flushData()
+            self.flushQueue()
 
             self._server_thread = threading.Thread(target=self._server.serve_forever)
             self._server_thread.name = "Thread-BWServer"
@@ -160,7 +160,7 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
         return len(_dataPackets)  # no lock needed - only reading
 
     @staticmethod
-    def flushData():
+    def flushQueue():
         """!To flush all existing data in queue"""
         logging.debug("Flush data queue")
         with _lockDataPackets:
