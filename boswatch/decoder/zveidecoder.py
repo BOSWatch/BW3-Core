@@ -23,7 +23,7 @@ from boswatch.packet import packet
 logging.debug("- %s loaded", __name__)
 
 
-class Zvei:
+class ZveiDecoder:
     """!ZVEI decoder class
 
     This class decodes ZVEI data.
@@ -46,7 +46,7 @@ class Zvei:
 
             bwPacket = packet.Packet()
             bwPacket.set("mode", "zvei")
-            bwPacket.set("zvei", Zvei._solveDoubleTone(data[7:12]))
+            bwPacket.set("zvei", ZveiDecoder._solveDoubleTone(data[7:12]))
 
             logging.debug(bwPacket)
             return bwPacket

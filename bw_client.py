@@ -84,7 +84,7 @@ try:
                 print("Alarm Nr #" + str(i))
 
                 data = "ZVEI1: 12345"
-                bwPacket = decoder.getDecoder(data).decode(data)
+                bwPacket = decoder.decode(data)
 
                 if bwPacket:
                     bwPacket.printInfo()

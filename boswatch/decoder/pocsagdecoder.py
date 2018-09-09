@@ -23,7 +23,7 @@ from boswatch.packet import packet
 logging.debug("- %s loaded", __name__)
 
 
-class Pocsag:
+class PocsagDecoder:
     """!POCSAG decoder class
 
     This class decodes POCSAG data.
@@ -40,7 +40,7 @@ class Pocsag:
 
         @param data: POCSAG for decoding
         @return BOSWatch POCSAG packet or None"""
-        bitrate, ric, subric = Pocsag._getBitrateRicSubric(data)
+        bitrate, ric, subric = PocsagDecoder._getBitrateRicSubric(data)
 
         if re.search("[0-9]{7}", ric) and re.search("[1-4]", subric):
             if "Alpha:" in data:

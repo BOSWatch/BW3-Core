@@ -23,7 +23,7 @@ from boswatch.packet import packet
 logging.debug("- %s loaded", __name__)
 
 
-class Fms:
+class FmsDecoder:
     """!FMS decoder class
 
     This class decodes FMS data.

@@ -16,42 +16,25 @@
 """
 import logging
 
-from boswatch.decoder.fms import Fms
-from boswatch.decoder.pocsag import Pocsag
-from boswatch.decoder.zvei import Zvei
+from boswatch.decoder.fmsdecoder import FmsDecoder
+from boswatch.decoder.pocsagdecoder import PocsagDecoder
+from boswatch.decoder.zveidecoder import ZveiDecoder
 
 logging.debug("- %s loaded", __name__)
 
 
-def getDecoder(data):
-    """!Choose the right decoder and return the new decoder object
+def decode(data):
+    """!Choose the right decoder and return a bwPacket instance
 
     @param data: data to decode
-    @return Decoder object"""
+    @return bwPacket instance"""
     logging.debug("search decoder")
     if "FMS" in data:
-        return Fms()
+        return FmsDecoder.decode(data)
     elif "POCSAG" in data:
-        return Pocsag()
+        return PocsagDecoder.decode(data)
     elif "ZVEI" in data:
-        return Zvei()
+        return ZveiDecoder.decode(data)
     else:
-        logging.debug("no decoder found for: %s", data)
-        return DummyDecoder()
-
-
-class DummyDecoder:
-    """!This dummy decoder class is needed because in case of
-    an getDecoder() with false data, we must return a decoder
-    object with an decode() method to prevent an error"""
-    def __init__(self):
-        """!Do nothing"""
-        pass
-
-    @staticmethod
-    def decode(data):
-        """!Dummy decode() method
-
-        @param data: data to decode
-        @return ALWAYS None"""
-        return None
+        logging.error("no decoder found for: %s", data)
+        return False
