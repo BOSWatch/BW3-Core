@@ -45,7 +45,7 @@ try:
     logging.debug("Import BOSWatch modules")
     from boswatch.config import Config
     from boswatch.network.client import TCPClient
-    from boswatch.decoder import decoder
+    from boswatch.decoder.decoder import Decoder
     from boswatch.utils import header
 except Exception as e:  # pragma: no cover
     logging.exception("cannot import modules")
@@ -84,7 +84,7 @@ try:
                 print("Alarm Nr #" + str(i))
 
                 data = "ZVEI1: 12345"
-                bwPacket = decoder.decode(data)
+                bwPacket = Decoder.decode(data)
 
                 if bwPacket:
                     bwPacket.printInfo()

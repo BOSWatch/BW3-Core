@@ -31,10 +31,6 @@ class ZveiDecoder:
     After that the double-tone-sign 'E' is replaced.
     In the last step a valid BOSWatch packet is created and returned"""
 
-    def __init__(self):
-        """!Create a new instance"""
-        logging.debug("ZVEI decoder started")
-
     @staticmethod
     def decode(data):
         """!Decodes ZVEI

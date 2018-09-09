@@ -30,10 +30,6 @@ class FmsDecoder:
     First step is to validate the data and _check if the format is correct.
     In the last step a valid BOSWatch packet is created and returned"""
 
-    def __init__(self):
-        """!Create a new instance"""
-        logging.debug("FMS decoder started")
-
     @staticmethod
     def decode(data):
         """!Decodes FMS

@@ -23,18 +23,21 @@ from boswatch.decoder.zveidecoder import ZveiDecoder
 logging.debug("- %s loaded", __name__)
 
 
-def decode(data):
-    """!Choose the right decoder and return a bwPacket instance
+class Decoder:
 
-    @param data: data to decode
-    @return bwPacket instance"""
-    logging.debug("search decoder")
-    if "FMS" in data:
-        return FmsDecoder.decode(data)
-    elif "POCSAG" in data:
-        return PocsagDecoder.decode(data)
-    elif "ZVEI" in data:
-        return ZveiDecoder.decode(data)
-    else:
-        logging.error("no decoder found for: %s", data)
-        return None
+    @staticmethod
+    def decode(data):
+        """!Choose the right decoder and return a bwPacket instance
+
+        @param data: data to decode
+        @return bwPacket instance"""
+        logging.debug("search decoder")
+        if "FMS" in data:
+            return FmsDecoder.decode(data)
+        elif "POCSAG" in data:
+            return PocsagDecoder.decode(data)
+        elif "ZVEI" in data:
+            return ZveiDecoder.decode(data)
+        else:
+            logging.error("no decoder found for: %s", data)
+            return None
