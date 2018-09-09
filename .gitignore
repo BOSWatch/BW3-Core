@@ -8,7 +8,10 @@
 
 log/
 _docu/
-_bin/
+_bin/win/zadig/
+_bin/win/rtl_sdr/
+_bin/win/multimon_1_1_1/
+_bin/win/kalibrate/
 
 # Logo Photoshop file
 *.psd
@@ -27,8 +30,3 @@ _bin/
 \.settings/
 \.project
 \.pydevproject
-
-
-
-
-
