@@ -22,8 +22,6 @@ from boswatch.plugin.plugin import Plugin
 
 # ###################### #
 
-logging.debug("- %s loaded", __name__)
-
 
 class BoswatchPlugin(Plugin):
     """!Description of the Plugin"""

@@ -31,6 +31,7 @@ class Plugin:
 
     def __init__(self, pluginName):
         """!init preload some needed locals and then call onLoad() directly"""
+        logging.debug("- %s loaded", pluginName)
         self._pluginName = pluginName
         self._pluginsActive += 1
 
