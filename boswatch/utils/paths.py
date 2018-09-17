@@ -17,12 +17,18 @@
 import logging
 import os
 import sys
+import platform
 
 logging.debug("- %s loaded", __name__)
 
 # todo searching for root part is not a nice solution atm
 ROOT_PATH = os.path.dirname(sys.modules['boswatch'].__file__).replace("\\", "/") + "/../"
-LOG_PATH = ROOT_PATH + "log/"
+
+if platform.system() is "Linux":
+    LOG_PATH = "/var/log/boswatch/"
+else:
+    LOG_PATH = ROOT_PATH + "log/"
+
 CONFIG_PATH = ROOT_PATH + "config/"
 PLUGIN_PATH = ROOT_PATH + "plugins/"
 CSV_PATH = ROOT_PATH + "csv/"
