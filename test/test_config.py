@@ -24,7 +24,7 @@ class Test_Config:
     """!Unittests for the config"""
 
     def setup_method(self, method):
-        logging.debug("[TEST] %s.%s" % (type(self).__name__, method.__name__))
+        logging.debug("[TEST] %s.%s", (type(self).__name__, method.__name__))
 
     def test_loadLocalConfig(self):
         """!load a local config file"""

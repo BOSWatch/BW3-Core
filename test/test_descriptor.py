@@ -25,7 +25,7 @@ class Test_Descriptor:
     """!Unittests for the descriptor"""
 
     def setup_method(self, method):
-        logging.debug("[TEST] %s.%s" % (type(self).__name__, method.__name__))
+        logging.debug("[TEST] %s.%s", (type(self).__name__, method.__name__))
 
     def test_loadCsvNotExist(self):
         """!read CSV file where not exist direct per DescriptionList class"""
