@@ -26,7 +26,7 @@ class Test_ServerClient:
     """!Unittest for the server/client environment"""
 
     def setup_method(self, method):
-        logging.debug("[TEST] %s.%s", (type(self).__name__, method.__name__))
+        logging.debug("[TEST] %s.%s", type(self).__name__, method.__name__)
 
     @pytest.fixture(scope="function")
     def useServer(self):

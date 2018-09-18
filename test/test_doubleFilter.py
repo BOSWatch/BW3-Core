@@ -22,7 +22,7 @@ import boswatch.filter.doubeFilter
 class Test_DoubleFilter:
 
     def setup_method(self, method):
-        logging.debug("[TEST] %s.%s", (type(self).__name__, method.__name__))
+        logging.debug("[TEST] %s.%s", type(self).__name__, method.__name__)
 
     def test_none(self):
         pass

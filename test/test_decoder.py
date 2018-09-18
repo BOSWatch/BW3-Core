@@ -23,7 +23,7 @@ class Test_Decoder:
     """!Unittests for the decoder"""
 
     def setup_method(self, method):
-        logging.debug("[TEST] %s.%s", (type(self).__name__, method.__name__))
+        logging.debug("[TEST] %s.%s", type(self).__name__, method.__name__)
 
     def test_decoderNoData(self):
         """!Test a empty string"""
