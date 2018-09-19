@@ -13,8 +13,7 @@
 @date:        15.01.2018
 @author:      Bastian Schroll
 @description: Class to implement a filter for double alarms
-@todo test, refactor and document
-@todo check_msg is not implemented yet
+@todo test, refactor and document / check_msg is not implemented yet
 """
 import logging
 import time

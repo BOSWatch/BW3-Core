@@ -13,7 +13,6 @@
 @date:        15.01.2018
 @author:      Bastian Schroll
 @description: Little Helper to replace wildcards in stings
-@todo not completed yet
 """
 import logging
 import time
