@@ -21,7 +21,7 @@ import platform
 
 logging.debug("- %s loaded", __name__)
 
-# todo searching for root part is not a nice solution atm
+# note searching for root part is not a nice solution atm
 ROOT_PATH = os.path.dirname(sys.modules['boswatch'].__file__).replace("\\", "/") + "/../"
 
 if platform.system() == "Linux":
