@@ -43,6 +43,7 @@ class Plugin:
         self._setupTime = 0
         self._alarmTime = 0
         self._teardownTime = 0
+        self._endTime = 0
         self._tmpTime = 0
 
         # for statistics
@@ -89,16 +90,16 @@ class Plugin:
         self._tmpTime = time.time()
         try:
 
-            if bwPacket.get("mode") is "fms":
+            if bwPacket.get("mode") == "fms":
                 logging.debug("[%s] fms()", self._pluginName)
                 self.fms(bwPacket)
-            if bwPacket.get("mode") is "pocsag":
+            if bwPacket.get("mode") == "pocsag":
                 logging.debug("[%s] pocsag()", self._pluginName)
                 self.pocsag(bwPacket)
-            if bwPacket.get("mode") is "zvei":
+            if bwPacket.get("mode") == "zvei":
                 logging.debug("[%s] zvei()", self._pluginName)
                 self.zvei(bwPacket)
-            if bwPacket.get("mode") is "msg":
+            if bwPacket.get("mode") == "msg":
                 logging.debug("[%s] msg()", self._pluginName)
                 self.msg(bwPacket)
         except:
