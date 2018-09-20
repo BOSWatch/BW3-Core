@@ -101,6 +101,5 @@ class Packet:
         """!Print a info message to the log on INFO level.
         Contains the most useful info about this packet.
         @todo not complete yet - must be edit to print nice formatted messages on console
-
-        @param bwPacket: BOSWatch packet instance"""
+        """
         logging.info("[%s]", self.get("mode"))
