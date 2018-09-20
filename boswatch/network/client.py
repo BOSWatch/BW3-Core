@@ -27,7 +27,10 @@ class TCPClient:
         """!Create a new instance
 
         Create a new instance of an TCP Client.
-        And set the timeout"""
+        And set the timeout
+
+        @param timeout: client timeout in sec (3)
+        """
         try:
             self._sock = None
             self._timeout = timeout
@@ -37,7 +40,7 @@ class TCPClient:
     def connect(self, host="localhost", port=8080):
         """!Connect to the server
 
-        @param host: Server IP address (localhost)
+        @param host: Server IP address ("localhost")
         @param port: Server Port (8080)
         @return True or False"""
         try:
@@ -98,7 +101,7 @@ class TCPClient:
         @return received data"""
         try:
             received = str(self._sock.recv(1024), "utf-8")
-            logging.debug("received: %d", received)
+            logging.debug("received: %s", received)
             return received
         except AttributeError:
             logging.error("cannot receive - no connection established")
