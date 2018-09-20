@@ -24,6 +24,7 @@ logging.debug("- %s loaded", __name__)
 # note searching for root part is not a nice solution atm
 ROOT_PATH = os.path.dirname(sys.modules['boswatch'].__file__).replace("\\", "/") + "/../"
 
+# here a system adaption for the paths can be implemented
 if platform.system() == "Linux":
     LOG_PATH = "/var/log/boswatch/"
 else:
