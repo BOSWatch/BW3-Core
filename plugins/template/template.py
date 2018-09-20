@@ -30,7 +30,7 @@ class BoswatchPlugin(Plugin):
     def __init__(self):
         """!Do not change anything here except the PLUGIN NAME in the super() call"""
         # PLEASE SET YOU PLUGIN NAME HERE !!!!
-        super().__init__("template")
+        Plugin.__init__("template")
 
     def onLoad(self):
         """!Called by import of the plugin"""

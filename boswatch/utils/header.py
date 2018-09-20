@@ -61,10 +61,10 @@ def infoToLog():
                       boswatch.version.date["day"],
                       boswatch.version.date["month"],
                       boswatch.version.date["year"])
-        logging.debug("- Python version:   " + platform.python_version())
-        logging.debug("- Python build:     " + str(platform.python_build()))
-        logging.debug("- System:           " + platform.system())
-        logging.debug("- OS Version:       " + platform.platform())
+        logging.debug("- Python version:   %s", platform.python_version())
+        logging.debug("- Python build:     %s", platform.python_build())
+        logging.debug("- System:           %s", platform.system())
+        logging.debug("- OS Version:       %s", platform.platform())
         logging.debug("")
         return True
     except:  # pragma: no cover

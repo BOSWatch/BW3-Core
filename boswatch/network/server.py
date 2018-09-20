@@ -48,8 +48,8 @@ class TCPHandler(socketserver.BaseRequestHandler):
         try:
             while data:
                 data = str(self.request.recv(1024).strip(), 'utf-8')
-                if data is not "":
-                    logging.debug(req_name + " recv: " + data)
+                if data != "":
+                    logging.debug("%s recv: %s", req_name, data)
 
                     # add a new entry at first position (index 0) with client IP
                     # and the decoded data dict as an string in utf-8 and an timestamp
@@ -57,14 +57,14 @@ class TCPHandler(socketserver.BaseRequestHandler):
                         _dataPackets.insert(0, (self.client_address[0], data, time.time()))  # time() to calc time in queue
                     logging.debug("Add data to queue")
 
-                    logging.debug(req_name + " send: [ack]")
+                    logging.debug("%s send: [ack]", req_name)
                     self.request.sendall(bytes("[ack]", "utf-8"))
             self.request.close()
 
         except (ConnectionResetError, ConnectionAbortedError):  # pragma: no cover
-            logging.debug(req_name + " connection closed")
+            logging.debug("%s connection closed", req_name)
         except:  # pragma: no cover
-            logging.exception(req_name + " error while receiving")
+            logging.exception("%s error while receiving", req_name)
         finally:
             with _lockClients:
                 del _clients[threading.current_thread().name]
@@ -100,7 +100,7 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
             self._server_thread.name = "Thread-BWServer"
             self._server_thread.daemon = True
             self._server_thread.start()
-            logging.debug("TCPServer started in Thread: " + self._server_thread.name)
+            logging.debug("TCPServer started in Thread: %s", self._server_thread.name)
             return True
         except OSError:
             logging.exception("server always running?")

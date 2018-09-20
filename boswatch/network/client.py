@@ -45,16 +45,16 @@ class TCPClient:
             self._sock.setdefaulttimeout(self._timeout)
             self._sock = socket.create_connection((host, port))
 
-            logging.debug("connected to " + str(host) + ":" + str(port))
+            logging.debug("connected to %s:%s", host, port)
             return True
         except ConnectionRefusedError:
-            logging.error("cannot connect to %s:%s - connection refused", str(host), str(port))
+            logging.error("cannot connect to %s:%s - connection refused", host, port)
             return False
         except socket.timeout:  # pragma: no cover
-            logging.warning("cannot connect to %s:%s - timeout after %s sec", str(host), str(port), self._timeout)
+            logging.warning("cannot connect to %s:%s - timeout after %s sec", host, port, self._timeout)
             return False
         except:  # pragma: no cover
-            logging.exception("cannot connect to %s:%s", str(host), str(port))
+            logging.exception("cannot connect to %s:%s", host, port)
             return False
 
     def disconnect(self):
@@ -78,7 +78,7 @@ class TCPClient:
         @param data: data to send to the server
         @return True or False"""
         try:
-            logging.debug("transmitting: " + data)
+            logging.debug("transmitting: %s", data)
             self._sock.sendall(bytes(data + "\n", "utf-8"))
             logging.debug("transmitted...")
             return True
@@ -98,7 +98,7 @@ class TCPClient:
         @return received data"""
         try:
             received = str(self._sock.recv(1024), "utf-8")
-            logging.debug("received: " + received)
+            logging.debug("received: %d", received)
             return received
         except AttributeError:
             logging.error("cannot receive - no connection established")

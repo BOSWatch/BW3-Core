@@ -34,11 +34,11 @@ class DoubleFilter:
 
     def filter(self, bwPacket):
 
-        if bwPacket.get("mode") is "fms":
+        if bwPacket.get("mode") == "fms":
             scanWord = "fms"
-        elif bwPacket.get("mode") is "pocsag":
+        elif bwPacket.get("mode") == "pocsag":
             scanWord = "ric"
-        elif bwPacket.get("mode") is "zvei":
+        elif bwPacket.get("mode") == "zvei":
             scanWord = "zvei"
         else:
             logging.error("No Filter for '%s'", bwPacket)
@@ -59,8 +59,8 @@ class DoubleFilter:
         counter = 0
         for listPacket in self._filterLists[bwPacket.get("mode")][1:]:  # [1:] skip first entry, thats the new one
             if listPacket.get("timestamp") < (time.time() - self._config.getInt("doubleFilter", "IgnoreTime", "serverConfig")):
-                    self._filterLists[bwPacket.get("mode")].remove(listPacket)
-                    counter += 1
+                self._filterLists[bwPacket.get("mode")].remove(listPacket)
+                counter += 1
         if counter:
             logging.debug("%d old entry(s) removed", counter)
 
