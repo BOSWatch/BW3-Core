@@ -14,8 +14,8 @@
 @author:      Bastian Schroll
 @description: Unittests for BOSWatch. File must be _run as "pytest" unittest
 """
-import pytest
 import logging
+import pytest
 import time
 
 from boswatch.network.server import TCPServer
