@@ -26,7 +26,7 @@ _dataPackets = []
 _lockDataPackets = threading.Lock()
 
 # module wide global list for all currently connected clients
-_clients = {}  # _clients[ThreadName] = {"address", "timestamp"}
+_clients = []  # _clients[ThreadName] = {"address", "timestamp"}
 _lockClients = threading.Lock()
 
 
