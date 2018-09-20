@@ -27,10 +27,11 @@ ROOT_PATH = os.path.dirname(sys.modules['boswatch'].__file__).replace("\\", "/")
 # implements a system adaption for the paths
 if platform.system() == "Linux":
     LOG_PATH = "/var/log/boswatch/"
+    CONFIG_PATH = "/etc/boswatch/"
 else:
     LOG_PATH = ROOT_PATH + "log/"
+    CONFIG_PATH = ROOT_PATH + "config/"
 
-CONFIG_PATH = ROOT_PATH + "config/"
 PLUGIN_PATH = ROOT_PATH + "plugins/"
 CSV_PATH = ROOT_PATH + "csv/"
 BIN_PATH = ROOT_PATH + "_bin/"
