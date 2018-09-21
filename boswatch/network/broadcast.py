@@ -16,6 +16,7 @@
 """
 import logging
 import socket
+import threading
 
 logging.debug("- %s loaded", __name__)
 
@@ -36,14 +37,13 @@ class BroadcastClient:
     def sendBroadcast(self):
         while True:
             try:
-
-                logging.debug("send magic <BW3-Request>")
+                logging.debug("send magic <BW3-Request> as broadcast")
                 self._socket.sendto("<BW3-Request>".encode(), ('255.255.255.255', self._broadcastPort))
                 payload, address = self._socket.recvfrom(1024)
                 payload = str(payload, "UTF-8")
 
                 if payload.startswith("<BW3-Result>"):
-                    logging.debug("received magic <BW3-Result>")
+                    logging.debug("received magic <BW3-Result> from: %s", address[0])
                     self._serverIP = address[0]
                     self._serverPort = int(payload.split(";")[1])
                     logging.info("got connection info: %s:%d", self._serverIP, self._serverPort)
@@ -71,16 +71,37 @@ class BroadcastServer:
         """!init comment"""
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._socket.bind(('', port))
+        self._serverThread = None
+        self._serverIsRunning = False
 
-    def listen(self):
+    def start(self):
+        try:
+            logging.debug("start udp broadcast server")
+            self._serverThread = threading.Thread(target=self._listen)
+            self._serverThread.name = "BroadServ"
+            self._serverThread.daemon = True
+            self._serverIsRunning = True
+            self._serverThread.start()
+        except:
+            logging.exception("cannot start udp broadcast server thread")
+
+    def stop(self):
+        try:
+            logging.debug("stop udp broadcast server")
+            self._serverIsRunning = False
+            self._serverThread.join()
+        except:
+            logging.exception("cannot stop udp broadcast server thread")
+
+    def _listen(self):
         try:
             logging.debug("start listening for magic")
-            while True:
+            while self._serverIsRunning:
                 payload, address = self._socket.recvfrom(1024)
                 payload = str(payload, "UTF-8")
                 if payload == "<BW3-Request>":
                     logging.debug("received magic <BW3-Request> from: %s", address[0])
-                    logging.debug("send connection info in magic <BW3-Result>")
+                    logging.info("send connection info in magic <BW3-Result> to: %s", address[0])
                     self._socket.sendto("<BW3-Result>;8080".encode(), address)  # todo give the TCPServer port
                     return True
         except:
