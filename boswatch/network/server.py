@@ -140,9 +140,10 @@ class TCPServer:
 
     @staticmethod
     def getClientsConnected():
-        """!List of currently connected Clients
+        """!A list of all connected clients
+        with their IP address and last seen timestamp
         _clients[ThreadName] = {"address", "timestamp"}
 
-        @return List of connected clients"""
+        @return List of onnected clients"""
         # todo return full list or write a print/debug method?
         return _clients

@@ -17,13 +17,23 @@
 import logging
 import os
 import sys
+import platform
 
 logging.debug("- %s loaded", __name__)
 
-# todo searching for root part is not a nice solution atm
+# note searching for root part is not a nice solution atm
 ROOT_PATH = os.path.dirname(sys.modules['boswatch'].__file__).replace("\\", "/") + "/../"
-LOG_PATH = ROOT_PATH + "log/"
-CONFIG_PATH = ROOT_PATH + "config/"
+
+# implements a system adaption for the paths
+if platform.system() == "Linux":
+    LOG_PATH = "/var/log/boswatch/"
+    CONFIG_PATH = "/etc/opt/boswatch/"
+else:
+    # FIXME LOG_PATH not used actually
+    # path is fixed in logger config.ini
+    LOG_PATH = ROOT_PATH + "log/"
+    CONFIG_PATH = ROOT_PATH + "config/"
+
 PLUGIN_PATH = ROOT_PATH + "plugins/"
 CSV_PATH = ROOT_PATH + "csv/"
 BIN_PATH = ROOT_PATH + "_bin/"

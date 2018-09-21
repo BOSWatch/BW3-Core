@@ -91,8 +91,7 @@ try:
                     bwPacket.addClientData()
                     bwClient.transmit(str(bwPacket))
 
-                    # todo should we do this in an thread, to not block receiving ???
-                    # todo but then we should use transmit() and receive() with Lock()
+                    # todo should we do this in an thread, to not block receiving ??? but then we should use transmit() and receive() with Lock()
                     failedTransmits = 0
                     while not bwClient.receive() == "[ack]":  # wait for ack or timeout
                         if failedTransmits >= 3:
