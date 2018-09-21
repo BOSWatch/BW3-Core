@@ -26,8 +26,7 @@ class TCPClient:
     def __init__(self, timeout=3):
         """!Create a new instance
 
-        Create a new instance of an TCP Client.
-        And set the timeout"""
+        @param timeout: timout for the client in sec. (3)"""
         try:
             self._sock = None
             self._timeout = timeout

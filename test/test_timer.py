@@ -20,6 +20,7 @@ import pytest
 
 from boswatch.utils.timer import RepeatedTimer
 
+# todo add more tests to overlap all testcases
 
 class Test_Timer:
     """!Unittest for the timer class"""
@@ -28,15 +29,21 @@ class Test_Timer:
         logging.debug("[TEST] %s.%s", type(self).__name__, method.__name__)
 
     @staticmethod
-    def testTarget():
-        logging.debug("run testTarget")
+    def testTargetFast():
+        logging.debug("run testTargetFast")
+
+    @staticmethod
+    def testTargetSlow():
+        logging.debug("run testTargetSlow start")
+        time.sleep(1)
+        logging.debug("run testTargetSlow end")
 
     @pytest.fixture(scope="function")
     def useTimer(self):
         """!Server a RepeatedTimer instance"""
-        self.testTimer = RepeatedTimer(0.5, Test_Timer.testTarget)
+        self.testTimer = RepeatedTimer(0.5, Test_Timer.testTargetFast)
         time.sleep(0.1)
-        yield 1
+        yield 1  # server the timer instance
 
     def test_timerStartStop(self, useTimer):
         assert self.testTimer.start()

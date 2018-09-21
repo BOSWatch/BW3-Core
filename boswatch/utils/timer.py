@@ -36,17 +36,24 @@ class RepeatedTimer:
         self._args = args
         self._kwargs = kwargs
         self._start = 0
+        self._overdueCount = 0
         self._event = Event()
         self._thread = None
 
     def start(self):
-        """!Start a new timer worker thread"""
-        self._event.clear()
-        self._thread = Thread(target=self._target)
-        self._thread.name = "RepTim(" + str(self._interval) + ")"
-        self._thread.start()
-        logging.debug("start repeatedTimer: %s", self._thread.name)
-        return True
+        """!Start a new timer worker thread
+
+        @return True or False"""
+        try:
+            self._event.clear()
+            self._thread = Thread(target=self._target)
+            self._thread.name = "RepTim(" + str(self._interval) + ")"
+            self._thread.start()
+            logging.debug("start repeatedTimer: %s", self._thread.name)
+            return True
+        except:
+            logging.exception("cannot start timer worker thread")
+            return False
 
     def stop(self):
         """!Stop the timer worker thread
@@ -78,8 +85,13 @@ class RepeatedTimer:
                 logging.debug("ready after: %0.3f sec. - next call in: %0.3f sec.", runTime, self.restTime)
             else:
                 logging.warning("timer overdue! interval: %0.3f sec. - runtime: %0.3f sec.", self._interval, runTime)
-
+                self._overdueCount += 1
     @property
     def restTime(self):
         """!Property to get remaining time till next call"""
         return self._interval - ((time.time() - self._start) % self._interval)
+
+    @property
+    def overdueCount(self):
+        """!Property to get a count over all iverdues"""
+        return self._overdueCount

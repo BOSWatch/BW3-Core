@@ -75,7 +75,9 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     """!TCP server class"""
 
     def __init__(self, timeout=3):
-        """!Create a new instance"""
+        """!Create a new instance
+
+        @param timeout: timeout for the server in sec. (3)"""
         self._server = None
         self._server_thread = None
         self._timeout = timeout
