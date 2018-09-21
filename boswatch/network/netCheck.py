@@ -27,7 +27,7 @@ class NetCheck:
         """!Create a new NetCheck instance
 
         @param hostname: host against connection check is running ("https://www.google.com/")
-        @param timout: timout for connection check in sec."""
+        @param timout: timout for connection check in sec. (1)"""
         self._hostname = hostname
         self._timeout = timeout
 
@@ -37,6 +37,8 @@ class NetCheck:
         @return True or False"""
         try:
             urlopen(self._hostname, timeout=self._timeout)
+            logging.debug("%s is reachable", self._hostname)
             return True
         except:
+            logging.warning("%s is not reachable", self._hostname)
             return False
