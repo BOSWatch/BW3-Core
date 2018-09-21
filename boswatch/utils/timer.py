@@ -48,6 +48,7 @@ class RepeatedTimer:
             self._event.clear()
             self._thread = Thread(target=self._target)
             self._thread.name = "RepTim(" + str(self._interval) + ")"
+            self._thread.daemon = True  # start as daemon (thread dies if main program ends)
             self._thread.start()
             logging.debug("start repeatedTimer: %s", self._thread.name)
             return True

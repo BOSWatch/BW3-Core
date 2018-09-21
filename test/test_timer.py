@@ -22,6 +22,7 @@ from boswatch.utils.timer import RepeatedTimer
 
 # todo add more tests to overlap all testcases
 
+
 class Test_Timer:
     """!Unittest for the timer class"""
 
