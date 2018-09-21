@@ -70,7 +70,7 @@ class RepeatedTimer:
             return False
 
     def _target(self):
-        """!Runs the target function with his arguments"""
+        """!Runs the target function with his arguments in own thread"""
         self._start = time.time()
         while not self._event.wait(self.restTime):
             logging.debug("work")
@@ -94,5 +94,5 @@ class RepeatedTimer:
 
     @property
     def overdueCount(self):
-        """!Property to get a count over all iverdues"""
+        """!Property to get a count over all overdues"""
         return self._overdueCount
