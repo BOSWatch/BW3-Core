@@ -24,10 +24,17 @@ class NetCheck:
     """!Worker class to check internet connection"""
 
     def __init__(self, hostname="https://www.google.com/", timeout=1):
+        """!Create a new NetCheck instance
+
+        @param hostname: host against connection check is running ("https://www.google.com/")
+        @param timout: timout for connection check in sec."""
         self._hostname = hostname
         self._timeout = timeout
 
     def checkConn(self):
+        """!Check the connection
+
+        @return True or False"""
         try:
             urlopen(self._hostname, timeout=self._timeout)
             return True
