@@ -29,6 +29,8 @@ if platform.system() == "Linux":
     LOG_PATH = "/var/log/boswatch/"
     CONFIG_PATH = "/etc/opt/boswatch/"
 else:
+    # FIXME LOG_PATH not used actually
+    # path is fixed in logger config.ini
     LOG_PATH = ROOT_PATH + "log/"
     CONFIG_PATH = ROOT_PATH + "config/"
 
