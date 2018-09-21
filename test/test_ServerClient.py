@@ -16,6 +16,7 @@
 """
 import logging
 import time
+import queue
 import pytest
 
 from boswatch.network.server import TCPServer
@@ -31,11 +32,19 @@ class Test_ServerClient:
     @pytest.fixture(scope="function")
     def useServer(self):
         """!Start and serve the sever for each functions where useServer is given"""
-        self.testServer = TCPServer()
+        self.dataQueue = queue.Queue()
+        self.testServer = TCPServer(self.dataQueue)
+        logging.debug("start server")
         assert self.testServer.start()
         time.sleep(0.1)  # wait for server
-        yield self.testServer  # server to all test where useServer is given
-        assert self.testServer.stop()
+        # serv the instances - created in self context
+        yield 1
+        try:
+            logging.debug("stop server")
+            self.testServer.stop()
+        except:
+            logging.warning("server still stopped")
+
         time.sleep(0.1)  # wait for server
 
     def test_clientConnectFailed(self):
@@ -80,7 +89,7 @@ class Test_ServerClient:
         assert self.testClient2.connect()
         time.sleep(0.1)  # wait for all clients connected
         # check connected clients
-        assert useServer.countClientsConnected() == 2
+        assert self.testServer.countClientsConnected() == 2
         # disconnect all
         assert self.testClient1.disconnect()
         assert self.testClient2.disconnect()
@@ -111,29 +120,28 @@ class Test_ServerClient:
         assert self.testClient2.receive() == "[ack]"
         assert self.testClient1.receive() == "[ack]"
         # check server msg queue
-        assert useServer.countPacketsInQueue() == 3
+        assert self.dataQueue.qsize() == 3
         # disconnect all
         assert self.testClient1.disconnect()
         assert self.testClient2.disconnect()
         assert self.testClient3.disconnect()
 
-    def test_serverRestart(self):
-        """!Test a restart of the server"""
-        self.testServer = TCPServer()
-        assert self.testServer.start()
+    def test_serverRestart(self, useServer):
+        """!Test a stop and restart of the server"""
         assert self.testServer.stop()
         assert self.testServer.start()
         assert self.testServer.stop()
 
-    def test_serverStopFailed(self):
-        """!Test to start the server twice"""
-        self.testServer = TCPServer()
+    def test_serverStopFailed(self, useServer):
+        """!Test to stop a stopped server"""
+        assert self.testServer.stop()
         assert not self.testServer.stop()
 
     def test_serverDoubleStart(self):
         """!Test to start the server twice"""
-        self.testServer1 = TCPServer()
-        self.testServer2 = TCPServer()
+        self.dataQueue = queue.Queue()
+        self.testServer1 = TCPServer(self.dataQueue)
+        self.testServer2 = TCPServer(self.dataQueue)
         assert self.testServer1.start()
         assert not self.testServer2.start()
         assert self.testServer1.stop()
@@ -147,7 +155,6 @@ class Test_ServerClient:
         self.testClient2 = TCPClient()
         assert self.testClient2.connect()
         # send all
-        useServer.flushQueue()
         assert self.testClient1.transmit("test1")
         time.sleep(0.1)  # wait for recv to prevent fail of false order
         assert self.testClient2.transmit("test2")
@@ -155,10 +162,10 @@ class Test_ServerClient:
         assert self.testClient1.receive() == "[ack]"
         assert self.testClient2.receive() == "[ack]"
         # _check server output data
-        assert useServer.countPacketsInQueue() == 2
-        assert useServer.getDataFromQueue()[1] == "test1"
-        assert useServer.getDataFromQueue()[1] == "test2"
-        assert useServer.getDataFromQueue() is None  # Last _check must be None
+        assert self.dataQueue.qsize() == 2
+        assert self.dataQueue.get(True, 1)[1] == "test1"
+        assert self.dataQueue.get(True, 1)[1] == "test2"
+        assert self.dataQueue.qsize() is 0  # Last _check must be None
         # disconnect all
         assert self.testClient1.disconnect()
         assert self.testClient2.disconnect()

@@ -95,7 +95,7 @@ try:
                     failedTransmits = 0
                     while not bwClient.receive() == "[ack]":  # wait for ack or timeout
                         if failedTransmits >= 3:
-                            logging.error("cannot transmit after 5 retires")
+                            logging.error("cannot transmit after 3 retires")
                             break
                         failedTransmits += 1
                         logging.warning("attempt %d to resend packet", failedTransmits)

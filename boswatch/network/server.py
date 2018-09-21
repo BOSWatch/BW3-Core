@@ -21,24 +21,16 @@ import time
 
 logging.debug("- %s loaded", __name__)
 
-# module wide global list for received data sets
-_dataPackets = []
-_lockDataPackets = threading.Lock()
 
-# module wide global list for all currently connected clients
-_clients = {}  # _clients[ThreadName] = {"address", "timestamp"}
-_lockClients = threading.Lock()
-
-
-class TCPHandler(socketserver.BaseRequestHandler):
-    """!RequestHandler class for our TCPServer class."""
+class ThreadedTCPRequestHandler(socketserver.ThreadingMixIn, socketserver.BaseRequestHandler):
+    """!ThreadedTCPRequestHandler class for our TCPServer class."""
 
     def handle(self):
         """!Handles the request from an single client in a own thread
 
         Insert a request in the clients[] list and send a [ack]"""
-        with _lockClients:
-            _clients[threading.current_thread().name] = {"address": self.client_address[0], "timestamp": time.time()}
+        with self.server.clientsConnctedLock:  # because our list is not threadsafe
+            self.server.clientsConnected[threading.current_thread().name] = {"address": self.client_address[0], "timestamp": time.time()}
 
         logging.info("Client connected: %s", self.client_address[0])
         data = 1  # to enter while loop
@@ -51,10 +43,8 @@ class TCPHandler(socketserver.BaseRequestHandler):
                 if data != "":
                     logging.debug("%s recv: %s", req_name, data)
 
-                    # add a new entry at first position (index 0) with client IP
-                    # and the decoded data dict as an string in utf-8 and an timestamp
-                    with _lockDataPackets:
-                        _dataPackets.insert(0, (self.client_address[0], data, time.time()))  # time() to calc time in queue
+                    # add a new entry and the decoded data dict as an string in utf-8 and an timestamp
+                    self.server.alarmQueue.put_nowait((self.client_address[0], data, time.time()))  # queue is threadsafe
                     logging.debug("Add data to queue")
 
                     logging.debug("%s send: [ack]", req_name)
@@ -66,21 +56,31 @@ class TCPHandler(socketserver.BaseRequestHandler):
         except:  # pragma: no cover
             logging.exception("%s error while receiving", req_name)
         finally:
-            with _lockClients:
-                del _clients[threading.current_thread().name]
+            del self.server.clientsConnected[threading.current_thread().name]
             logging.info("Client disconnected: %s", self.client_address[0])
 
 
-class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    """!ThreadedTCPServer class for our TCPServer class."""
+    pass
+
+
+class TCPServer:
     """!TCP server class"""
 
-    def __init__(self, timeout=3):
+    def __init__(self, alarmQueue, timeout=3):
         """!Create a new instance
 
-        @param timeout: timeout for the server in sec. (3)"""
+        @param alarmQueue: python queue instance
+        @param timeout: server timeout in sec (3)
+        """
         self._server = None
         self._server_thread = None
         self._timeout = timeout
+        self._alarmQueue = alarmQueue
+
+        self._clientsConnectedLock = threading.Lock()
+        self._clientsConnected = {}
 
     def start(self, port=8080):
         """!Start a threaded TCP socket server
@@ -93,10 +93,12 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
         @return True or False"""
         try:
-            self._server = socketserver.ThreadingTCPServer(("", port), TCPHandler)
+            self._server = ThreadedTCPServer(("", port), ThreadedTCPRequestHandler)
             self._server.timeout = self._timeout
+            self._server.alarmQueue = self._alarmQueue
 
-            self.flushQueue()
+            self._server.clientsConnctedLock = self._clientsConnectedLock
+            self._server.clientsConnected = self._clientsConnected
 
             self._server_thread = threading.Thread(target=self._server.serve_forever)
             self._server_thread.name = "Thread-BWServer"
@@ -117,7 +119,9 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
         try:
             self._server.shutdown()
             self._server_thread.join()
+            self._server_thread = None
             self._server.socket.close()
+            self._server = None
             logging.debug("TCPServer stopped")
             return True
         except AttributeError:
@@ -127,47 +131,19 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
             logging.exception("cannot stop the server")
             return False
 
-    @staticmethod
-    def countClientsConnected():
+    def countClientsConnected(self):
         """!Number of currently connected Clients
 
         @return Connected clients"""
-        with _lockClients:
-            return len(_clients)
+        with self._clientsConnectedLock:  # because our list is not threadsafe
+            return len(self._clientsConnected)
 
-    @staticmethod
-    def getClientsConnected():
+    def getClientsConnected(self):
         """!A list of all connected clients
         with their IP address and last seen timestamp
         _clients[ThreadName] = {"address", "timestamp"}
 
         @return List of onnected clients"""
         # todo return full list or write a print/debug method?
-        return _clients
-
-    @staticmethod
-    def getDataFromQueue():
-        """!Function to get the data packages from server
-        must be polled by main program
-
-        @return Next data packet.py from intern queue"""
-        if _dataPackets:
-            with _lockDataPackets:
-                message = _dataPackets.pop()
-            logging.debug("Get data from queue")
-            return message
-        return None
-
-    @staticmethod
-    def countPacketsInQueue():
-        """!Get packets waiting in queue
-
-        @return Packets in queue"""
-        return len(_dataPackets)  # no lock needed - only reading
-
-    @staticmethod
-    def flushQueue():
-        """!To flush all existing data in queue"""
-        logging.debug("Flush data queue")
-        with _lockDataPackets:
-            _dataPackets.clear()
+        with self._clientsConnectedLock:  # because our list is not threadsafe
+            return self.clientsConnected
