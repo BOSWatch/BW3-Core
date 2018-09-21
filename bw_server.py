@@ -41,7 +41,7 @@ try:
     import time
     import sys
     import threading
-    import threading
+    import queue
 
     logging.debug("Import BOSWatch modules")
     from boswatch.config import Config
@@ -111,12 +111,13 @@ try:
     #
     # t1 = threading.Timer(1, eins)
     # t2 = threading.Timer(5, zwei)
-    t3 = threading.Timer(15, drei)
+    # t3 = threading.Timer(15, drei)
     # t1.start()
     # t2.start()
-    t3.start()
+    # t3.start()
 
-    bwServer = TCPServer(bwConfig.getInt("Server", "PORT"))
+    incomingQueue = queue.Queue()
+    bwServer = TCPServer(incomingQueue)
     if bwServer.start():
 
         while 1:
@@ -126,7 +127,7 @@ try:
                 packetsOld = 0
                 while serverPaused is True:
                     time.sleep(0.2)  # reduce cpu load (run all 200ms)
-                    packetsNew = bwServer.countPacketsInQueue()
+                    packetsNew = incomingQueue.qsize()
                     if packetsNew is not packetsOld:
                         logging.debug("%s packet(s) waiting in queue", packetsNew)
                         packetsOld = packetsNew
@@ -136,13 +137,13 @@ try:
                 logging.warning("Server stop flag received ...")
                 break
 
-            if not bwServer.countPacketsInQueue():  # pause only when no data
+            if incomingQueue.empty():  # pause only when no data
                 time.sleep(0.1)  # reduce cpu load (run all 100ms)
 
-            data = bwServer.getDataFromQueue()
+            data = incomingQueue.get()
             if data is not None:
                 logging.info("get data from %s (waited in queue %0.3f sec.)", data[0], time.time() - data[2])
-                logging.debug("%s packet(s) waiting in queue", bwServer.countPacketsInQueue())
+                logging.debug("%s packet(s) waiting in queue", incomingQueue.qsize())
                 bwPacket = Packet((data[1]))
 
                 if not bwDoubleFilter.filter(bwPacket):
@@ -156,6 +157,7 @@ try:
 
                 bwPluginManager.runAllPlugins(bwPacket)
                 # print(bwPacket.get("clientVersion")["major"])
+                incomingQueue.task_done()
 
 except KeyboardInterrupt:  # pragma: no cover
     logging.warning("Keyboard interrupt")
