@@ -135,7 +135,11 @@ class TCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
     @staticmethod
     def getClientsConnected():
-        # todo insert comment
+        """!A list of all connected clients
+        with their IP address and last seen timestamp
+        _clients[ThreadName] = {"address", "timestamp"}
+
+        @return List of onnected clients"""
         # todo return full list or write a print/debug method?
         return _clients
 
