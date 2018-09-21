@@ -44,25 +44,36 @@ class RepeatedTimer:
         self._event.clear()
         self._thread = Thread(target=self._target)
         self._thread.name = "RepTim(" + str(self._interval) + ")"
-        self._start = time.time()
         self._thread.start()
         logging.debug("start repeatedTimer: %s", self._thread.name)
+        return True
 
     def stop(self):
-        """!Stop the timer worker thread"""
+        """!Stop the timer worker thread
+
+        @return True or False"""
         self._event.set()
-        self._thread.join()
-        logging.debug("stop repeatedTimer: %s", self._thread.name)
+        if self._thread is not None:
+            logging.debug("stop repeatedTimer: %s", self._thread.name)
+            self._thread.join()
+            return True
+        else:
+            logging.warning("repeatedTimer always stopped")
+            return False
 
     def _target(self):
         """!Runs the target function with his arguments"""
+        self._start = time.time()
         while not self._event.wait(self.restTime):
             logging.debug("work")
             startTime = time.time()
-            self._function(*self._args, **self._kwargs)
-            time.sleep(1.5)
-            runTime = time.time() - startTime
 
+            try:
+                self._function(*self._args, **self._kwargs)
+            except:
+                logging.exception("target throws an exception")
+
+            runTime = time.time() - startTime
             if runTime < self._interval:
                 logging.debug("ready after: %0.3f sec. - next call in: %0.3f sec.", runTime, self.restTime)
             else:
