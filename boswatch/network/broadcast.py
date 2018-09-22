@@ -24,6 +24,9 @@ logging.debug("- %s loaded", __name__)
 class BroadcastClient:
 
     def __init__(self, port=5000):
+        """!Create an BroadcastClient instance
+
+        @param port: port to send broadcast packets (5000)"""
         self._broadcastPort = port
 
         self._serverIP = ""
@@ -32,9 +35,13 @@ class BroadcastClient:
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-        self._socket.settimeout(3)
+        self._socket.settimeout(5)
 
     def sendBroadcast(self):
+        """!Send broadcastpackets
+
+        This function will block until the connection Info
+        from server will be received."""
         while True:
             try:
                 logging.debug("send magic <BW3-Request> as broadcast")
@@ -49,7 +56,7 @@ class BroadcastClient:
                     logging.info("got connection info: %s:%d", self._serverIP, self._serverPort)
                     return True
             except socket.timeout:
-                logging.warning("retry sending magic")
+                logging.warning("no server found - retry sending magic")
                 continue
             except:
                 logging.exception("error on getting connection info")
@@ -57,22 +64,28 @@ class BroadcastClient:
 
     @property
     def serverIP(self):
+        """!Property to get the server IP after successful broadcast"""
         return self._serverIP
 
     @property
     def serverPort(self):
+        """!Property to get the server Port after successful broadcast"""
         return self._serverPort
 
 
 class BroadcastServer:
-    """!General class comment"""
 
-    def __init__(self, port=5000):
-        """!init comment"""
+    def __init__(self, servePort=8080,listenPort=5000):
+        """!Create an BroadcastServer instance
+
+        @param listenPort: port to listen for broadcast packets (5000)"""
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self._socket.bind(('', port))
+        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        self._socket.bind(('', listenPort))
         self._serverThread = None
         self._serverIsRunning = False
+        self._servePort = servePort
 
     def start(self):
         try:
@@ -102,7 +115,7 @@ class BroadcastServer:
                 if payload == "<BW3-Request>":
                     logging.debug("received magic <BW3-Request> from: %s", address[0])
                     logging.info("send connection info in magic <BW3-Result> to: %s", address[0])
-                    self._socket.sendto("<BW3-Result>;8080".encode(), address)  # todo give the TCPServer port
+                    self._socket.sendto("<BW3-Result>;".encode() + str(self._servePort).encode(), address)
                     return True
         except:
             logging.exception("error while listening for clients")
