@@ -22,6 +22,7 @@ logging.debug("- %s loaded", __name__)
 
 
 class BroadcastClient:
+    """!BroadcastClient class"""
 
     def __init__(self, port=5000):
         """!Create an BroadcastClient instance
@@ -41,7 +42,13 @@ class BroadcastClient:
         """!Send broadcastpackets
 
         This function will block until the connection Info
-        from server will be received."""
+        from server will be received.
+
+        - send the magic packet <BW-Request> on broadcast address.
+        - wait for a <BW-Result> magic packet.
+        - extract the connection data from the magic packet and return
+
+        @return True or False"""
         while True:
             try:
                 logging.debug("send magic <BW3-Request> as broadcast")
@@ -74,6 +81,7 @@ class BroadcastClient:
 
 
 class BroadcastServer:
+    """!BroadcastServer class"""
 
     def __init__(self, servePort=8080,listenPort=5000):
         """!Create an BroadcastServer instance
@@ -88,6 +96,9 @@ class BroadcastServer:
         self._servePort = servePort
 
     def start(self):
+        """!Start the broadcast server in a new thread
+
+        @return True or False"""
         try:
             logging.debug("start udp broadcast server")
             self._serverThread = threading.Thread(target=self._listen)
@@ -95,27 +106,40 @@ class BroadcastServer:
             self._serverThread.daemon = True
             self._serverIsRunning = True
             self._serverThread.start()
+            return True
         except:
             logging.exception("cannot start udp broadcast server thread")
+            return False
 
     def stop(self):
+        """!Stop the broadcast server
+
+        @return True or False"""
         try:
             logging.debug("stop udp broadcast server")
             self._serverIsRunning = False
             self._serverThread.join()
+            return True
         except:
             logging.exception("cannot stop udp broadcast server thread")
+            return False
 
     def _listen(self):
+        """!Broadcast server worker thread
+
+        This function listen for magic packets on broadcast
+        address and send the connection info to the clients.
+
+        - listen for the magic packet <BW-Request>
+        - send connection info in an <BW-Result> macig packet"""
         try:
             logging.debug("start listening for magic")
             while self._serverIsRunning:
-                payload, address = self._socket.recvfrom(1024)
+                payload, address = self._socket.recvfrom(1024)  # fixme recv is blocking, evtl we can use to wait for readable data
                 payload = str(payload, "UTF-8")
                 if payload == "<BW3-Request>":
                     logging.debug("received magic <BW3-Request> from: %s", address[0])
                     logging.info("send connection info in magic <BW3-Result> to: %s", address[0])
                     self._socket.sendto("<BW3-Result>;".encode() + str(self._servePort).encode(), address)
-                    return True
         except:
             logging.exception("error while listening for clients")
