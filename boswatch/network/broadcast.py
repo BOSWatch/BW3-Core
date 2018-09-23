@@ -55,7 +55,7 @@ class BroadcastClient:
         sendPackages = 1
         while sendPackages <= retry or retry == 0:
             try:
-                logging.debug("send magic <BW3-Request> as broadcast - #%d", sendPackages)
+                logging.debug("send magic <BW3-Request> as broadcast - Try: %d", sendPackages)
                 self._socket.sendto("<BW3-Request>".encode(), ('255.255.255.255', self._broadcastPort))
                 payload, address = self._socket.recvfrom(1024)
                 payload = str(payload, "UTF-8")
@@ -107,29 +107,37 @@ class BroadcastServer:
 
         @return True or False"""
         try:
-            logging.debug("start udp broadcast server")
-            self._serverThread = threading.Thread(target=self._listen)
-            self._serverThread.name = "BroadServ"
-            self._serverThread.daemon = True
-            self._serverIsRunning = True
-            self._serverThread.start()
-            return True
+            if not self._serverIsRunning:
+                logging.debug("start udp broadcast server")
+                self._serverThread = threading.Thread(target=self._listen)
+                self._serverThread.name = "BroadServ"
+                self._serverThread.daemon = True
+                self._serverIsRunning = True
+                self._serverThread.start()
+                return True
+            else:
+                logging.warning("udp broadcast server always started")
+                return True
         except:
             logging.exception("cannot start udp broadcast server thread")
             return False
 
-    def stopp(self):
+    def stop(self):
         """!Stop the broadcast server
 
         Due to the timeout of the socket,
-        stopping the thread can be delayed by two seconds
+        stopping the thread can be delayed by two seconds.
+        But function returns immediately.
 
         @return True or False"""
         try:
-            logging.debug("stop udp broadcast server")
-            self._serverIsRunning = False
-            # self._serverThread.join()
-            return True
+            if not self._serverIsRunning:
+                logging.debug("stop udp broadcast server")
+                self._serverIsRunning = False
+                return True
+            else:
+                logging.warning("udp broadcast server always stopped")
+                return True
         except:
             logging.exception("cannot stop udp broadcast server thread")
             return False
@@ -156,3 +164,8 @@ class BroadcastServer:
             except:
                 logging.exception("error while listening for clients")
         logging.debug("udp broadcast server stopped")
+
+    @property
+    def isRunning(self):
+        """!Property of broadcast server running state"""
+        return self._serverIsRunning
