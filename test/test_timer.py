@@ -44,12 +44,16 @@ class Test_Timer:
         """!Server a RepeatedTimer instance with fast worker"""
         self.testTimer = RepeatedTimer(0.1, Test_Timer.testTargetFast)
         yield 1  # server the timer instance
+        if self.testTimer.isRunning:
+            self.testTimer.stop()
 
     @pytest.fixture(scope="function")
     def useTimerSlow(self):
         """!Server a RepeatedTimer instance slow worker"""
         self.testTimer = RepeatedTimer(0.1, Test_Timer.testTargetSlow)
         yield 1  # server the timer instance
+        if self.testTimer.isRunning:
+            self.testTimer.stop()
 
     # test cases starts here
 
@@ -64,6 +68,11 @@ class Test_Timer:
 
     def test_timerStopNotStarted(self, useTimerFast):
         assert not self.testTimer.stop()
+
+    def test_timerIsRunning(self, useTimerFast):
+        assert self.testTimer.start()
+        assert self.testTimer.isRunning
+        assert self.testTimer.stop()
 
     def test_timerRun(self, useTimerFast):
         assert self.testTimer.start()
