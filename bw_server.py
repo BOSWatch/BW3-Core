@@ -51,11 +51,21 @@ try:
     from boswatch.descriptor.descriptor import Descriptor
     from boswatch.filter.doubeFilter import DoubleFilter
     from boswatch.utils import header
+    from boswatch.network.broadcast import BroadcastClient
+    from boswatch.network.broadcast import BroadcastServer
 except Exception as e:  # pragma: no cover
     logging.exception("cannot import modules")
     print("cannot import modules")
     print(e)
     exit(1)
+
+#  Test for the broadcast connection info function
+server = BroadcastServer()
+client = BroadcastClient()
+server.start()
+client.getConnInfo()
+print(client.serverIP, client.serverPort)
+server.stop()
 
 try:
     header.logoToLog()
