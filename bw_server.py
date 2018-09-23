@@ -63,9 +63,13 @@ except Exception as e:  # pragma: no cover
 server = BroadcastServer()
 client = BroadcastClient()
 server.start()
+print(server.isRunning)
 client.getConnInfo()
 print(client.serverIP, client.serverPort)
 server.stop()
+print(server.isRunning)
+time.sleep(2)
+print(server.isRunning)
 
 try:
     header.logoToLog()

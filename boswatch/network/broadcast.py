@@ -71,7 +71,6 @@ class BroadcastClient:
                 sendPackages += 1
             except:
                 logging.exception("error on getting connection info")
-
         return False
 
 
@@ -99,7 +98,7 @@ class BroadcastServer:
         self._socket.settimeout(2)
         self._socket.bind(('', listenPort))
         self._serverThread = None
-        self._serverIsRunning = False
+        self._serverShutdown = False
         self._servePort = servePort
 
     def start(self):
@@ -107,12 +106,12 @@ class BroadcastServer:
 
         @return True or False"""
         try:
-            if not self._serverIsRunning:
+            if not self._serverThread:
                 logging.debug("start udp broadcast server")
                 self._serverThread = threading.Thread(target=self._listen)
                 self._serverThread.name = "BroadServ"
                 self._serverThread.daemon = True
-                self._serverIsRunning = True
+                self._serverShutdown = False
                 self._serverThread.start()
                 return True
             else:
@@ -131,9 +130,9 @@ class BroadcastServer:
 
         @return True or False"""
         try:
-            if not self._serverIsRunning:
+            if self._serverThread:
                 logging.debug("stop udp broadcast server")
-                self._serverIsRunning = False
+                self._serverShutdown = True
                 return True
             else:
                 logging.warning("udp broadcast server always stopped")
@@ -151,7 +150,7 @@ class BroadcastServer:
         - listen for the magic packet <BW-Request>
         - send connection info in an <BW-Result> macig packet"""
         logging.debug("start listening for magic")
-        while self._serverIsRunning:
+        while not self._serverShutdown:
             try:
                 payload, address = self._socket.recvfrom(1024)
                 payload = str(payload, "UTF-8")
@@ -163,9 +162,12 @@ class BroadcastServer:
                 continue  # timeout is accepted (not block at recvfrom())
             except:
                 logging.exception("error while listening for clients")
+        self._serverThread = None
         logging.debug("udp broadcast server stopped")
 
     @property
     def isRunning(self):
         """!Property of broadcast server running state"""
-        return self._serverIsRunning
+        if self._serverThread:
+            return True
+        return False
