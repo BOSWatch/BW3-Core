@@ -71,9 +71,8 @@ class RepeatedTimer:
             logging.debug("stop repeatedTimer: %s", self._thread.name)
             self._thread.join()
             return True
-        else:
-            logging.warning("repeatedTimer always stopped")
-            return False
+        logging.warning("repeatedTimer always stopped")
+        return False
 
     def _target(self):
         """!Runs the target function with his arguments in own thread"""
@@ -97,10 +96,11 @@ class RepeatedTimer:
                 self._lostEvents += lostEvents
                 self._overdueCount += 1
         logging.debug("repeatedTimer thread stopped: %s", self._thread.name)
-        self._Thread = None  # set to none after leave teh thread (running recognize)
+        self._thread = None  # set to none after leave teh thread (running recognize)
 
     @property
     def isRunning(self):
+        """!Property for repeatedTimer running state"""
         if self._thread:
             return True
         return False
