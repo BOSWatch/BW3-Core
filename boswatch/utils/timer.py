@@ -70,7 +70,6 @@ class RepeatedTimer:
         if self._thread is not None:
             logging.debug("stop repeatedTimer: %s", self._thread.name)
             self._thread.join()
-            self._thread = None
             return True
         else:
             logging.warning("repeatedTimer always stopped")
@@ -98,6 +97,13 @@ class RepeatedTimer:
                 self._lostEvents += lostEvents
                 self._overdueCount += 1
         logging.debug("repeatedTimer thread stopped: %s", self._thread.name)
+        self._Thread = None  # set to none after leave teh thread (running recognize)
+
+    @property
+    def isRunning(self):
+        if self._thread:
+            return True
+        return False
 
     @property
     def restTime(self):
