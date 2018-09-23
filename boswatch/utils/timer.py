@@ -87,6 +87,8 @@ class RepeatedTimer:
             else:
                 logging.warning("timer overdue! interval: %0.3f sec. - runtime: %0.3f sec.", self._interval, runTime)
                 self._overdueCount += 1
+        logging.debug("repeatedTimer thread stopped: %s", self._thread.name)
+
     @property
     def restTime(self):
         """!Property to get remaining time till next call"""

@@ -30,6 +30,8 @@ class NetCheck:
         @param timout: timout for connection check in sec. (1)"""
         self._hostname = hostname
         self._timeout = timeout
+        self._connectionState = False
+        self.checkConn()  # initiate a first check
 
     def checkConn(self):
         """!Check the connection
@@ -38,7 +40,14 @@ class NetCheck:
         try:
             urlopen(self._hostname, timeout=self._timeout)
             logging.debug("%s is reachable", self._hostname)
+            self._connectionState = True
             return True
         except:
             logging.warning("%s is not reachable", self._hostname)
+            self._connectionState = False
             return False
+
+    @property
+    def connectionState(self):
+        """!Property for the last connection state from checkConn()"""
+        return self._connectionState

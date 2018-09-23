@@ -61,8 +61,11 @@ except Exception as e:  # pragma: no cover
 from boswatch.utils.timer import RepeatedTimer
 from boswatch.network.netCheck import NetCheck
 net = NetCheck()
-test = RepeatedTimer(10, net.checkConn)
+test = RepeatedTimer(3, net.checkConn)
 test.start()
+time.sleep(10)
+print(net.connectionState)
+test.stop()
 
 try:
     header.logoToLog()
