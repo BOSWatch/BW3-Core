@@ -37,6 +37,8 @@ class RepeatedTimer:
         self._kwargs = kwargs
         self._start = 0
         self._overdueCount = 0
+        self._lostEvents = 0
+        self._isRunning = False
         self._event = Event()
         self._thread = None
 
@@ -45,14 +47,18 @@ class RepeatedTimer:
 
         @return True or False"""
         try:
-            self._event.clear()
-            self._thread = Thread(target=self._target)
-            self._thread.name = "RepTim(" + str(self._interval) + ")"
-            self._thread.daemon = True  # start as daemon (thread dies if main program ends)
-            self._thread.start()
-            logging.debug("start repeatedTimer: %s", self._thread.name)
-            return True
-        except:
+            if self._thread is None:
+                self._event.clear()
+                self._thread = Thread(target=self._target)
+                self._thread.name = "RepTim(" + str(self._interval) + ")"
+                self._thread.daemon = True  # start as daemon (thread dies if main program ends)
+                self._thread.start()
+                logging.debug("start repeatedTimer: %s", self._thread.name)
+                return True
+            else:
+                logging.debug("repeatedTimer always started")
+                return True
+        except:  # pragma: no cover
             logging.exception("cannot start timer worker thread")
             return False
 
@@ -64,6 +70,7 @@ class RepeatedTimer:
         if self._thread is not None:
             logging.debug("stop repeatedTimer: %s", self._thread.name)
             self._thread.join()
+            self._thread = None
             return True
         else:
             logging.warning("repeatedTimer always stopped")
@@ -78,14 +85,17 @@ class RepeatedTimer:
 
             try:
                 self._function(*self._args, **self._kwargs)
-            except:
+            except:  # pragma: no cover
                 logging.exception("target throws an exception")
 
             runTime = time.time() - startTime
             if runTime < self._interval:
                 logging.debug("ready after: %0.3f sec. - next call in: %0.3f sec.", runTime, self.restTime)
             else:
-                logging.warning("timer overdue! interval: %0.3f sec. - runtime: %0.3f sec.", self._interval, runTime)
+                lostEvents = int(runTime / self._interval)
+                logging.warning("timer overdue! interval: %0.3f sec. - runtime: %0.3f sec. - "
+                                "%d events lost - next call in: %0.3f sec.", self._interval, runTime, lostEvents, self.restTime)
+                self._lostEvents += lostEvents
                 self._overdueCount += 1
         logging.debug("repeatedTimer thread stopped: %s", self._thread.name)
 
@@ -98,3 +108,8 @@ class RepeatedTimer:
     def overdueCount(self):
         """!Property to get a count over all overdues"""
         return self._overdueCount
+
+    @property
+    def lostEvents(self):
+        """!Property to get a count over all los events"""
+        return self._lostEvents

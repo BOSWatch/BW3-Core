@@ -20,8 +20,6 @@ import pytest
 
 from boswatch.utils.timer import RepeatedTimer
 
-# todo add more tests to overlap all testcases
-
 
 class Test_Timer:
     """!Unittest for the timer class"""
@@ -31,29 +29,59 @@ class Test_Timer:
 
     @staticmethod
     def testTargetFast():
+        """!Fast worker thread"""
         logging.debug("run testTargetFast")
 
     @staticmethod
     def testTargetSlow():
+        """!Slow worker thread"""
         logging.debug("run testTargetSlow start")
-        time.sleep(1)
+        time.sleep(0.51)
         logging.debug("run testTargetSlow end")
 
     @pytest.fixture(scope="function")
-    def useTimer(self):
-        """!Server a RepeatedTimer instance"""
-        self.testTimer = RepeatedTimer(0.5, Test_Timer.testTargetFast)
-        time.sleep(0.1)
+    def useTimerFast(self):
+        """!Server a RepeatedTimer instance with fast worker"""
+        self.testTimer = RepeatedTimer(0.1, Test_Timer.testTargetFast)
         yield 1  # server the timer instance
 
-    def test_timerStartStop(self, useTimer):
+    @pytest.fixture(scope="function")
+    def useTimerSlow(self):
+        """!Server a RepeatedTimer instance slow worker"""
+        self.testTimer = RepeatedTimer(0.1, Test_Timer.testTargetSlow)
+        yield 1  # server the timer instance
+
+    # test cases starts here
+
+    def test_timerStartStop(self, useTimerFast):
         assert self.testTimer.start()
         assert self.testTimer.stop()
 
-    def test_timerStopNotStarted(self, useTimer):
+    def test_timerDoubleSTart(self, useTimerFast):
+        assert self.testTimer.start()
+        assert self.testTimer.start()
+        assert self.testTimer.stop()
+
+    def test_timerStopNotStarted(self, useTimerFast):
         assert not self.testTimer.stop()
 
-    def test_timerRun(self, useTimer):
+    def test_timerRun(self, useTimerFast):
         assert self.testTimer.start()
-        time.sleep(0.6)
+        time.sleep(0.2)
         assert self.testTimer.stop()
+        assert self.testTimer.overdueCount == 0
+        assert self.testTimer.lostEvents == 0
+
+    def test_timerOverdue(self, useTimerSlow):
+        assert self.testTimer.start()
+        time.sleep(0.2)
+        assert self.testTimer.stop()
+        assert self.testTimer.overdueCount == 1
+        assert self.testTimer.lostEvents == 5
+
+    def test_timerOverdueLong(self, useTimerSlow):
+        assert self.testTimer.start()
+        time.sleep(1)
+        assert self.testTimer.stop()
+        assert self.testTimer.overdueCount == 2
+        assert self.testTimer.lostEvents == 10
