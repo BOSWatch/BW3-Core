@@ -10,7 +10,7 @@
                      by Bastian Schroll
 
 @file:        test_timer.py
-@date:        21.09.2019
+@date:        21.09.2018
 @author:      Bastian Schroll
 @description: Unittests for BOSWatch. File must be _run as "pytest" unittest
 """
