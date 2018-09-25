@@ -17,7 +17,6 @@
 import logging
 import socket
 import threading
-import time
 
 logging.debug("- %s loaded", __name__)
 
@@ -40,7 +39,7 @@ class BroadcastClient:
         self._socket.settimeout(3)
 
     def getConnInfo(self, retry=0):
-        """!Send broadcastpackets
+        """!Get the connection info from server over udp broadcast
 
         This function will send broadcast package(s)
         to get connection info from the server.
@@ -52,11 +51,12 @@ class BroadcastClient:
         @param retry: Count of retry - 0 is infinite (0)
 
         @return True or False"""
-        sendPackages = 1
-        while sendPackages <= retry or retry == 0:
+        sendPackages = 0
+        while sendPackages < retry or retry == 0:
             try:
                 logging.debug("send magic <BW3-Request> as broadcast - Try: %d", sendPackages)
                 self._socket.sendto("<BW3-Request>".encode(), ('255.255.255.255', self._broadcastPort))
+                sendPackages += 1
                 payload, address = self._socket.recvfrom(1024)
                 payload = str(payload, "UTF-8")
 
@@ -68,9 +68,9 @@ class BroadcastClient:
                     return True
             except socket.timeout:  # nothing received - retry
                 logging.debug("no magic packet received")
-                sendPackages += 1
-            except:
+            except:  # pragma: no cover
                 logging.exception("error on getting connection info")
+        logging.warning("cannot fetch connection info after %d tries", sendPackages)
         return False
 
 
@@ -117,7 +117,7 @@ class BroadcastServer:
             else:
                 logging.warning("udp broadcast server always started")
                 return True
-        except:
+        except:  # pragma: no cover
             logging.exception("cannot start udp broadcast server thread")
             return False
 
@@ -137,7 +137,7 @@ class BroadcastServer:
             else:
                 logging.warning("udp broadcast server always stopped")
                 return True
-        except:
+        except:  # pragma: no cover
             logging.exception("cannot stop udp broadcast server thread")
             return False
 
@@ -160,7 +160,7 @@ class BroadcastServer:
                     self._socket.sendto("<BW3-Result>;".encode() + str(self._servePort).encode(), address)
             except socket.timeout:
                 continue  # timeout is accepted (not block at recvfrom())
-            except:
+            except:  # pragma: no cover
                 logging.exception("error while listening for clients")
         self._serverThread = None
         logging.debug("udp broadcast server stopped")
