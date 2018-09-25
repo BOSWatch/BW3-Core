@@ -57,6 +57,16 @@ except Exception as e:  # pragma: no cover
     print(e)
     exit(1)
 
+
+from boswatch.utils.timer import RepeatedTimer
+from boswatch.network.netCheck import NetCheck
+net = NetCheck()
+test = RepeatedTimer(3, net.checkConn)
+test.start()
+time.sleep(10)
+print(net.connectionState)
+test.stop()
+
 try:
     header.logoToLog()
     header.infoToLog()
@@ -111,7 +121,7 @@ try:
     #
     # t1 = threading.Timer(1, eins)
     # t2 = threading.Timer(5, zwei)
-    # t3 = threading.Timer(15, drei)
+    # t3 = threading.Timer(600, drei)
     # t1.start()
     # t2.start()
     # t3.start()
