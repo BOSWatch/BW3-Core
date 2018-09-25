@@ -146,4 +146,4 @@ class TCPServer:
         @return List of onnected clients"""
         # todo return full list or write a print/debug method?
         with self._clientsConnectedLock:  # because our list is not threadsafe
-            return self.clientsConnected
+            return self._clientsConnected
