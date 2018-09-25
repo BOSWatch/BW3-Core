@@ -51,13 +51,27 @@ try:
     from boswatch.descriptor.descriptor import Descriptor
     from boswatch.filter.doubeFilter import DoubleFilter
     from boswatch.utils import header
+    from boswatch.network.broadcast import BroadcastClient
+    from boswatch.network.broadcast import BroadcastServer
 except Exception as e:  # pragma: no cover
     logging.exception("cannot import modules")
     print("cannot import modules")
     print(e)
     exit(1)
 
+#  Test for the broadcast connection info function
+server = BroadcastServer()
+client = BroadcastClient()
+server.start()
+print(server.isRunning)
+client.getConnInfo()
+print(client.serverIP, client.serverPort)
+server.stop()
+print(server.isRunning)
+time.sleep(2)
+print(server.isRunning)
 
+# test for the timer class
 from boswatch.utils.timer import RepeatedTimer
 from boswatch.network.netCheck import NetCheck
 net = NetCheck()
