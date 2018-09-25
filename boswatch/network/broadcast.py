@@ -73,7 +73,6 @@ class BroadcastClient:
         logging.warning("cannot fetch connection info after %d tries", sendPackages)
         return False
 
-
     @property
     def serverIP(self):
         """!Property to get the server IP after successful broadcast"""
@@ -88,9 +87,10 @@ class BroadcastClient:
 class BroadcastServer:
     """!BroadcastServer class"""
 
-    def __init__(self, servePort=8080,listenPort=5000):
+    def __init__(self, servePort=8080, listenPort=5000):
         """!Create an BroadcastServer instance
 
+        @param servePort: port to serve as connection info (8080)
         @param listenPort: port to listen for broadcast packets (5000)"""
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
