@@ -22,7 +22,7 @@ from boswatch.network.broadcast import BroadcastServer
 from boswatch.network.broadcast import BroadcastClient
 
 
-class Test_Timer:
+class Test_Broadcast:
     """!Unittest for the timer class"""
 
     def setup_method(self, method):
