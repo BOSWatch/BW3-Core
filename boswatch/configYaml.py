@@ -9,7 +9,7 @@
                 German BOS Information Script
                      by Bastian Schroll
 
-@file:        config_yaml.py
+@file:        configYaml.py
 @date:        27.02.2019
 @author:      Bastian Schroll
 @description: Module for the configuration in yaml format

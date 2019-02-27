@@ -10,16 +10,13 @@
 client:
   name: BW3 Client        # name of the BW3 Client instance
   inputSource: stick      # possible is 'stick' or 'audio'
-  useBroadcast: yes       # use broadcast function to find server
+#  useBroadcast: yes       # use broadcast function to find server
 
-servers:                  # only used if useBroadcast = no
-  - name: Server one
-    ip:   127.0.0.1
-    port: 8080
-
-  - name: Server two
-    ip:   11.12.13.14
-    port: 5000
+# atm only one server possible
+server:                  # only used if useBroadcast = no
+  name: Server one
+  ip:   127.0.0.1
+  port: 8080
 
 inputSource:
   stick:
@@ -30,7 +27,7 @@ inputSource:
     Gain: 100
   audio:                  # not implemented yet
 
-decoder:
+decoder:                  # not implemented yet
   fms: yes
   zvei: yes
   poc512: yes

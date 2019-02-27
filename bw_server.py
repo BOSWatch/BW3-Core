@@ -44,7 +44,7 @@ try:
     import queue
 
     logging.debug("Import BOSWatch modules")
-    from boswatch.config import Config
+    from boswatch import configYaml
     from boswatch.network.server import TCPServer
     from boswatch.packet.packet import Packet
     from boswatch.plugin.pluginManager import PluginManager
@@ -96,8 +96,8 @@ try:
     parser.add_argument("-c", "--config", help="Name to configuration File", required=True)
     args = parser.parse_args()
 
-    bwConfig = Config()
-    if bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config, "serverConfig") is False:
+    bwConfig = configYaml.loadConfigFile(paths.CONFIG_PATH + args.config, "serverConfig")
+    if bwConfig is None:
         logging.exception("cannot load config file")
         print("cannot load config file")
         exit(1)  # without config cannot run
@@ -106,14 +106,6 @@ try:
     bwPluginManager.searchPluginDir()
     bwPluginManager.importAllPlugins()
     bwPluginManager.loadAllPlugins()
-
-    bwDescriptor = Descriptor()
-    if bwConfig.getBool("Description", "fms"):
-        bwDescriptor.loadDescription("fms")
-    if bwConfig.getBool("Description", "pocsag"):
-        bwDescriptor.loadDescription("pocsag")
-    if bwConfig.getBool("Description", "zvei"):
-        bwDescriptor.loadDescription("zvei")
 
     bwDoubleFilter = DoubleFilter()
 
@@ -175,9 +167,6 @@ try:
 
                 bwPacket.set("clientIP", data[0])
                 bwPacket.addServerData()
-
-                if bwConfig.getBool("Description", bwPacket.get("mode")):
-                    bwDescriptor.addDescriptions(bwPacket)
 
                 bwPluginManager.runAllPlugins(bwPacket)
                 # print(bwPacket.get("clientVersion")["major"])

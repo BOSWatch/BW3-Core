@@ -43,7 +43,7 @@ try:
     import time
 
     logging.debug("Import BOSWatch modules")
-    from boswatch import config_yaml
+    from boswatch import configYaml
     from boswatch.network.client import TCPClient
     from boswatch.decoder.decoder import Decoder
     from boswatch.utils import header
@@ -69,14 +69,14 @@ try:
     parser.add_argument("-t", "--test", help="Client will send some testdata", action="store_true")  # todo implement testmode
     args = parser.parse_args()
 
-    bwConfig = config_yaml.loadConfigFile(paths.CONFIG_PATH + args.config, "clientConfig")
+    bwConfig = configYaml.loadConfigFile(paths.CONFIG_PATH + args.config, "clientConfig")
     if bwConfig is None:
         logging.exception("cannot load config file")
         print("cannot load config file")
-        exit(1)  # without config cannot _run
+        exit(1)  # without config cannot run
 
     bwClient = TCPClient()
-    if bwClient.connect(bwConfig["servers"][0]["ip"], bwConfig["servers"][0]["port"]):
+    if bwClient.connect(bwConfig["server"]["ip"], bwConfig["server"]["port"]):
 
         while 1:
             for i in range(0, 5):

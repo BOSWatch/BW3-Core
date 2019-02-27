@@ -16,7 +16,7 @@
 """
 import logging
 import time
-from boswatch.config import Config
+from boswatch import configYaml
 from boswatch import version
 
 logging.debug("- %s loaded", __name__)
@@ -73,14 +73,14 @@ class Packet:
         - clientBranch
         - inputSource
         - frequency"""
-        config = Config()
+        config = configYaml.loadConfigSharepoint("clientConfig")
         logging.debug("add client data to bwPacket")
-        self.set("clientName", config.getStr("Client", "Name", "clientConfig"))
+        self.set("clientName", config["client"]["name"])
         self.set("clientVersion", version.client)
         self.set("clientBuildDate", version.date)
         self.set("clientBranch", version.branch)
-        self.set("inputSource", config.getStr("Client", "InputSource", "clientConfig"))
-        self.set("frequency", config.getStr("Stick", "Frequency", "clientConfig"))
+        self.set("inputSource", config["client"]["inputSource"])
+        self.set("frequency", config["inputSource"]["stick"]["frequency"])
 
     def addServerData(self):
         """!Add the server information to the decoded data
@@ -90,9 +90,9 @@ class Packet:
         - serverVersion
         - serverBuildDate
         - serverBranch"""
-        config = Config()
+        config = configYaml.loadConfigSharepoint("serverConfig")
         logging.debug("add server data to bwPacket")
-        self.set("serverName", config.getStr("Server", "Name", "serverConfig"))
+        self.set("serverName", config["server"]["name"])
         self.set("serverVersion", version.server)
         self.set("serverBuildDate", version.date)
         self.set("serverBranch", version.branch)

@@ -18,7 +18,7 @@
 import logging
 import time
 
-from boswatch.config import Config
+from boswatch import configYaml
 
 logging.debug("- %s loaded", __name__)
 
@@ -28,7 +28,7 @@ class DoubleFilter:
 
     def __init__(self):
         """!init"""
-        self._config = Config()
+        self._config = configYaml.loadConfigSharepoint("serverConfig")["filter"]["doubleFilter"]
         self._filterLists = {}
 
     def filter(self, bwPacket):
@@ -57,14 +57,14 @@ class DoubleFilter:
         # delete entries that are to old
         counter = 0
         for listPacket in self._filterLists[bwPacket.get("mode")][1:]:  # [1:] skip first entry, thats the new one
-            if listPacket.get("timestamp") < (time.time() - self._config.getInt("doubleFilter", "IgnoreTime", "serverConfig")):
+            if listPacket.get("timestamp") < (time.time() - self._config["ignoreTime"]):
                 self._filterLists[bwPacket.get("mode")].remove(listPacket)
                 counter += 1
         if counter:
             logging.debug("%d old entry(s) removed", counter)
 
         # delete last entry if list is to big
-        if len(self._filterLists[bwPacket.get("mode")]) > self._config.getInt("doubleFilter", "MaxEntry", "serverConfig"):
+        if len(self._filterLists[bwPacket.get("mode")]) > self._config["maxEntry"]:
             logging.debug("MaxEntry reached - delete oldest")
             self._filterLists[bwPacket.get("mode")].pop()
 
