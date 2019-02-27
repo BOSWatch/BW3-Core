@@ -45,6 +45,7 @@ try:
     logging.debug("Import BOSWatch modules")
     from boswatch import configYaml
     from boswatch.network.client import TCPClient
+    from boswatch.network.broadcast import BroadcastClient
     from boswatch.decoder.decoder import Decoder
     from boswatch.utils import header
 except Exception as e:  # pragma: no cover
@@ -71,12 +72,27 @@ try:
 
     bwConfig = configYaml.loadConfigFile(paths.CONFIG_PATH + args.config, "clientConfig")
     if bwConfig is None:
-        logging.exception("cannot load config file")
-        print("cannot load config file")
-        exit(1)  # without config cannot run
+        logging.error("cannot load config file")
+
+except Exception as e:  # pragma: no cover
+    logging.exception("error occurred")
+    exit(1)
+
+
+# ############################# begin client system
+try:
+
+    if bwConfig["client"]["useBroadcast"]:
+        broadcastClient = BroadcastClient()
+        if broadcastClient.getConnInfo():
+            ip = broadcastClient.serverIP
+            port = broadcastClient.serverPort
+    else:
+        ip = bwConfig["server"]["ip"]
+        port = bwConfig["server"]["port"]
 
     bwClient = TCPClient()
-    if bwClient.connect(bwConfig["server"]["ip"], bwConfig["server"]["port"]):
+    if bwClient.connect(ip, port):
 
         while 1:
             for i in range(0, 5):

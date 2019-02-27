@@ -80,7 +80,7 @@ class Packet:
         self.set("clientBuildDate", version.date)
         self.set("clientBranch", version.branch)
         self.set("inputSource", config["client"]["inputSource"])
-        self.set("frequency", config["inputSource"]["stick"]["frequency"])
+        self.set("frequency", config["inputSource"]["sdr"]["frequency"])
 
     def addServerData(self):
         """!Add the server information to the decoded data

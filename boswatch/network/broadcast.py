@@ -101,6 +101,12 @@ class BroadcastServer:
         self._serverShutdown = False
         self._servePort = servePort
 
+    def __del__(self):
+        if self.isRunning:
+            self.stop()
+            while self.isRunning:
+                pass
+
     def start(self):
         """!Start the broadcast server in a new thread
 

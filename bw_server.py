@@ -61,15 +61,8 @@ except Exception as e:  # pragma: no cover
 
 #  Test for the broadcast connection info function
 server = BroadcastServer()
-client = BroadcastClient()
 server.start()
-print(server.isRunning)
-client.getConnInfo()
-print(client.serverIP, client.serverPort)
-server.stop()
-print(server.isRunning)
-time.sleep(2)
-print(server.isRunning)
+
 
 # test for the timer class
 from boswatch.utils.timer import RepeatedTimer

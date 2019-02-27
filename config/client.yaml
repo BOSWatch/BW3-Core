@@ -9,25 +9,22 @@
 
 client:
   name: BW3 Client        # name of the BW3 Client instance
-  inputSource: stick      # possible is 'stick' or 'audio'
-#  useBroadcast: yes       # use broadcast function to find server
+  inputSource: sdr        # atm only 'sdr' is possible
+  useBroadcast: no        # use broadcast to find server automatically
 
-# atm only one server possible
-server:                  # only used if useBroadcast = no
-  name: Server one
+server:                   # only used if useBroadcast = no
   ip:   127.0.0.1
   port: 8080
 
 inputSource:
-  stick:
+  sdr:
     device: 0
     frequency: 85.000M
     PPMError: 0
     Squelch: 0
     Gain: 100
-  audio:                  # not implemented yet
 
-decoder:                  # not implemented yet
+decoder:
   fms: yes
   zvei: yes
   poc512: yes
