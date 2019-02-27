@@ -18,7 +18,7 @@ import logging
 import time
 
 from boswatch.utils import paths
-from boswatch.config import Config
+from boswatch import configYaml
 from boswatch.utils import wildcard
 
 logging.debug("- %s loaded", __name__)
@@ -52,9 +52,8 @@ class Plugin:
         self._alarmErrorCount = 0
         self._teardownErrorCount = 0
 
-        if paths.fileExist(paths.PLUGIN_PATH + pluginName + "/" + pluginName + ".ini"):
-            self.config = Config()
-            self.config.loadConfigFile(paths.PLUGIN_PATH + pluginName + "/" + pluginName + ".ini")
+        if paths.fileExist(paths.PLUGIN_PATH + pluginName + "/" + pluginName + ".yaml"):
+            self.config = configYaml.loadConfigFile(paths.PLUGIN_PATH + pluginName + "/" + pluginName + ".yaml")
         else:
             logging.debug("no config for %s found", pluginName)
 

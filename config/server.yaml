@@ -10,11 +10,16 @@
 server:
   name: BW3 Server        # name of the BW3 Server instance
 
+plugins:
+  template: 1
+
 filter:
   doubleFilter:
     maxEntry: 30
     ignoreTime: 10
     checkMsg: no
+
+
 #[Server]
 #PORT  = 8080
 #Name  = BW3 Server
@@ -66,3 +71,4 @@ filter:
 ## the higher the number the earlier the plugin is called on alarm
 ## we call ist Plugin Prioority
 #template = 1
+
