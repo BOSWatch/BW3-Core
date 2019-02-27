@@ -48,10 +48,9 @@ try:
     from boswatch.network.broadcast import BroadcastClient
     from boswatch.decoder.decoder import Decoder
     from boswatch.utils import header
-except Exception as e:  # pragma: no cover
+
+except:  # pragma: no cover
     logging.exception("cannot import modules")
-    print("cannot import modules")
-    print(e)
     exit(1)
 
 try:
@@ -67,14 +66,13 @@ try:
                                      epilog="""More options you can find in the extern client.ini
                                      file in the folder /config""")
     parser.add_argument("-c", "--config", help="Name to configuration File", required=True)
-    parser.add_argument("-t", "--test", help="Client will send some testdata", action="store_true")  # todo implement testmode
     args = parser.parse_args()
 
     bwConfig = configYaml.loadConfigFile(paths.CONFIG_PATH + args.config, "clientConfig")
     if bwConfig is None:
         logging.error("cannot load config file")
 
-except Exception as e:  # pragma: no cover
+except:  # pragma: no cover
     logging.exception("error occurred")
     exit(1)
 
@@ -95,12 +93,12 @@ try:
     if bwClient.connect(ip, port):
 
         while 1:
-            for i in range(0, 5):
+
+            for i in range(0, 5):  # todo implement real data receive
                 time.sleep(1)
                 print("Alarm Nr #" + str(i))
 
-                data = "ZVEI1: 12345"
-                bwPacket = Decoder.decode(data)
+                bwPacket = Decoder.decode("ZVEI1: 12345")
 
                 if bwPacket:
                     bwPacket.printInfo()

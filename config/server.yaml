@@ -8,8 +8,16 @@
 #                     by Bastian Schroll
 
 server:
+  port: 8080
   name: BW3 Server        # name of the BW3 Server instance
+  useBroadcast: no        # serve server ip on broadcast request
 
+
+## here you can enable needed plugins
+## 0 is disabled
+## all greater than 0 enable the plugin
+## the higher the number the earlier the plugin is called on alarm
+## we call ist Plugin Prioority
 plugins:
   template: 1
 
@@ -45,56 +53,3 @@ router:
 
 - name: Router 2
   route:
-
-#[Server]
-#PORT  = 8080
-#Name  = BW3 Server
-#
-#[FMS]
-#UseLists =
-#Allowed  =
-#Denied   =
-#RegEx    =
-#
-#[POCSAG]
-#UseLists =
-#Allowed  =
-#Denied   =
-#Range    =
-#RegEx    =
-#
-#[ZVEI]
-#UseLists =
-#Allowed  =
-#Denied   =
-#Range    =
-#RegEx    =
-#
-#[Filter]
-#UseDoubleFilter = 0
-#UseRegexFilter  = 0
-#
-#[doubleFilter]
-## max number of entrys to save for comparison
-#MaxEntry   = 30
-## time to ignore same alarm in seconds
-#IgnoreTime = 10
-## include pocsag msg in comparison
-#CheckMsg   = 0
-#
-#[regexFilter]
-#
-#[Description]
-## load CSV description files with short and lon description
-#fms    = 0
-#pocsag = 0
-#zvei   = 0
-#
-#[Plugins]
-## here you can enable needed plugins
-## 0 is disabled
-## all greater than 0 enable the plugin
-## the higher the number the earlier the plugin is called on alarm
-## we call ist Plugin Prioority
-#template = 1
-
