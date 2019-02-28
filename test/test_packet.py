@@ -55,13 +55,3 @@ class Test_Packet:
         """!set and get a field"""
         buildPacket.set("testField", "test")
         assert buildPacket.get("testField") is "test"
-
-    def test_addClientData(self, buildPacket):
-        """!add client data to packet"""
-        buildPacket.addClientData()
-        assert buildPacket.get("clientVersion")
-
-    def test_addServerData(self, buildPacket):
-        """!add server data to packet"""
-        buildPacket.addServerData()
-        assert buildPacket.get("serverVersion")
