@@ -40,12 +40,15 @@ class TCPClient:
         @param port: Server Port (8080)
         @return True or False"""
         try:
-            self._sock = socket
-            self._sock.setdefaulttimeout(self._timeout)
-            self._sock = socket.create_connection((host, port))
-
-            logging.debug("connected to %s:%s", host, port)
-            return True
+            if not self.isConnected:
+                self._sock = socket
+                self._sock.setdefaulttimeout(self._timeout)
+                self._sock = socket.create_connection((host, port))
+                logging.debug("connected to %s:%s", host, port)
+                return True
+            else:
+                logging.warning("client always connected")
+                return True
         except ConnectionRefusedError:
             logging.error("cannot connect to %s:%s - connection refused", host, port)
             return False
@@ -61,9 +64,14 @@ class TCPClient:
 
         @return True or False"""
         try:
-            self._sock.close()
-            logging.debug("disconnected")
-            return True
+            if self.isConnected:
+                self._sock.close()
+                self._sock = None
+                logging.debug("disconnected")
+                return True
+            else:
+                logging.warning("client not connected")
+                return True
         except AttributeError:
             logging.error("cannot disconnect - no connection established")
             return False
@@ -111,3 +119,10 @@ class TCPClient:
         except:  # pragma: no cover
             logging.exception("error while receiving")
             return False
+
+    @property
+    def isConnected(self):
+        """!Property of client connected state"""
+        if self._sock:
+            return True
+        return False

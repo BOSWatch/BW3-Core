@@ -20,7 +20,7 @@ import os
 import time
 import importlib
 
-from boswatch.config import Config
+from boswatch import configYaml
 from boswatch.utils import paths
 
 logging.debug("- %s loaded", __name__)
@@ -33,7 +33,7 @@ class PluginManager:
 
     def __init__(self):
         """!init comment"""
-        self._config = Config()
+        self._config = configYaml.loadConfigSharepoint("serverConfig")
         self._pluginList = []
 
     def searchPluginDir(self):
@@ -45,7 +45,7 @@ class PluginManager:
             if not os.path.isdir(location) or not name + ".py" in os.listdir(location):
                 continue
 
-            pluginPriority = self._config.getInt("Plugins", name, "serverConfig")
+            pluginPriority = self._config["plugins"][name]
 
             if pluginPriority is None:
                 logging.warning("no entry in server config for plugin: %s", name)

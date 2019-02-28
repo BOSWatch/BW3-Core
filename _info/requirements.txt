@@ -1,6 +1,8 @@
 # for pip to install all needed
 # called with 'pip -r requirements.txt'
 
+pyyaml
+
 pytest
 pytest-cov
 pytest-pep8

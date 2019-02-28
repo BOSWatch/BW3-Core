@@ -55,7 +55,7 @@ class Test_ServerClient:
     def test_clientDisconnectFailed(self):
         """!Disconnect while no connection is established"""
         self.testClient = TCPClient()
-        assert not self.testClient.disconnect()
+        assert self.testClient.disconnect()
 
     def test_clientTransmitFailed(self):
         """!Transmit while no connection is established"""
@@ -135,7 +135,7 @@ class Test_ServerClient:
     def test_serverStopFailed(self, useServer):
         """!Test to stop a stopped server"""
         assert self.testServer.stop()
-        assert not self.testServer.stop()
+        assert self.testServer.stop()
 
     def test_serverDoubleStart(self):
         """!Test to start the server twice"""
@@ -145,7 +145,7 @@ class Test_ServerClient:
         assert self.testServer1.start()
         assert not self.testServer2.start()
         assert self.testServer1.stop()
-        assert not self.testServer2.stop()
+        assert self.testServer2.stop()
 
     def test_serverGetOutput(self, useServer):
         """!Send data to server with 2 clients, check '[ack]' and data on server queue"""

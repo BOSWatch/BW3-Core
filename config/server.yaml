@@ -1,0 +1,55 @@
+# -*- coding: utf-8 -*-
+#    ____  ____  ______       __      __       __       _____
+#   / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
+#  / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
+# / /_/ / /_/ /___/ /| |/ |/ / /_/ / /_/ /__/ / / /   ___/ /
+#/_____/\____//____/ |__/|__/\__,_/\__/\___/_/ /_/   /____/
+#                German BOS Information Script
+#                     by Bastian Schroll
+
+server:
+  port: 8080
+  name: BW3 Server        # name of the BW3 Server instance
+  useBroadcast: no        # serve server ip on broadcast request
+
+
+## here you can enable needed plugins
+## 0 is disabled
+## all greater than 0 enable the plugin
+## the higher the number the earlier the plugin is called on alarm
+## we call ist Plugin Prioority
+plugins:
+  template: 1
+
+filter:
+  doubleFilter:
+    maxEntry: 30
+    ignoreTime: 10
+    checkMsg: no
+
+
+alarmRouter:
+- Router 1
+- Router 2
+
+router:
+
+- name: Router 1
+  route:
+  - type: module
+    name: doubleFilter
+    config:
+      maxEntry: 30
+      ignoreTime: 10
+      checkMsg: no
+  - type: plugin
+    name: mysql
+    config:
+      user: test
+      pass: test
+      db: test
+  - type: router
+    name: Router 2
+
+- name: Router 2
+  route:
