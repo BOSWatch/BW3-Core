@@ -48,11 +48,7 @@ try:
     from boswatch import configYaml
     from boswatch.network.server import TCPServer
     from boswatch.packet.packet import Packet
-    from boswatch.plugin.pluginManager import PluginManager
-    from boswatch.descriptor.descriptor import Descriptor
-    from boswatch.filter.doubeFilter import DoubleFilter
     from boswatch.utils import header
-    from boswatch.network.broadcast import BroadcastClient
     from boswatch.network.broadcast import BroadcastServer
 except:  # pragma: no cover
     logging.exception("cannot import modules")

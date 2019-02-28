@@ -112,7 +112,7 @@ class BroadcastServer:
 
         @return True or False"""
         try:
-            if not self._serverThread:
+            if not self.isRunning:
                 logging.debug("start udp broadcast server")
                 self._serverThread = threading.Thread(target=self._listen)
                 self._serverThread.name = "BroadServ"
@@ -136,7 +136,7 @@ class BroadcastServer:
 
         @return True or False"""
         try:
-            if self._serverThread:
+            if self.isRunning:
                 logging.debug("stop udp broadcast server")
                 self._serverShutdown = True
                 return True

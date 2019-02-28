@@ -82,6 +82,10 @@ class TCPServer:
         self._clientsConnectedLock = threading.Lock()
         self._clientsConnected = {}
 
+    def __del__(self):
+        if self.isRunning:
+            self.stop()
+
     def start(self, port=8080):
         """!Start a threaded TCP socket server
 
@@ -93,21 +97,23 @@ class TCPServer:
 
         @return True or False"""
         try:
-            self._server = ThreadedTCPServer(("", port), ThreadedTCPRequestHandler)
-            self._server.timeout = self._timeout
-            self._server.alarmQueue = self._alarmQueue
+            if not self.isRunning:
+                self._server = ThreadedTCPServer(("", port), ThreadedTCPRequestHandler)
+                self._server.timeout = self._timeout
+                self._server.alarmQueue = self._alarmQueue
 
-            self._server.clientsConnctedLock = self._clientsConnectedLock
-            self._server.clientsConnected = self._clientsConnected
+                self._server.clientsConnctedLock = self._clientsConnectedLock
+                self._server.clientsConnected = self._clientsConnected
 
-            self._server_thread = threading.Thread(target=self._server.serve_forever)
-            self._server_thread.name = "Thread-BWServer"
-            self._server_thread.daemon = True
-            self._server_thread.start()
-            logging.debug("TCPServer started in Thread: %s", self._server_thread.name)
-            return True
-        except OSError:
-            logging.exception("server always running?")
+                self._server_thread = threading.Thread(target=self._server.serve_forever)
+                self._server_thread.name = "Thread-BWServer"
+                self._server_thread.daemon = True
+                self._server_thread.start()
+                logging.debug("TCPServer started in Thread: %s", self._server_thread.name)
+                return True
+            else:
+                logging.warning("server always started")
+                return True
         except:  # pragma: no cover
             logging.exception("cannot start the server")
             return False
@@ -117,16 +123,17 @@ class TCPServer:
 
         @return True or False"""
         try:
-            self._server.shutdown()
-            self._server_thread.join()
-            self._server_thread = None
-            self._server.socket.close()
-            self._server = None
-            logging.debug("TCPServer stopped")
-            return True
-        except AttributeError:
-            logging.exception("cannot stop - server not started?")
-            return False
+            if self.isRunning:
+                self._server.shutdown()
+                self._server_thread.join()
+                self._server_thread = None
+                self._server.socket.close()
+                self._server = None
+                logging.debug("TCPServer stopped")
+                return True
+            else:
+                logging.warning("server always stopped")
+                return True
         except:  # pragma: no cover
             logging.exception("cannot stop the server")
             return False
@@ -147,3 +154,10 @@ class TCPServer:
         # todo return full list or write a print/debug method?
         with self._clientsConnectedLock:  # because our list is not threadsafe
             return self._clientsConnected
+
+    @property
+    def isRunning(self):
+        """!Property of server running state"""
+        if self._server:
+            return True
+        return False
