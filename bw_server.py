@@ -47,7 +47,7 @@ try:
     logging.debug("Import BOSWatch module")
     from boswatch.configYaml import ConfigYAML
     from boswatch.network.server import TCPServer
-    from boswatch.packet.packet import Packet
+    from boswatch.packet import Packet
     from boswatch.utils import header
     from boswatch.network.broadcast import BroadcastServer
 except:  # pragma: no cover

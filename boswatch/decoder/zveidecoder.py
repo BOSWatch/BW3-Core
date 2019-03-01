@@ -18,7 +18,7 @@
 import logging
 import re
 
-from boswatch.packet import packet
+from boswatch.packet import Packet
 
 logging.debug("- %s loaded", __name__)
 
@@ -40,7 +40,7 @@ class ZveiDecoder:
         if re.search("[0-9E]{5}", data[7:12]):
             logging.debug("found valid ZVEI")
 
-            bwPacket = packet.Packet()
+            bwPacket = Packet()
             bwPacket.set("mode", "zvei")
             bwPacket.set("zvei", ZveiDecoder._solveDoubleTone(data[7:12]))
 

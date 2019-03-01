@@ -4,7 +4,7 @@
 import logging
 
 from boswatch.configYaml import ConfigYAML
-from boswatch.packet.packet import Packet
+from boswatch.packet import Packet
 
 import importlib
 import copy
