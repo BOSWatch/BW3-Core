@@ -35,7 +35,7 @@ except Exception as e:  # pragma: no cover
 
 
 try:
-    logging.debug("Import python modules")
+    logging.debug("Import python module")
     import argparse
     logging.debug("- argparse")
     # following is temp for testing
@@ -44,14 +44,14 @@ try:
     import threading
     import queue
 
-    logging.debug("Import BOSWatch modules")
-    from boswatch import configYaml
+    logging.debug("Import BOSWatch module")
+    from boswatch.configYaml import ConfigYAML
     from boswatch.network.server import TCPServer
     from boswatch.packet.packet import Packet
     from boswatch.utils import header
     from boswatch.network.broadcast import BroadcastServer
 except:  # pragma: no cover
-    logging.exception("cannot import modules")
+    logging.exception("cannot import module")
     exit(1)
 
 try:
@@ -69,19 +69,21 @@ try:
     parser.add_argument("-c", "--config", help="Name to configuration File", required=True)
     args = parser.parse_args()
 
-    bwConfig = configYaml.loadConfigFile(paths.CONFIG_PATH + args.config, "serverConfig")
-    if bwConfig is None:
+    bwConfig = ConfigYAML()
+    if not bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config):
         logging.error("cannot load config file")
+        exit(1)
 
 except:  # pragma: no cover
     logging.exception("error occurred")
     exit(1)
 
+import router_test
 
 # ############################# begin server system
 try:
 
-    if bwConfig["server"]["useBroadcast"]:
+    if bwConfig.get("server", "useBroadcast", default=False):
         bcServer = BroadcastServer()
         bcServer.start()
 

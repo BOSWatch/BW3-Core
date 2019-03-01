@@ -17,8 +17,6 @@
 import logging
 import time
 
-from boswatch.utils import paths
-from boswatch import configYaml
 from boswatch.utils import wildcard
 
 logging.debug("- %s loaded", __name__)
@@ -29,9 +27,10 @@ class Plugin:
 
     _pluginsActive = 0
 
-    def __init__(self, pluginName):
+    def __init__(self, pluginName, config):
         """!init preload some needed locals and then call onLoad() directly"""
         self._pluginName = pluginName
+        self.config = config
         self._pluginsActive += 1
 
         # to save the packet while alarm is running for other functions
@@ -51,11 +50,6 @@ class Plugin:
         self._setupErrorCount = 0
         self._alarmErrorCount = 0
         self._teardownErrorCount = 0
-
-        if paths.fileExist(paths.PLUGIN_PATH + pluginName + "/" + pluginName + ".yaml"):
-            self.config = configYaml.loadConfigFile(paths.PLUGIN_PATH + pluginName + "/" + pluginName + ".yaml")
-        else:
-            logging.debug("no config for %s found", pluginName)
 
         logging.debug("[%s] onLoad()", pluginName)
         self.onLoad()
@@ -125,6 +119,8 @@ class Plugin:
         # logging.debug("- setup:    %0.2f sec.", self._setupTime)
         # logging.debug("- alarm:    %0.2f sec.", self._alarmTime)
         # logging.debug("- teardown: %0.2f sec.", self._teardownTime)
+
+        return None
 
     def _getStatistics(self):
         """!Returns statistical information's from last plugin run

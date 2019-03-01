@@ -9,13 +9,13 @@
                 German BOS Information Script
                      by Bastian Schroll
 
-@file:        template.py
+@file:        template_module.py
 @date:        14.01.2018
 @author:      Bastian Schroll
 @description: Template Plugin File
 """
 import logging
-from boswatch.plugin.plugin import Plugin
+from plugin.plugin import Plugin
 
 # ###################### #
 # Custom plugin includes #
@@ -27,10 +27,9 @@ logging.debug("- %s loaded", __name__)
 
 class BoswatchPlugin(Plugin):
     """!Description of the Plugin"""
-    def __init__(self):
-        """!Do not change anything here except the PLUGIN NAME in the super() call"""
-        # PLEASE SET YOU PLUGIN NAME HERE !!!!
-        super().__init__("template")
+    def __init__(self, config):
+        """!Do not change anything here!"""
+        super().__init__(__name__, config)  # you can access the config DICT by 'self._config'
 
     def onLoad(self):
         """!Called by import of the plugin"""

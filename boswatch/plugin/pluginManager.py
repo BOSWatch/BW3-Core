@@ -12,7 +12,7 @@
 @file:        pluginManager.py
 @date:        08.01.2018
 @author:      Bastian Schroll
-@description: Plugin manager class to load and call the plugins
+@description: Plugin manager class to load and call the plugin
 @todo must be mostly refactored
 """
 import logging
@@ -27,7 +27,7 @@ logging.debug("- %s loaded", __name__)
 
 
 class PluginManager:
-    """!Plugin manager class to load, manage and call the plugins
+    """!Plugin manager class to load, manage and call the plugin
 
     @todo refactor the class and add documentation"""
 
@@ -37,7 +37,7 @@ class PluginManager:
         self._pluginList = []
 
     def searchPluginDir(self):
-        logging.debug("search for plugins in: %s", paths.PLUGIN_PATH)
+        logging.debug("search for plugin in: %s", paths.PLUGIN_PATH)
         for name in os.listdir(paths.PLUGIN_PATH):
             location = os.path.join(paths.PLUGIN_PATH, name)
 
@@ -45,7 +45,7 @@ class PluginManager:
             if not os.path.isdir(location) or not name + ".py" in os.listdir(location):
                 continue
 
-            pluginPriority = self._config["plugins"][name]
+            pluginPriority = self._config["plugin"][name]
 
             if pluginPriority is None:
                 logging.warning("no entry in server config for plugin: %s", name)
@@ -60,7 +60,7 @@ class PluginManager:
         self._pluginList.sort(key=lambda x: x['pluginPriority'], reverse=True)
 
     def importAllPlugins(self):
-        logging.debug("importing all plugins")
+        logging.debug("importing all plugin")
         for item in self._pluginList:
             importPlugin = self._importPlugin(item["pluginName"])
             if importPlugin:
@@ -70,13 +70,13 @@ class PluginManager:
     def _importPlugin(pluginName):
         logging.debug("import plugin: %s", pluginName)
         try:
-            return importlib.import_module("plugins." + pluginName + "." + pluginName)
+            return importlib.import_module("plugin." + pluginName + "." + pluginName)
         except:
             logging.exception("error while loading plugin: %s", pluginName)
             return False
 
     def loadAllPlugins(self):
-        logging.debug("loading all plugins")
+        logging.debug("loading all plugin")
         for item in self._pluginList:
             item["pluginObject"] = None  # todo del or none ???
             item["pluginObject"] = item["pluginImport"].BoswatchPlugin()
@@ -89,7 +89,7 @@ class PluginManager:
         self.printEndStats()
 
     def unloadAllPlugins(self):
-        logging.debug("unload all plugins")
+        logging.debug("unload all plugin")
         for item in self._pluginList:
             #  todo del or None ???
             del item["pluginObject"]  # delete plugin object to force __del__() running

@@ -34,7 +34,7 @@ else:
     LOG_PATH = ROOT_PATH + "log/"
     CONFIG_PATH = ROOT_PATH + "config/"
 
-PLUGIN_PATH = ROOT_PATH + "plugins/"
+PLUGIN_PATH = ROOT_PATH + "plugin/"
 CSV_PATH = ROOT_PATH + "csv/"
 BIN_PATH = ROOT_PATH + "_bin/"
 TEST_PATH = ROOT_PATH + "test/"

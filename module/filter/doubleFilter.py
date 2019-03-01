@@ -18,17 +18,15 @@
 import logging
 import time
 
-from boswatch import configYaml
-
 logging.debug("- %s loaded", __name__)
 
 
 class DoubleFilter:
     """!Double Filter Class"""
 
-    def __init__(self):
+    def __init__(self, config):
         """!init"""
-        self._config = configYaml.loadConfigSharepoint("serverConfig")["filter"]["doubleFilter"]
+        self._config = config
         self._filterLists = {}
 
     def filter(self, bwPacket):

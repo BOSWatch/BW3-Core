@@ -53,7 +53,7 @@ class Router:
                 endpoint.call(bwPacket)
 
 
-# modules
+# module
 double = Module("double")
 descriptor = Module("descriptor")
 # boswatch plugins
@@ -63,7 +63,7 @@ mysql = Plugin("mysql")
 Router1 = Router("R1")
 Router2 = Router("R2")
 
-# Router 1 modules
+# Router 1 module
 Router1.addModule(double)
 Router1.addModule(descriptor)
 Router1.addModule(double)
@@ -74,7 +74,7 @@ Router1.addEndpoint(telegram)
 Router1.addEndpoint(mysql)
 Router1.addEndpoint(Router2)
 
-# Router 2 modules
+# Router 2 module
 Router2.addModule(double)
 Router2.addModule(descriptor)
 # Router 2 endpoints

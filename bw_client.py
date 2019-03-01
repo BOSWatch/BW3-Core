@@ -43,7 +43,7 @@ try:
     import time
 
     logging.debug("Import BOSWatch modules")
-    from boswatch import configYaml
+    from boswatch.configYaml import ConfigYAML
     from boswatch.network.client import TCPClient
     from boswatch.network.broadcast import BroadcastClient
     from boswatch.decoder.decoder import Decoder
@@ -68,26 +68,26 @@ try:
     parser.add_argument("-c", "--config", help="Name to configuration File", required=True)
     args = parser.parse_args()
 
-    bwConfig = configYaml.loadConfigFile(paths.CONFIG_PATH + args.config, "clientConfig")
-    if bwConfig is None:
+    bwConfig = ConfigYAML()
+    if not bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config):
         logging.error("cannot load config file")
+        exit(1)
 
 except:  # pragma: no cover
     logging.exception("error occurred")
     exit(1)
 
-
 # ############################# begin client system
 try:
 
-    if bwConfig["client"]["useBroadcast"]:
+    if bwConfig.get("client", "useBroadcast", default=False):
         broadcastClient = BroadcastClient()
         if broadcastClient.getConnInfo():
             ip = broadcastClient.serverIP
             port = broadcastClient.serverPort
     else:
-        ip = bwConfig["server"]["ip"]
-        port = bwConfig["server"]["port"]
+        ip = bwConfig.get("server", "ip", default="127.0.0.1")
+        port = bwConfig.get("server", "port", default="8080")
 
     bwClient = TCPClient()
     if bwClient.connect(ip, port):
