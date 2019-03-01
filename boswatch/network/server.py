@@ -22,7 +22,7 @@ import time
 logging.debug("- %s loaded", __name__)
 
 
-class ThreadedTCPRequestHandler(socketserver.ThreadingMixIn, socketserver.BaseRequestHandler):
+class _ThreadedTCPRequestHandler(socketserver.ThreadingMixIn, socketserver.BaseRequestHandler):
     """!ThreadedTCPRequestHandler class for our TCPServer class."""
 
     def handle(self):
@@ -60,7 +60,7 @@ class ThreadedTCPRequestHandler(socketserver.ThreadingMixIn, socketserver.BaseRe
             logging.info("Client disconnected: %s", self.client_address[0])
 
 
-class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+class _ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     """!ThreadedTCPServer class for our TCPServer class."""
     pass
 
@@ -98,7 +98,7 @@ class TCPServer:
         @return True or False"""
         try:
             if not self.isRunning:
-                self._server = ThreadedTCPServer(("", port), ThreadedTCPRequestHandler)
+                self._server = _ThreadedTCPServer(("", port), _ThreadedTCPRequestHandler)
                 self._server.timeout = self._timeout
                 self._server.alarmQueue = self._alarmQueue
 

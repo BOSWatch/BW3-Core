@@ -23,17 +23,17 @@ logging.debug("- %s loaded", __name__)
 class ConfigYAML:
 
     def __init__(self, config=None):
-        self.__config = config
+        self._config = config
 
     def __iter__(self):
-        for item in self.__config:
+        for item in self._config:
             if type(item) is list or type(item) is dict:
                 yield ConfigYAML(item)
             else:
                 yield item
 
     def __str__(self):
-        return str(self.__config)
+        return str(self._config)
 
     def loadConfigFile(self, configPath):
         """!loads a given configuration
@@ -44,14 +44,14 @@ class ConfigYAML:
         try:
             with open(configPath) as file:
                 # use safe_load instead load
-                self.__config = yaml.safe_load(file)
+                self._config = yaml.safe_load(file)
             return True
         except:  # pragma: no cover
             logging.exception("cannot load config file")
             return False
 
     def get(self, *args, default=None):
-        tmp = self.__config
+        tmp = self._config
         try:
             for arg in args:
                 tmp = tmp.get(arg, default)

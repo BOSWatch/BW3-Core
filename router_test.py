@@ -5,7 +5,6 @@ from boswatch.configYaml import ConfigYAML
 from boswatch.packet import Packet
 from boswatch.router import RouterManager
 
-
 config = ConfigYAML()
 config.loadConfigFile("config/server.yaml")
 
@@ -19,6 +18,9 @@ routMan.buildRouter(config)
 
 print()
 routMan.runRouter(config.get("alarmRouter"), bwPack)
+
+print()
+routMan.runRouter("Router 2", bwPack)
 
 
 print()

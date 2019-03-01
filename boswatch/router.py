@@ -24,56 +24,57 @@ logging.debug("- %s loaded", __name__)
 
 class _Router:
     def __init__(self, name):
-        self.__name = name
-        self.__route = []
-        logging.debug("[%s] new router", self.__name)
+        self._name = name
+        self._route = []
+        logging.debug("[%s] new router", self._name)
 
     def addRoute(self, route):
-        logging.debug("[%s] add route: %s", self.__name, route)
-        self.__route.append(route)
+        logging.debug("[%s] add route: %s", self._name, route)
+        self._route.append(route)
 
     def runRouter(self, bwPacket):
-        logging.debug("[%s] started", self.__name)
-        for routeCall in self.__route:
-            logging.debug("[%s] -> run route: %s", self.__name, routeCall)
+        logging.debug("[%s] started", self._name)
+        for routeCall in self._route:
+            logging.debug("[%s] -> run route: %s", self._name, routeCall)
             bwPacket_tmp = routeCall(copy.deepcopy(bwPacket))  # copy bwPacket to prevent edit the original
 
             if bwPacket_tmp is None:  # returning None doesnt change the bwPacket
                 continue
 
             if bwPacket_tmp is False:  # returning False stops the router immediately
-                logging.debug("[%s] stopped", self.__name)
+                logging.debug("[%s] stopped", self._name)
                 break
 
             bwPacket = bwPacket_tmp
-            logging.debug("[%s] <- bwPacket returned: %s", self.__name, bwPacket)
-        logging.debug("[%s] ended", self.__name)
+            logging.debug("[%s] <- bwPacket returned: %s", self._name, bwPacket)
+        logging.debug("[%s] ended", self._name)
         return bwPacket
 
     @property
     def name(self):
-        return self.__name
+        return self._name
 
     @property
     def route(self):
-        return self.__route
+        return self._route
 
 
 class RouterManager:
     def __init__(self):
-        self.__routerDict = {}
+        self._routerDict = {}
 
     def __del__(self):
-        del self.__routerDict
+        # destroy all routers (also destroys all instances of modules/plugins)
+        del self._routerDict
 
     def buildRouter(self, config):
-        self.__routerDict = {}  # all routers and loaded modules/plugins would be unloaded
+        self._routerDict = {}  # all routers and instances of modules/plugins would be destroyed
         logging.debug("build routers")
 
         # first we have to init all routers
         # because a router can be a valid target and we need his reference
         for router in config.get("router"):
-            self.__routerDict[router.get("name")] = _Router(router.get("name"))
+            self._routerDict[router.get("name")] = _Router(router.get("name"))
 
         for router in config.get("router"):
             for route in router.get("route"):
@@ -90,32 +91,35 @@ class RouterManager:
                     if routeType == "plugin":
                         importedFile = importlib.import_module(routeType + "." + routeName)
                         loadedClass = importedFile.BoswatchPlugin(route.get("config"))
-                        self.__routerDict[routerName].addRoute(loadedClass._run)
+                        self._routerDict[routerName].addRoute(loadedClass._run)
 
                     elif routeType == "module":
                         importedFile = importlib.import_module(routeType + "." + routeName)
                         loadedClass = importedFile.BoswatchModule(route.get("config"))
-                        self.__routerDict[routerName].addRoute(loadedClass._run)
+                        self._routerDict[routerName].addRoute(loadedClass._run)
 
                     elif routeType == "router":
-                        self.__routerDict[routerName].addRoute(self.__routerDict[routeName].runRouter)
+                        self._routerDict[routerName].addRoute(self._routerDict[routeName].runRouter)
 
                     else:
                         logging.warning("unknown type: %s", routeType)
 
                 except ModuleNotFoundError:
                     logging.error("%s not found: %s", route.get("type"), route.get("name"))
-                    
+
         logging.debug("finished building routers")
         self._showRouterRoute()
 
     def runRouter(self, routerList, bwPacket):
-        for router in routerList:
-            if router in self.__routerDict:
-                self.__routerDict[router].runRouter(bwPacket)
+        if type(routerList) is str:  # convert single string name to list
+            routerList = [routerList]
+
+        for routerName in routerList:
+            if routerName in self._routerDict:
+                self._routerDict[routerName].runRouter(bwPacket)
 
     def _showRouterRoute(self):
-        for name, router in self.__routerDict.items():
+        for name, router in self._routerDict.items():
             logging.debug("Route for %s", name)
-            for route in router.route:
-                logging.debug(" | %s", route)
+            for routePoint in router.route:
+                logging.debug(" | %s", routePoint)
