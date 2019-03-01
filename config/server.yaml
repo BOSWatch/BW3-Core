@@ -14,6 +14,7 @@ server:
 
 alarmRouter:
 - Router 1
+- Test
 
 router:
 

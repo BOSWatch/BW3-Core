@@ -1,84 +1,104 @@
-class Module:
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""!
+    ____  ____  ______       __      __       __       _____
+   / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
+  / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
+ / /_/ / /_/ /___/ /| |/ |/ / /_/ / /_/ /__/ / / /   ___/ /
+/_____/\____//____/ |__/|__/\__,_/\__/\___/_/ /_/   /____/
+                German BOS Information Script
+                     by Bastian Schroll
+
+@file:        router.py
+@date:        01.03.2019
+@author:      Bastian Schroll
+@description: Class for the BOSWatch packet router
+"""
+import logging
+import copy
+import importlib
+
+logging.debug("- %s loaded", __name__)
+
+
+class _Router:
     def __init__(self, name):
         self.__name = name
+        self.__route = []
+        logging.debug("add new router: %s", self.__name)
 
-    def run(self, bwPacket):
-        print("-- run module:", self.__name)
+    def addRoute(self, route):
+        logging.debug("[%s] add route: %s", self.__name, route)
+        self.__route.append(route)
+
+    def runRouter(self, bwPacket):
+        logging.debug("[%s] started", self.__name)
+        for routeCall in self.__route:
+            logging.debug("[%s] -> run route: %s", self.__name, routeCall)
+            bwPacket_tmp = routeCall(copy.deepcopy(bwPacket))  # copy bwPacket to prevent edit the original
+
+            if bwPacket_tmp is None:  # returning None doesnt change the bwPacket
+                continue
+
+            if bwPacket_tmp is False:  # returning False stops the router immediately
+                logging.debug("[%s] stopped", self.__name)
+                break
+
+            bwPacket = bwPacket_tmp
+            logging.debug("[%s] <- bwPacket returned: %s", self.__name, bwPacket)
+        logging.debug("[%s] ended", self.__name)
         return bwPacket
 
+    @property
+    def name(self):
+        return self.__name
 
-class Plugin:
-    def __init__(self, name):
-        self.__name = name
-
-    def run(self, bwPacket):
-        print("-- run plugin:", self.__name)
-
-
-class Router:
-    def __init__(self, name):
-        self.__name = name
-        self.__modules = []
-        self.__endpoints = []
-        self.__bwPacket = None
-
-    def addModule(self, module):
-        if type(module) is Module:
-            self.__modules.append(module)
-        else:
-            print("not a instance of module class:", module)
-
-    def addEndpoint(self, endpoint):
-        if (type(endpoint) is Plugin) or (type(endpoint) is Router):
-            self.__endpoints.append(endpoint)
-        else:
-            print("not a instance of plugin class:", endpoint)
-
-    def call(self, bwPacket):
-        # bwPacket has to be copied for each router
-        # make it possible to run more routers parallel
-        print("call router:", self.__name)
-        for module in self.__modules:
-            bwPacket = module.run(bwPacket)
-        self.__callEndpoints(bwPacket)
-        print("router finished:", self.__name)
-
-    def __callEndpoints(self, bwPacket):
-        print("call endpoints:", self.__name)
-        for endpoint in self.__endpoints:
-            if type(endpoint) is not Router:
-                endpoint.run(bwPacket)
-            else:
-                print("> endpoint is a new router")
-                endpoint.call(bwPacket)
+    @property
+    def route(self):
+        return self.__route
 
 
-# module
-double = Module("double")
-descriptor = Module("descriptor")
-# boswatch plugins
-telegram = Plugin("telegram")
-mysql = Plugin("mysql")
+class RouterManager:
+    def __init__(self):
+        self.__routerDict = {}
 
-Router1 = Router("R1")
-Router2 = Router("R2")
+    def __del__(self):
+        del self.__routerDict
+        
+    def buildRouter(self, config):
+        self.__routerDict = {}  # all routers and loaded modules/plugins would be unloaded
+        logging.debug("build routers")
 
-# Router 1 module
-Router1.addModule(double)
-Router1.addModule(descriptor)
-Router1.addModule(double)
-Router1.addModule(double)
-Router1.addModule(descriptor)
-# Router 1 endpoints
-Router1.addEndpoint(telegram)
-Router1.addEndpoint(mysql)
-Router1.addEndpoint(Router2)
+        # first we have to init all routers
+        # because a router can be a valid target and we need his reference
+        for router in config.get("router"):
+            self.__routerDict[router.get("name")] = _Router(router.get("name"))
+    
+        for router in config.get("router"):
+            for route in router.get("route"):
+    
+                if route.get("type") == "plugin":
+                    importedFile = importlib.import_module(route.get("type") + "." + route.get("name"))
+                    loadedClass = importedFile.BoswatchPlugin(route.get("config"))
+                    self.__routerDict[router.get("name")].addRoute(loadedClass._run)
+    
+                elif route.get("type") == "module":
+                    importedFile = importlib.import_module(route.get("type") + "." + route.get("name"))
+                    loadedClass = importedFile.BoswatchModule(route.get("config"))
+                    self.__routerDict[router.get("name")].addRoute(loadedClass._run)
+    
+                elif route.get("type") == "router":
+                    self.__routerDict[router.get("name")].addRoute(self.__routerDict[route.get("name")].runRouter)
 
-# Router 2 module
-Router2.addModule(double)
-Router2.addModule(descriptor)
-# Router 2 endpoints
-Router2.addEndpoint(telegram)
-Router2.addEndpoint(mysql)
+    def runRouter(self, routerList, bwPacket):
+        for router in routerList:
+            if router in self.__routerDict:
+                self.__routerDict[router].runRouter(bwPacket)
 
-Router1.call("Test123")
+    def showRouterRoute(self):
+        for name, router in self.__routerDict.items():
+            logging.debug("Route for %s", name)
+            for route in router.route:
+                logging.debug("- %s", route)
+
+
