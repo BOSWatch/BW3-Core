@@ -17,25 +17,22 @@ alarmRouter:
 - Test
 
 router:
-
-- name: Router 1
-  route:
-  - type: module
-    name: template_module
-    config:
-      maxEntry: 30
-      ignoreTime: 10
-      checkMsg: no
-  - type: router
-    name: Router 2
-  - type: plugin
-    name: template_plugin
-    config:
-      user: test
-      pass: test
-      db: test
-
-- name: Router 2
-  route:
-    - type: module
-      name: template_module
+  - name: Router 1
+    route:
+      - type: module
+        name: template_module
+        config:
+          maxEntry: 30
+          ignoreTime: 10
+          checkMsg: no
+      - type: router
+        name: Router 2
+      - type: plugin
+        name: template_plugin
+        config:
+          user: test
+          pass: test
+  - name: Router 2
+    route:
+      - type: module
+        name: template_module

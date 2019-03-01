@@ -67,16 +67,24 @@ class RouterManager:
         # destroy all routers (also destroys all instances of modules/plugins)
         del self._routerDict
 
-    def buildRouter(self, config):
+    def buildRouter(self, config):  # todo validation
         self._routerDict = {}  # all routers and instances of modules/plugins would be destroyed
+        routerDict_tmp = {}
         logging.debug("build routers")
 
         # first we have to init all routers
         # because a router can be a valid target and we need his reference
         for router in config.get("router"):
-            self._routerDict[router.get("name")] = _Router(router.get("name"))
+            if router.get("name") in self._routerDict:
+                logging.error("duplicated router name: %s", router.get("name"))
+                return False
+            routerDict_tmp[router.get("name")] = _Router(router.get("name"))
 
         for router in config.get("router"):
+            if router.get("name") is None or router.get("route") is None:
+                logging.error("name or route not found in router: %s", router)
+                return False
+
             for route in router.get("route"):
 
                 routerName = router.get("name")
@@ -84,31 +92,35 @@ class RouterManager:
                 routeName = route.get("name")
 
                 if routeType is None or routeName is None:
-                    logging.error("type or name error in config: %s", route)
-                    continue
+                    logging.error("type or name not found in route: %s", route)
+                    return False
 
                 try:
                     if routeType == "plugin":
                         importedFile = importlib.import_module(routeType + "." + routeName)
                         loadedClass = importedFile.BoswatchPlugin(route.get("config"))
-                        self._routerDict[routerName].addRoute(loadedClass._run)
+                        routerDict_tmp[routerName].addRoute(loadedClass._run)
 
                     elif routeType == "module":
                         importedFile = importlib.import_module(routeType + "." + routeName)
                         loadedClass = importedFile.BoswatchModule(route.get("config"))
-                        self._routerDict[routerName].addRoute(loadedClass._run)
+                        routerDict_tmp[routerName].addRoute(loadedClass._run)
 
                     elif routeType == "router":
-                        self._routerDict[routerName].addRoute(self._routerDict[routeName].runRouter)
+                        routerDict_tmp[routerName].addRoute(routerDict_tmp[routeName].runRouter)
 
                     else:
-                        logging.warning("unknown type: %s", routeType)
+                        logging.error("unknown type '%s' in %s", routeType, route)
+                        return False
 
                 except ModuleNotFoundError:
                     logging.error("%s not found: %s", route.get("type"), route.get("name"))
+                    return False
 
         logging.debug("finished building routers")
+        self._routerDict = routerDict_tmp
         self._showRouterRoute()
+        return True
 
     def runRouter(self, routerList, bwPacket):
         if type(routerList) is str:  # convert single string name to list
