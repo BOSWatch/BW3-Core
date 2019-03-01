@@ -38,11 +38,13 @@ try:
     logging.debug("Import python module")
     import argparse
     logging.debug("- argparse")
+    import queue
+    logging.debug("- queue")
+
     # following is temp for testing
     import time
     import sys
     import threading
-    import queue
 
     logging.debug("Import BOSWatch module")
     from boswatch.configYaml import ConfigYAML

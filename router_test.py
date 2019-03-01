@@ -16,8 +16,8 @@ print()
 routMan = RouterManager()
 
 routMan.buildRouter(config)
+
 print()
-routMan.showRouterRoute()
 routMan.runRouter(config.get("alarmRouter"), bwPack)
 
 
