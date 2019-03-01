@@ -81,4 +81,4 @@ for alaRouter in config.get("alarmRouter"):
     routerList[str(alaRouter)].call(bwPack)
 
 
-exit(0)
+#exit(0)

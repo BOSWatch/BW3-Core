@@ -16,7 +16,7 @@
 """
 import logging
 
-import boswatch.filter.doubeFilter
+from module.filter.doubleFilter import DoubleFilter
 
 
 class Test_DoubleFilter:

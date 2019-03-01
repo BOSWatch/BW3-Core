@@ -16,9 +16,9 @@
 """
 import logging
 
-from boswatch.descriptor.descriptor import Descriptor
-from boswatch.descriptor.descriptor import DescriptionList
-from boswatch.packet.packet import Packet
+from module.descriptor import Descriptor
+from module.descriptor import DescriptionList
+from boswatch.packet import Packet
 
 
 class Test_Descriptor:

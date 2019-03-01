@@ -17,7 +17,7 @@
 import logging
 import pytest
 
-from boswatch.packet.packet import Packet
+from boswatch.packet import Packet
 
 
 class Test_Packet:

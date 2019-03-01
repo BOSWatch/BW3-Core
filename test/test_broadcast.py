@@ -15,7 +15,6 @@
 @description: Unittests for BOSWatch. File must be _run as "pytest" unittest
 """
 import logging
-import time
 import pytest
 
 from boswatch.network.broadcast import BroadcastServer
