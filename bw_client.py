@@ -20,73 +20,59 @@ if not paths.makeDirIfNotExist(paths.LOG_PATH):
     print("cannot find/create log directory: %s", paths.LOG_PATH)
     exit(1)
 
-try:
-    import logging
-    import logging.config
+import logging.config
+logging.config.fileConfig(paths.CONFIG_PATH + "logger_client.ini")
+logging.debug("")
+logging.debug("######################## NEW LOG ############################")
+logging.debug("BOSWatch client has started ...")
 
-    logging.config.fileConfig(paths.CONFIG_PATH + "logger_client.ini")
-    logging.debug("")
-    logging.debug("######################## NEW LOG ############################")
-    logging.debug("BOSWatch client has started ...")
-except Exception as e:  # pragma: no cover
-    print("cannot load logger")
-    print(e)
+
+logging.debug("Import python modules")
+import argparse
+logging.debug("- argparse")
+import subprocess
+logging.debug("- subprocess")
+import time
+logging.debug("- time")
+
+logging.debug("Import BOSWatch modules")
+from boswatch.configYaml import ConfigYAML
+from boswatch.network.client import TCPClient
+from boswatch.network.broadcast import BroadcastClient
+from boswatch.decoder.decoder import Decoder
+from boswatch.utils import header
+
+
+header.logoToLog()
+header.infoToLog()
+
+logging.debug("parse args")
+# With -h or --help you get the Args help
+parser = argparse.ArgumentParser(prog="bw_client.py",
+                                 description="""BOSWatch is a Python Script to receive and
+                                 decode german BOS information with rtl_fm and multimon-NG""",
+                                 epilog="""More options you can find in the extern client.ini
+                                 file in the folder /config""")
+parser.add_argument("-c", "--config", help="Name to configuration File", required=True)
+args = parser.parse_args()
+
+bwConfig = ConfigYAML()
+if not bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config):
+    logging.error("cannot load config file")
     exit(1)
 
-try:
-    logging.debug("Import python modules")
-    import argparse
-    logging.debug("- argparse")
-    import subprocess
-    logging.debug("- subprocess")
-    # following is temp for testing
-    import time
-
-    logging.debug("Import BOSWatch modules")
-    from boswatch.configYaml import ConfigYAML
-    from boswatch.network.client import TCPClient
-    from boswatch.network.broadcast import BroadcastClient
-    from boswatch.decoder.decoder import Decoder
-    from boswatch.utils import header
-
-except:  # pragma: no cover
-    logging.exception("cannot import modules")
-    exit(1)
-
-try:
-    header.logoToLog()
-    header.infoToLog()
-
-    logging.debug("parse args")
-    # With -h or --help you get the Args help
-    parser = argparse.ArgumentParser(prog="bw_client.py",
-                                     description="""BOSWatch is a Python Script to receive and
-                                     decode german BOS information with rtl_fm and multimon-NG""",
-                                     epilog="""More options you can find in the extern client.ini
-                                     file in the folder /config""")
-    parser.add_argument("-c", "--config", help="Name to configuration File", required=True)
-    args = parser.parse_args()
-
-    bwConfig = ConfigYAML()
-    if not bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config):
-        logging.error("cannot load config file")
-        exit(1)
-
-except:  # pragma: no cover
-    logging.exception("error occurred")
-    exit(1)
 
 # ############################# begin client system
 try:
+
+    ip = bwConfig.get("server", "ip", default="127.0.0.1")
+    port = bwConfig.get("server", "port", default="8080")
 
     if bwConfig.get("client", "useBroadcast", default=False):
         broadcastClient = BroadcastClient()
         if broadcastClient.getConnInfo():
             ip = broadcastClient.serverIP
             port = broadcastClient.serverPort
-    else:
-        ip = bwConfig.get("server", "ip", default="127.0.0.1")
-        port = bwConfig.get("server", "port", default="8080")
 
     bwClient = TCPClient()
     if bwClient.connect(ip, port):
