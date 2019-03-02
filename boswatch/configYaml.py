@@ -36,7 +36,7 @@ class ConfigYAML:
         return str(self._config)
 
     def loadConfigFile(self, configPath):
-        """!loads a given configuration
+        """!loads a given configuration file
 
         @param configPath: Path to the config file
         @return True or False"""

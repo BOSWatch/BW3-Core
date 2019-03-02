@@ -53,8 +53,6 @@ class _ThreadedTCPRequestHandler(socketserver.ThreadingMixIn, socketserver.BaseR
 
         except (ConnectionResetError, ConnectionAbortedError):  # pragma: no cover
             logging.debug("%s connection closed", req_name)
-        except:  # pragma: no cover
-            logging.exception("%s error while receiving", req_name)
         finally:
             del self.server.clientsConnected[threading.current_thread().name]
             logging.info("Client disconnected: %s", self.client_address[0])
@@ -96,47 +94,39 @@ class TCPServer:
         @param port: Server Port (8080)
 
         @return True or False"""
-        try:
-            if not self.isRunning:
-                self._server = _ThreadedTCPServer(("", port), _ThreadedTCPRequestHandler)
-                self._server.timeout = self._timeout
-                self._server.alarmQueue = self._alarmQueue
+        if not self.isRunning:
+            self._server = _ThreadedTCPServer(("", port), _ThreadedTCPRequestHandler)
+            self._server.timeout = self._timeout
+            self._server.alarmQueue = self._alarmQueue
 
-                self._server.clientsConnctedLock = self._clientsConnectedLock
-                self._server.clientsConnected = self._clientsConnected
+            self._server.clientsConnctedLock = self._clientsConnectedLock
+            self._server.clientsConnected = self._clientsConnected
 
-                self._server_thread = threading.Thread(target=self._server.serve_forever)
-                self._server_thread.name = "Thread-BWServer"
-                self._server_thread.daemon = True
-                self._server_thread.start()
-                logging.debug("TCPServer started in Thread: %s", self._server_thread.name)
-                return True
-            else:
-                logging.warning("server always started")
-                return True
-        except:  # pragma: no cover
-            logging.exception("cannot start the server")
-            return False
+            self._server_thread = threading.Thread(target=self._server.serve_forever)
+            self._server_thread.name = "Thread-BWServer"
+            self._server_thread.daemon = True
+            self._server_thread.start()
+            logging.debug("TCPServer started in Thread: %s", self._server_thread.name)
+            return True
+        else:
+            logging.warning("server always started")
+            return True
 
     def stop(self):
         """!Stops the TCP socket server
 
         @return True or False"""
-        try:
-            if self.isRunning:
-                self._server.shutdown()
-                self._server_thread.join()
-                self._server_thread = None
-                self._server.socket.close()
-                self._server = None
-                logging.debug("TCPServer stopped")
-                return True
-            else:
-                logging.warning("server always stopped")
-                return True
-        except:  # pragma: no cover
-            logging.exception("cannot stop the server")
-            return False
+        if self.isRunning:
+            self._server.shutdown()
+            self._server_thread.join()
+            self._server_thread = None
+            self._server.socket.close()
+            self._server = None
+            logging.debug("TCPServer stopped")
+            return True
+        else:
+            logging.warning("server always stopped")
+            return True
 
     def countClientsConnected(self):
         """!Number of currently connected Clients

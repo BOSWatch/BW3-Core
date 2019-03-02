@@ -42,7 +42,7 @@ class NetCheck:
             logging.debug("%s is reachable", self._hostname)
             self._connectionState = True
             return True
-        except:
+        except:  # todo find right exception type
             logging.warning("%s is not reachable", self._hostname)
             self._connectionState = False
             return False

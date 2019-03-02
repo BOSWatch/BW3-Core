@@ -68,8 +68,6 @@ class BroadcastClient:
                     return True
             except socket.timeout:  # nothing received - retry
                 logging.debug("no magic packet received")
-            except:  # pragma: no cover
-                logging.exception("error on getting connection info")
         logging.warning("cannot fetch connection info after %d tries", sendPackages)
         return False
 
@@ -135,17 +133,16 @@ class BroadcastServer:
         But function returns immediately.
 
         @return True or False"""
-        try:
-            if self.isRunning:
-                logging.debug("stop udp broadcast server")
-                self._serverShutdown = True
-                return True
-            else:
-                logging.warning("udp broadcast server always stopped")
-                return True
-        except:  # pragma: no cover
-            logging.exception("cannot stop udp broadcast server thread")
-            return False
+
+        if self.isRunning:
+            logging.debug("stop udp broadcast server")
+            self._serverShutdown = True
+            return True
+        else:
+            logging.warning("udp broadcast server always stopped")
+            return True
+
+        return False
 
     def _listen(self):
         """!Broadcast server worker thread
@@ -166,8 +163,6 @@ class BroadcastServer:
                     self._socket.sendto("<BW3-Result>;".encode() + str(self._servePort).encode(), address)
             except socket.timeout:
                 continue  # timeout is accepted (not block at recvfrom())
-            except:  # pragma: no cover
-                logging.exception("error while listening for clients")
         self._serverThread = None
         logging.debug("udp broadcast server stopped")
 

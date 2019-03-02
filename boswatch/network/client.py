@@ -27,11 +27,8 @@ class TCPClient:
         """!Create a new instance
 
         @param timeout: timeout for the client in sec. (3)"""
-        try:
-            self._sock = None
-            self._timeout = timeout
-        except:  # pragma: no cover
-            logging.exception("cannot create a TCPClient")
+        self._sock = None
+        self._timeout = timeout
 
     def connect(self, host="localhost", port=8080):
         """!Connect to the server
@@ -51,13 +48,9 @@ class TCPClient:
                 return True
         except ConnectionRefusedError:
             logging.error("cannot connect to %s:%s - connection refused", host, port)
-            return False
         except socket.timeout:  # pragma: no cover
             logging.warning("cannot connect to %s:%s - timeout after %s sec", host, port, self._timeout)
-            return False
-        except:  # pragma: no cover
-            logging.exception("cannot connect to %s:%s", host, port)
-            return False
+        return False
 
     def disconnect(self):
         """!Disconnect from the server
@@ -74,10 +67,7 @@ class TCPClient:
                 return True
         except AttributeError:
             logging.error("cannot disconnect - no connection established")
-            return False
-        except:  # pragma: no cover
-            logging.exception("error while disconnecting")
-            return False
+         return False
 
     def transmit(self, data):
         """!Send a data packet to the server
@@ -91,13 +81,9 @@ class TCPClient:
             return True
         except AttributeError:
             logging.error("cannot transmit - no connection established")
-            return False
         except ConnectionResetError:
             logging.error("cannot transmit - host closed connection")
-            return False
-        except:  # pragma: no cover
-            logging.exception("error while transmitting")
-            return False
+        return False
 
     def receive(self):
         """!Receive data from the server
@@ -109,16 +95,11 @@ class TCPClient:
             return received
         except AttributeError:
             logging.error("cannot receive - no connection established")
-            return False
         except ConnectionResetError:
             logging.error("cannot receive - host closed connection")
-            return False
         except socket.timeout:  # pragma: no cover
             logging.warning("cannot receive - timeout after %s sec", self._timeout)
-            return False
-        except:  # pragma: no cover
-            logging.exception("error while receiving")
-            return False
+        return False
 
     @property
     def isConnected(self):

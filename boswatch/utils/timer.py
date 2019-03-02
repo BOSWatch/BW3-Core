@@ -46,37 +46,29 @@ class RepeatedTimer:
         """!Start a new timer worker thread
 
         @return True or False"""
-        try:
-            if self._thread is None:
-                self._event.clear()
-                self._thread = Thread(target=self._target)
-                self._thread.name = "RepTim(" + str(self._interval) + ")"
-                self._thread.daemon = True  # start as daemon (thread dies if main program ends)
-                self._thread.start()
-                logging.debug("start repeatedTimer: %s", self._thread.name)
-                return True
-            else:
-                logging.debug("repeatedTimer always started")
-                return True
-        except:  # pragma: no cover
-            logging.exception("cannot start timer worker thread")
-            return False
+        if self._thread is None:
+            self._event.clear()
+            self._thread = Thread(target=self._target)
+            self._thread.name = "RepTim(" + str(self._interval) + ")"
+            self._thread.daemon = True  # start as daemon (thread dies if main program ends)
+            self._thread.start()
+            logging.debug("start repeatedTimer: %s", self._thread.name)
+            return True
+        else:
+            logging.debug("repeatedTimer always started")
+            return True
 
     def stop(self):
         """!Stop the timer worker thread
 
         @return True or False"""
-        try:
-            self._event.set()
-            if self._thread is not None:
-                logging.debug("stop repeatedTimer: %s", self._thread.name)
-                self._thread.join()
-                return True
-            logging.warning("repeatedTimer always stopped")
+        self._event.set()
+        if self._thread is not None:
+            logging.debug("stop repeatedTimer: %s", self._thread.name)
+            self._thread.join()
             return True
-        except:  # pragma: no cover
-            logging.exception("cannot stop repeatedTimer")
-            return False
+        logging.warning("repeatedTimer always stopped")
+        return True
 
     def _target(self):
         """!Runs the target function with his arguments in own thread"""

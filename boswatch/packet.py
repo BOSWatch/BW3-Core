@@ -34,11 +34,7 @@ class Packet:
             self._packet = {"timestamp": time.time()}
         else:
             logging.debug("create bwPacket from string")
-            try:
-                self._packet = eval(str(bwPacket.strip()))
-            except:  # pragma: no cover
-                # todo can we repair the packet anyway?
-                logging.exception("error while create packet from string")
+            self._packet = eval(str(bwPacket.strip()))
 
     def __str__(self):
         """!Return the intern _packet dict as string"""
@@ -63,7 +59,7 @@ class Packet:
             logging.warning("field not found: %s", fieldName)
             return None
 
-    def addClientData(self):
+    def addClientData(self, config):
         """!Add the client information to the decoded data
 
         This function adds the following data to the bwPacket:
@@ -73,16 +69,15 @@ class Packet:
         - clientBranch
         - inputSource
         - frequency"""
-        config = configYaml.loadConfigSharepoint("clientConfig")
         logging.debug("add client data to bwPacket")
-        self.set("clientName", config["client"]["name"])
+        self.set("clientName", config.get("client", "name"))
         self.set("clientVersion", version.client)
         self.set("clientBuildDate", version.date)
         self.set("clientBranch", version.branch)
-        self.set("inputSource", config["client"]["inputSource"])
-        self.set("frequency", config["inputSource"]["sdr"]["frequency"])
+        self.set("inputSource", config.get("client", "inoutSource"))
+        self.set("frequency", config.get("inputSource", "sdr", "frequency"))
 
-    def addServerData(self):
+    def addServerData(self, config):
         """!Add the server information to the decoded data
 
         This function adds the following data to the bwPacket:
@@ -90,9 +85,8 @@ class Packet:
         - serverVersion
         - serverBuildDate
         - serverBranch"""
-        config = configYaml.loadConfigSharepoint("serverConfig")
         logging.debug("add server data to bwPacket")
-        self.set("serverName", config["server"]["name"])
+        self.set("serverName", config.get("server", "name"))
         self.set("serverVersion", version.server)
         self.set("serverBuildDate", version.date)
         self.set("serverBranch", version.branch)

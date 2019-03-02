@@ -49,11 +49,7 @@ def makeDirIfNotExist(dirPath):
 
     @param dirPath: Path of the directory
     @return Path of the directory or False"""
-    try:
-        if not os.path.exists(dirPath):
-            os.mkdir(dirPath)
-            logging.debug("directory created: %s", dirPath)
-        return dirPath
-    except:  # pragma: no cover
-        logging.exception("error by creating a directory: %s", dirPath)
-        return False
+    if not os.path.exists(dirPath):
+        os.mkdir(dirPath)
+        logging.debug("directory created: %s", dirPath)
+    return dirPath
