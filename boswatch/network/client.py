@@ -67,7 +67,7 @@ class TCPClient:
                 return True
         except AttributeError:
             logging.error("cannot disconnect - no connection established")
-         return False
+        return False
 
     def transmit(self, data):
         """!Send a data packet to the server

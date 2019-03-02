@@ -52,6 +52,7 @@ try:
     from boswatch.packet import Packet
     from boswatch.utils import header
     from boswatch.network.broadcast import BroadcastServer
+    from boswatch.router import RouterManager
 except:  # pragma: no cover
     logging.exception("cannot import module")
     exit(1)
@@ -59,7 +60,6 @@ except:  # pragma: no cover
 try:
     header.logoToLog()
     header.infoToLog()
-    header.logoToScreen()
 
     logging.debug("parse args")
     # With -h or --help you get the Args help
@@ -80,7 +80,10 @@ except:  # pragma: no cover
     logging.exception("error occurred")
     exit(1)
 
-import router_test
+
+bwRoutMan = RouterManager()
+bwRoutMan.buildRouter(bwConfig)
+
 
 # ############################# begin server system
 try:
@@ -105,9 +108,10 @@ try:
                 bwPacket = Packet((data[1]))
 
                 bwPacket.set("clientIP", data[0])
-                bwPacket.addServerData()
+                bwPacket.addServerData(bwConfig)
 
                 # todo implement routing
+                bwRoutMan.runRouter(bwConfig.get("alarmRouter"), bwPacket)
 
                 incomingQueue.task_done()
 

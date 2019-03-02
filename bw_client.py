@@ -56,7 +56,6 @@ except:  # pragma: no cover
 try:
     header.logoToLog()
     header.infoToLog()
-    header.logoToScreen()
 
     logging.debug("parse args")
     # With -h or --help you get the Args help
@@ -102,7 +101,7 @@ try:
 
                 if bwPacket:
                     bwPacket.printInfo()
-                    bwPacket.addClientData()
+                    bwPacket.addClientData(bwConfig)
                     bwClient.transmit(str(bwPacket))
 
                     # todo should we do this in an thread, to not block receiving ??? but then we should use transmit() and receive() with Lock()
