@@ -48,10 +48,12 @@ def getRunningServer(getServer):
     """!Build and serve a still running TCPServer"""
     logging.debug("start server")
     assert getServer.start()
-    assert getServer.isRunning
+    while not getServer.isRunning:
+        pass
     yield getServer
     logging.debug("stop server")
     assert getServer.stop()
+    time.sleep(0.1)  # wait for safe stopped
 
 
 def test_clientConnectFailed(getClient):

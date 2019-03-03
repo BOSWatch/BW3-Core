@@ -29,7 +29,7 @@ class _ThreadedTCPRequestHandler(socketserver.ThreadingMixIn, socketserver.BaseR
         """!Handles the request from an single client in a own thread
 
         Insert a request in the clients[] list and send a [ack]"""
-        with self.server.clientsConnctedLock:  # because our list is not threadsafe
+        with self.server.clientsConnectedLock:  # because our list is not threadsafe
             self.server.clientsConnected[threading.current_thread().name] = {"address": self.client_address[0], "timestamp": time.time()}
 
         logging.info("Client connected: %s", self.client_address[0])
@@ -100,7 +100,7 @@ class TCPServer:
                 self._server.timeout = self._timeout
                 self._server.alarmQueue = self._alarmQueue
 
-                self._server.clientsConnctedLock = self._clientsConnectedLock
+                self._server.clientsConnectedLock = self._clientsConnectedLock
                 self._server.clientsConnected = self._clientsConnected
 
                 self._server_thread = threading.Thread(target=self._server.serve_forever)
@@ -124,7 +124,6 @@ class TCPServer:
             self._server.shutdown()
             self._server_thread.join()
             self._server_thread = None
-            self._server.socket.close()
             self._server = None
             logging.debug("TCPServer stopped")
             return True
