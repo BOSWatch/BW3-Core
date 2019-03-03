@@ -43,9 +43,8 @@ class TCPClient:
                 self._sock = socket.create_connection((host, port))
                 logging.debug("connected to %s:%s", host, port)
                 return True
-            else:
-                logging.warning("client always connected")
-                return True
+            logging.warning("client always connected")
+            return True
         except ConnectionRefusedError:
             logging.error("cannot connect to %s:%s - connection refused", host, port)
         except socket.timeout:  # pragma: no cover
@@ -62,9 +61,8 @@ class TCPClient:
                 self._sock = None
                 logging.debug("disconnected")
                 return True
-            else:
-                logging.warning("client not connected")
-                return True
+            logging.warning("client not connected")
+            return True
         except AttributeError:
             logging.error("cannot disconnect - no connection established")
         return False

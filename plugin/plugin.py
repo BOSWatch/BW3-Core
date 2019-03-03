@@ -42,7 +42,6 @@ class Plugin:
         self._setupTime = 0
         self._alarmTime = 0
         self._teardownTime = 0
-        self._endTime = 0
         self._tmpTime = 0
 
         # for statistics
@@ -111,7 +110,6 @@ class Plugin:
         self._teardownTime = time.time() - self._tmpTime
         self._sumTime = self._setupTime + self._alarmTime + self._teardownTime
         self._cumTime += self._sumTime
-        self._endTime = time.time()
 
         self._bwPacket = None
 

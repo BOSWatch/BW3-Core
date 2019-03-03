@@ -128,9 +128,8 @@ class TCPServer:
             self._server = None
             logging.debug("TCPServer stopped")
             return True
-        else:
-            logging.warning("server always stopped")
-            return True
+        logging.warning("server always stopped")
+        return True
 
     def countClientsConnected(self):
         """!Number of currently connected Clients

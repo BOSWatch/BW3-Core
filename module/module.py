@@ -35,7 +35,6 @@ class Module:
         self._cumTime = 0
         self._moduleTime = 0
         self._tmpTime = 0
-        self._tmpTime = 0
 
         # for statistics
         self._runCount = 0
@@ -68,7 +67,6 @@ class Module:
         self._moduleTime = time.time() - self._tmpTime
 
         self._cumTime += self._moduleTime
-        self._endTime = time.time()
 
         logging.debug("[%s] took %0.3f seconds", self._moduleName, self._moduleTime)
 

@@ -54,9 +54,8 @@ class RepeatedTimer:
             self._thread.start()
             logging.debug("start repeatedTimer: %s", self._thread.name)
             return True
-        else:
-            logging.debug("repeatedTimer always started")
-            return True
+        logging.debug("repeatedTimer always started")
+        return True
 
     def stop(self):
         """!Stop the timer worker thread

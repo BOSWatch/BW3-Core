@@ -109,21 +109,16 @@ class BroadcastServer:
         """!Start the broadcast server in a new thread
 
         @return True or False"""
-        try:
-            if not self.isRunning:
-                logging.debug("start udp broadcast server")
-                self._serverThread = threading.Thread(target=self._listen)
-                self._serverThread.name = "BroadServ"
-                self._serverThread.daemon = True
-                self._serverShutdown = False
-                self._serverThread.start()
-                return True
-            else:
-                logging.warning("udp broadcast server always started")
-                return True
-        except:  # pragma: no cover
-            logging.exception("cannot start udp broadcast server thread")
-            return False
+        if not self.isRunning:
+            logging.debug("start udp broadcast server")
+            self._serverThread = threading.Thread(target=self._listen)
+            self._serverThread.name = "BroadServ"
+            self._serverThread.daemon = True
+            self._serverShutdown = False
+            self._serverThread.start()
+            return True
+        logging.warning("udp broadcast server always started")
+        return True
 
     def stop(self):
         """!Stop the broadcast server
@@ -141,8 +136,6 @@ class BroadcastServer:
         else:
             logging.warning("udp broadcast server always stopped")
             return True
-
-        return False
 
     def _listen(self):
         """!Broadcast server worker thread
