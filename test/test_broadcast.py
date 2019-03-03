@@ -12,7 +12,7 @@
 @file:        test_broadcast.py
 @date:        25.09.2018
 @author:      Bastian Schroll
-@description: Unittests for BOSWatch. File must be _run as "pytest" unittest
+@description: Unittests for BOSWatch. File have to run as "pytest" unittest
 """
 import logging
 import pytest
@@ -21,49 +21,50 @@ from boswatch.network.broadcast import BroadcastServer
 from boswatch.network.broadcast import BroadcastClient
 
 
-class Test_Broadcast:
-    """!Unittest for the timer class"""
+def setup_method(method):
+    logging.debug("[TEST] %s.%s", method.__module__, method.__name__)
 
-    def setup_method(self, method):
-        logging.debug("[TEST] %s.%s", type(self).__name__, method.__name__)
 
-    @pytest.fixture(scope="function")
-    def useBroadcastServer(self):
-        """!Server a BroadcastServer instance"""
-        self.broadcastServer = BroadcastServer()
-        yield 1  # server the server instance
-        if self.broadcastServer.isRunning:
-            assert self.broadcastServer.stop()
-        while self.broadcastServer.isRunning:
-            pass
+@pytest.fixture()
+def broadcastServer():
+    """!Server a BroadcastServer instance"""
+    broadcastServer = BroadcastServer()
+    yield broadcastServer
+    if broadcastServer.isRunning:
+        assert broadcastServer.stop()
+    while broadcastServer.isRunning:
+        pass
 
-    @pytest.fixture(scope="function")
-    def useBroadcastClient(self):
-        """!Server a BroadcastClient instance"""
-        self.broadcastClient = BroadcastClient()
-        yield 1  # server the server instance
 
-    # tests start here
+@pytest.fixture()
+def broadcastClient():
+    """!Server a BroadcastClient instance"""
+    return BroadcastClient()
 
-    def test_serverStartStop(self, useBroadcastServer):
-        assert self.broadcastServer.start()
-        assert self.broadcastServer.isRunning
-        assert self.broadcastServer.stop()
 
-    def test_serverDoubleStart(self, useBroadcastServer):
-        assert self.broadcastServer.start()
-        assert self.broadcastServer.start()
-        assert self.broadcastServer.stop()
+def test_serverStartStop(broadcastServer):
+    assert broadcastServer.start()
+    assert broadcastServer.isRunning
+    assert broadcastServer.stop()
 
-    def test_serverStopNotStarted(self, useBroadcastServer):
-        assert self.broadcastServer.stop()
 
-    def test_clientWithoutServer(self, useBroadcastClient):
-        assert not self.broadcastClient.getConnInfo(1)
+def test_serverDoubleStart(broadcastServer):
+    assert broadcastServer.start()
+    assert broadcastServer.start()
+    assert broadcastServer.stop()
 
-    def test_serverClientFetchConnInfo(self, useBroadcastServer, useBroadcastClient):
-        assert self.broadcastServer.start()
-        assert self.broadcastClient.getConnInfo()
-        assert self.broadcastServer.stop()
-        assert self.broadcastClient.serverIP
-        assert self.broadcastClient.serverPort
+
+def test_serverStopNotStarted(broadcastServer):
+    assert broadcastServer.stop()
+
+
+def test_clientWithoutServer(broadcastClient):
+    assert not broadcastClient.getConnInfo(1)
+
+
+def test_serverClientFetchConnInfo(broadcastClient, broadcastServer):
+    assert broadcastServer.start()
+    assert broadcastClient.getConnInfo()
+    assert broadcastServer.stop()
+    assert broadcastClient.serverIP
+    assert broadcastClient.serverPort

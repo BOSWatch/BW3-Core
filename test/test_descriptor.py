@@ -12,20 +12,22 @@
 @file:        test_descriptor.py
 @date:        07.01.2017
 @author:      Bastian Schroll
-@description: Unittests for BOSWatch. File must be _run as "pytest" unittest
+@description: Unittests for BOSWatch. File have to run as "pytest" unittest
 """
 import logging
+import pytest
 
 from module.descriptor import Descriptor
 from module.descriptor import DescriptionList
 from boswatch.packet import Packet
 
 
+@pytest.mark.skip
 class Test_Descriptor:
     """!Unittests for the descriptor"""
 
     def setup_method(self, method):
-        logging.debug("[TEST] %s.%s", type(self).__name__, method.__name__)
+        logging.debug("[TEST] %s.%s", method.__module__, method.__name__)
 
     def test_loadCsvNotExist(self):
         """!read CSV file where not exist direct per DescriptionList class"""

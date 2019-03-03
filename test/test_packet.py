@@ -12,7 +12,7 @@
 @file:        test_packet.py
 @date:        12.12.2017
 @author:      Bastian Schroll
-@description: Unittests for BOSWatch. File must be _run as "pytest" unittest
+@description: Unittests for BOSWatch. File have to run as "pytest" unittest
 """
 import logging
 import pytest
@@ -20,38 +20,39 @@ import pytest
 from boswatch.packet import Packet
 
 
-class Test_Packet:
-    """!Unittests for the BOSWatch packet"""
+def setup_method(method):
+    logging.debug("[TEST] %s.%s", method.__module__, method.__name__)
 
-    def setup_method(self, method):
-        logging.debug("[TEST] %s.%s", type(self).__name__, method.__name__)
 
-    @pytest.fixture(scope="function")
-    def buildPacket(self):
-        """!Build a BOSWatch packet and serve it to each test"""
-        bwPacket = Packet()
-        yield bwPacket
+@pytest.fixture()
+def buildPacket():
+    """!Build a BOSWatch packet and serve it to each test"""
+    return Packet()
 
-    def test_createPacket(self):
-        """!Create a packet"""
-        bwPacket = Packet()
-        assert bwPacket is not ""
 
-    def test_copyPacket(self, buildPacket):
-        """!Copy a packet to an new instance"""
-        bwCopyPacket = Packet(buildPacket.__str__())
-        assert bwCopyPacket is not ""
+def test_createPacket(buildPacket):
+    """!Create a packet"""
+    assert buildPacket is not ""
 
-    def test_getPacketString(self, buildPacket):
-        """!get the intern packet dict as string"""
-        assert type(buildPacket.__str__()) is str
-        assert buildPacket.__str__() is not ""
 
-    def test_getNotSetField(self, buildPacket):
-        """!try to get a not set field"""
-        assert not buildPacket.get("testfield")
+def test_copyPacket(buildPacket):
+    """!Copy a packet to an new instance"""
+    bwCopyPacket = Packet(buildPacket.__str__())
+    assert bwCopyPacket is not ""
 
-    def test_setGetField(self, buildPacket):
-        """!set and get a field"""
-        buildPacket.set("testField", "test")
-        assert buildPacket.get("testField") is "test"
+
+def test_getPacketString(buildPacket):
+    """!get the intern packet dict as string"""
+    assert type(buildPacket.__str__()) is str
+    assert buildPacket.__str__() is not ""
+
+
+def test_getNotSetField(buildPacket):
+    """!try to get a not set field"""
+    assert not buildPacket.get("testfield")
+
+
+def test_setGetField(buildPacket):
+    """!set and get a field"""
+    buildPacket.set("testField", "test")
+    assert buildPacket.get("testField") is "test"

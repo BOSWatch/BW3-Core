@@ -12,7 +12,7 @@
 @file:        test_timer.py
 @date:        21.09.2018
 @author:      Bastian Schroll
-@description: Unittests for BOSWatch. File must be _run as "pytest" unittest
+@description: Unittests for BOSWatch. File have to run as "pytest" unittest
 """
 import logging
 import time
@@ -21,76 +21,80 @@ import pytest
 from boswatch.utils.timer import RepeatedTimer
 
 
-class Test_Timer:
-    """!Unittest for the timer class"""
+def setup_method(method):
+    logging.debug("[TEST] %s.%s", method.__module__, method.__name__)
 
-    def setup_method(self, method):
-        logging.debug("[TEST] %s.%s", type(self).__name__, method.__name__)
 
-    @staticmethod
-    def testTargetFast():
-        """!Fast worker thread"""
-        logging.debug("run testTargetFast")
+def testTargetFast():
+    """!Fast worker thread"""
+    logging.debug("run testTargetFast")
 
-    @staticmethod
-    def testTargetSlow():
-        """!Slow worker thread"""
-        logging.debug("run testTargetSlow start")
-        time.sleep(0.51)
-        logging.debug("run testTargetSlow end")
 
-    @pytest.fixture(scope="function")
-    def useTimerFast(self):
-        """!Server a RepeatedTimer instance with fast worker"""
-        self.testTimer = RepeatedTimer(0.1, Test_Timer.testTargetFast)
-        yield 1  # server the timer instance
-        if self.testTimer.isRunning:
-            assert self.testTimer.stop()
+def testTargetSlow():
+    """!Slow worker thread"""
+    logging.debug("run testTargetSlow start")
+    time.sleep(0.51)
+    logging.debug("run testTargetSlow end")
 
-    @pytest.fixture(scope="function")
-    def useTimerSlow(self):
-        """!Server a RepeatedTimer instance slow worker"""
-        self.testTimer = RepeatedTimer(0.1, Test_Timer.testTargetSlow)
-        yield 1  # server the timer instance
-        if self.testTimer.isRunning:
-            assert self.testTimer.stop()
 
-    # test cases starts here
+@pytest.fixture()
+def useTimerFast():
+    """!Server a RepeatedTimer instance with fast worker"""
+    testTimer = RepeatedTimer(0.1, testTargetFast)
+    yield testTimer
+    if testTimer.isRunning:
+        assert testTimer.stop()
 
-    def test_timerStartStop(self, useTimerFast):
-        assert self.testTimer.start()
-        assert self.testTimer.stop()
 
-    def test_timerDoubleStart(self, useTimerFast):
-        assert self.testTimer.start()
-        assert self.testTimer.start()
-        assert self.testTimer.stop()
+@pytest.fixture()
+def useTimerSlow():
+    """!Server a RepeatedTimer instance slow worker"""
+    testTimer = RepeatedTimer(0.1, testTargetSlow)
+    yield testTimer
+    if testTimer.isRunning:
+        assert testTimer.stop()
 
-    def test_timerStopNotStarted(self, useTimerFast):
-        assert self.testTimer.stop()
 
-    def test_timerIsRunning(self, useTimerFast):
-        assert self.testTimer.start()
-        assert self.testTimer.isRunning
-        assert self.testTimer.stop()
+def test_timerStartStop(useTimerFast):
+    assert useTimerFast.start()
+    assert useTimerFast.stop()
 
-    def test_timerRun(self, useTimerFast):
-        assert self.testTimer.start()
-        time.sleep(0.2)
-        assert self.testTimer.stop()
-        assert self.testTimer.overdueCount == 0
-        assert self.testTimer.lostEvents == 0
 
-    def test_timerOverdue(self, useTimerSlow):
-        assert self.testTimer.start()
-        time.sleep(0.2)
-        assert self.testTimer.stop()
-        assert self.testTimer.overdueCount == 1
-        assert self.testTimer.lostEvents == 5
+def test_timerDoubleStart(useTimerFast):
+    assert useTimerFast.start()
+    assert useTimerFast.start()
+    assert useTimerFast.stop()
 
-    def test_timerOverdueLong(self, useTimerSlow):
-        assert self.testTimer.start()
-        time.sleep(1)
-        assert self.testTimer.stop()
-        assert self.testTimer.overdueCount == 2
-        assert self.testTimer.lostEvents == 10
+
+def test_timerStopNotStarted(useTimerFast):
+    assert useTimerFast.stop()
+
+
+def test_timerIsRunning(useTimerFast):
+    assert useTimerFast.start()
+    assert useTimerFast.isRunning
+    assert useTimerFast.stop()
+
+
+def test_timerRun(useTimerFast):
+    assert useTimerFast.start()
+    time.sleep(0.2)
+    assert useTimerFast.stop()
+    assert useTimerFast.overdueCount == 0
+    assert useTimerFast.lostEvents == 0
+
+
+def test_timerOverdue(useTimerSlow):
+    assert useTimerSlow.start()
+    time.sleep(0.2)
+    assert useTimerSlow.stop()
+    assert useTimerSlow.overdueCount == 1
+    assert useTimerSlow.lostEvents == 5
+
+
+def test_timerOverdueLong(useTimerSlow):
+    assert useTimerSlow.start()
+    time.sleep(1)
+    assert useTimerSlow.stop()
+    assert useTimerSlow.overdueCount == 2
+    assert useTimerSlow.lostEvents == 10

@@ -9,20 +9,32 @@
                 German BOS Information Script
                      by Bastian Schroll
 
-@file:        test_watchdog.py
-@date:        15.12.2017
+@file:        test_template.py
+@date:        03.03.2019
 @author:      Bastian Schroll
-@description: Unittests for BOSWatch. File must be _run as "pytest" unittest
+@description: Unittests for BOSWatch. File have to run as "pytest" unittest
 """
 import logging
+import pytest
 
-# import boswatch.watchdog.watchdog
+
+def setup_method(method):
+    logging.debug("[TEST] %s.%s", method.__module__, method.__name__)
 
 
-class Test_Watchdog:
+@pytest.fixture
+def fixtureTemplate():
+    return None
 
-    def setup_method(self, method):
-        logging.debug("[TEST] %s.%s", type(self).__name__, method.__name__)
 
-    def test_none(self):
-        pass
+@pytest.mark.skip
+def test_skippedTest():
+    pass
+
+
+def test_testName():
+    pass
+
+
+def test_withFixture(fixtureTemplate):
+    assert fixtureTemplate is None

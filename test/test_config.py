@@ -12,21 +12,22 @@
 @file:        test_config.py
 @date:        08.01.2017
 @author:      Bastian Schroll
-@description: Unittests for BOSWatch. File must be _run as "pytest" unittest
+@description: Unittests for BOSWatch. File have to run as "pytest" unittest
 """
 import logging
+import pytest
 
 from boswatch.utils import paths
 from boswatch import configYaml
 
 # FIXME complete tests
 
-
+@pytest.mark.skip
 class Test_Config:
     """!Unittests for the config"""
 
     def setup_method(self, method):
-        logging.debug("[TEST] %s.%s", type(self).__name__, method.__name__)
+        logging.debug("[TEST] %s.%s", method.__module__, method.__name__)
 
     def test_loadLocalConfig(self):
         """!load a local config file"""

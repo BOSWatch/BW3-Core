@@ -12,17 +12,19 @@
 @file:        test_doubleFilter.py
 @date:        15.12.2017
 @author:      Bastian Schroll
-@description: Unittests for BOSWatch. File must be _run as "pytest" unittest
+@description: Unittests for BOSWatch. File have to run as "pytest" unittest
 """
 import logging
+import pytest
 
 from module.filter.doubleFilter import DoubleFilter
 
 
+@pytest.mark.skip
 class Test_DoubleFilter:
 
     def setup_method(self, method):
-        logging.debug("[TEST] %s.%s", type(self).__name__, method.__name__)
+        logging.debug("[TEST] %s.%s", method.__module__, method.__name__)
 
     def test_none(self):
         pass
