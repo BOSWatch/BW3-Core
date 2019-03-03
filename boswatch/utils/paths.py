@@ -23,6 +23,7 @@ logging.debug("- %s loaded", __name__)
 # note searching for root part is not a nice solution atm
 ROOT_PATH = os.path.dirname(sys.modules['boswatch'].__file__).replace("\\", "/") + "/../"
 
+LOG_PATH = ROOT_PATH + "log/"
 CONFIG_PATH = ROOT_PATH + "config/"
 BIN_PATH = ROOT_PATH + "_bin/"
 TEST_PATH = ROOT_PATH + "test/"

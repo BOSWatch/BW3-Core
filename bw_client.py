@@ -14,6 +14,7 @@
 @author:      Bastian Schroll
 @description: BOSWatch client application
 """
+# pylint: disable=wrong-import-position
 from boswatch.utils import paths
 
 if not paths.makeDirIfNotExist(paths.LOG_PATH):

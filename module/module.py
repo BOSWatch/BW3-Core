@@ -100,4 +100,3 @@ class Module:
         """!Called by destruction of the module
         Must be inherit"""
         pass
-
