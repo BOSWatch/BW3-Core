@@ -1,0 +1,14 @@
+# -*- coding: utf-8 -*-
+#    ____  ____  ______       __      __       __       _____
+#   / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
+#  / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
+# / /_/ / /_/ /___/ /| |/ |/ / /_/ / /_/ /__/ / / /   ___/ /
+#/_____/\____//____/ |__/|__/\__,_/\__/\___/_/ /_/   /____/
+#                German BOS Information Script
+#
+
+# for the test_config - a config failing while loading
+types:
+ failedIntend: Hello World  # this line has false indentation
+  rightIntend: Hello World
+

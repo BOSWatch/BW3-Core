@@ -15,9 +15,8 @@
 @description: Unittests for BOSWatch. File have to run as "pytest" unittest
 """
 import logging
-from typing import Dict
-
 import pytest
+from boswatch.utils import paths
 
 from boswatch.configYaml import ConfigYAML
 
@@ -34,23 +33,23 @@ def getConfig():
 @pytest.fixture
 def getFilledConfig():
     filledConfig = ConfigYAML()
-    filledConfig.loadConfigFile("test_config.yaml")
+    assert filledConfig.loadConfigFile(paths.TEST_PATH + "test_config.yaml") is True
     return filledConfig
 
 
 def test_loadConfigFile(getConfig):
-    """!load a local config file"""
-    assert getConfig.loadConfigFile("test_config.yaml") is True
+    """!load a config file"""
+    assert getConfig.loadConfigFile(paths.TEST_PATH + "test_config.yaml") is True
 
 
 def test_loadConfigFileFailed(getConfig):
-    """!load a local config file with syntax error"""
-    assert getConfig.loadConfigFile("test_configFailed.yaml") is False
+    """!load a config file with syntax error"""
+    assert getConfig.loadConfigFile(paths.TEST_PATH + "test_configFailed.yaml") is False
 
 
 def test_loadConfigFileNotFound(getConfig):
-    """!load a local config file where is not available"""
-    assert getConfig.loadConfigFile("test_configNotFound.yaml") is False
+    """!load a config file where is not available"""
+    assert getConfig.loadConfigFile(paths.TEST_PATH + "test_configNotFound.yaml") is False
 
 
 def test_getTypes(getFilledConfig):

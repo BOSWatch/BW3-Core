@@ -50,7 +50,7 @@ class ConfigYAML:
         except FileNotFoundError:
             logging.error("config file not found: %s", configPath)
         except yaml.parser.ParserError:
-            logging.exception("error in config file")
+            logging.exception("syntax error in config file: %s", configPath)
         return False
 
     def get(self, *args, default=None):
