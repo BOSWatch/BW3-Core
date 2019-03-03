@@ -14,6 +14,8 @@
 @author:      Bastian Schroll
 @description: Unittests for BOSWatch. File have to run as "pytest" unittest
 """
+# problem of the pytest fixtures
+# pylint: disable=redefined-outer-name
 import logging
 import os
 
