@@ -32,7 +32,3 @@ class Test_Header:
     def test_infoToLog(self):
         """!Test info to log"""
         assert header.infoToLog()
-
-    def test_logoToScreen(self):
-        """!Test logo to screen"""
-        assert header.logoToScreen()

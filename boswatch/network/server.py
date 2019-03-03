@@ -95,19 +95,23 @@ class TCPServer:
 
         @return True or False"""
         if not self.isRunning:
-            self._server = _ThreadedTCPServer(("", port), _ThreadedTCPRequestHandler)
-            self._server.timeout = self._timeout
-            self._server.alarmQueue = self._alarmQueue
+            try:
+                self._server = _ThreadedTCPServer(("", port), _ThreadedTCPRequestHandler)
+                self._server.timeout = self._timeout
+                self._server.alarmQueue = self._alarmQueue
 
-            self._server.clientsConnctedLock = self._clientsConnectedLock
-            self._server.clientsConnected = self._clientsConnected
+                self._server.clientsConnctedLock = self._clientsConnectedLock
+                self._server.clientsConnected = self._clientsConnected
 
-            self._server_thread = threading.Thread(target=self._server.serve_forever)
-            self._server_thread.name = "Thread-BWServer"
-            self._server_thread.daemon = True
-            self._server_thread.start()
-            logging.debug("TCPServer started in Thread: %s", self._server_thread.name)
-            return True
+                self._server_thread = threading.Thread(target=self._server.serve_forever)
+                self._server_thread.name = "Thread-BWServer"
+                self._server_thread.daemon = True
+                self._server_thread.start()
+                logging.debug("TCPServer started in Thread: %s", self._server_thread.name)
+                return True
+            except OSError:
+                logging.exception("Socket Error")
+
         else:
             logging.warning("server always started")
             return True
