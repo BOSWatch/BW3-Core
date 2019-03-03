@@ -45,26 +45,31 @@ def broadcastClient():
 
 
 def test_serverStartStop(broadcastServer):
+    """!Start a BroadcastServer, check if running and stop it"""
     assert broadcastServer.start()
     assert broadcastServer.isRunning
     assert broadcastServer.stop()
 
 
 def test_serverDoubleStart(broadcastServer):
+    """!Try to start a BroadcastServer twice"""
     assert broadcastServer.start()
     assert broadcastServer.start()
     assert broadcastServer.stop()
 
 
 def test_serverStopNotStarted(broadcastServer):
+    """!Try to stop a BroadcastServer where is not running"""
     assert broadcastServer.stop()
 
 
 def test_clientWithoutServer(broadcastClient):
+    """!Use BroadcastClient with no server"""
     assert not broadcastClient.getConnInfo(1)
 
 
 def test_serverClientFetchConnInfo(broadcastClient, broadcastServer):
+    """!Fetch connection info from BroadcastServer"""
     assert broadcastServer.start()
     assert broadcastClient.getConnInfo()
     assert broadcastServer.stop()

@@ -58,27 +58,32 @@ def useTimerSlow():
 
 
 def test_timerStartStop(useTimerFast):
+    """!Try to start and stop a timer"""
     assert useTimerFast.start()
     assert useTimerFast.stop()
 
 
 def test_timerDoubleStart(useTimerFast):
+    """!Try to start a timer twice"""
     assert useTimerFast.start()
     assert useTimerFast.start()
     assert useTimerFast.stop()
 
 
 def test_timerStopNotStarted(useTimerFast):
+    """!Try to stop a timer where is not started"""
     assert useTimerFast.stop()
 
 
 def test_timerIsRunning(useTimerFast):
+    """!Check if a timer is running"""
     assert useTimerFast.start()
     assert useTimerFast.isRunning
     assert useTimerFast.stop()
 
 
 def test_timerRun(useTimerFast):
+    """!Run a timer and check overdue and lostEvents"""
     assert useTimerFast.start()
     time.sleep(0.2)
     assert useTimerFast.stop()
@@ -87,6 +92,7 @@ def test_timerRun(useTimerFast):
 
 
 def test_timerOverdue(useTimerSlow):
+    """!Run a timer and check overdue and lostEvents"""
     assert useTimerSlow.start()
     time.sleep(0.2)
     assert useTimerSlow.stop()
@@ -95,6 +101,7 @@ def test_timerOverdue(useTimerSlow):
 
 
 def test_timerOverdueLong(useTimerSlow):
+    """!Run a timer and check overdue and lostEvents"""
     assert useTimerSlow.start()
     time.sleep(1)
     assert useTimerSlow.stop()

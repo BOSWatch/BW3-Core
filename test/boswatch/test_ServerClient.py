@@ -31,12 +31,13 @@ def setup_method(method):
 
 @pytest.fixture
 def getClient():
+    """!Build and serve a TCPCLient"""
     return TCPClient()
 
 
 @pytest.fixture
 def getServer():
-    """!Start and serve the sever for each functions where useServer is given"""
+    """!Build and serve a TCPServer"""
     dataQueue = queue.Queue()
     testServer = TCPServer(dataQueue)
     return testServer
@@ -44,10 +45,10 @@ def getServer():
 
 @pytest.fixture
 def getRunningServer(getServer):
+    """!Build and serve a still running TCPServer"""
     logging.debug("start server")
     assert getServer.start()
-    if not getServer.isRunning:
-        pytest.fail("server not running")
+    assert getServer.isRunning
     yield getServer
     logging.debug("stop server")
     assert getServer.stop()
@@ -108,6 +109,7 @@ def test_clientCommunicate(getClient, getRunningServer):
     assert getClient.disconnect()
 
 
+@pytest.mark.skip("needs fixture for more than one client")
 def test_clientMultiCommunicate(getServer):
     """!Try to send data to the server with 3 clients and check on '[ack]'"""
     # connect all
@@ -156,6 +158,7 @@ def test_serverDoubleStart():
     assert testServer2.stop()
 
 
+@pytest.mark.skip("needs fixture for more than one client")
 def test_serverGetOutput(getRunningServer):
     """!Send data to server with 2 clients, check '[ack]' and data on server queue"""
     # connect all

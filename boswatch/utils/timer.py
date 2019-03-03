@@ -112,5 +112,5 @@ class RepeatedTimer:
 
     @property
     def lostEvents(self):
-        """!Property to get a count over all los events"""
+        """!Property to get a count over all lost events"""
         return self._lostEvents

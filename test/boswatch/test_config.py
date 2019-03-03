@@ -29,11 +29,13 @@ def setup_method(method):
 
 @pytest.fixture
 def getConfig():
+    """!Build a config object"""
     return ConfigYAML()
 
 
 @pytest.fixture
 def getFilledConfig():
+    """!Build a config object and fill it with the config data"""
     filledConfig = ConfigYAML()
     assert filledConfig.loadConfigFile(paths.TEST_PATH + "test_config.yaml") is True
     return filledConfig
@@ -55,6 +57,7 @@ def test_loadConfigFileNotFound(getConfig):
 
 
 def test_getTypes(getFilledConfig):
+    """!Get and check different data types in config"""
     assert type(getFilledConfig.get("types")) is ConfigYAML
     assert type(getFilledConfig.get("types", "string")) is str
     assert type(getFilledConfig.get("types", "bool")) is bool
@@ -63,12 +66,14 @@ def test_getTypes(getFilledConfig):
 
 
 def test_getNestedConfig(getFilledConfig):
+    """!Work with nested sub-config elements"""
     nestedConfig = getFilledConfig.get("types")
     assert type(nestedConfig) is ConfigYAML
     assert nestedConfig.get("string") == "Hello World"
 
 
 def test_configIterationList(getFilledConfig):
+    """!Try to iterate over a list in the config"""
     counter = 0
     for item in getFilledConfig.get("list"):
         assert type(item) is str
