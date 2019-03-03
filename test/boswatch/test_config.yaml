@@ -1,5 +1,10 @@
 types:
   string: Hello World
-  boolean: true
+  bool: true
   integer: 11
   float: 3.14
+
+list:
+  - one
+  - two
+  - three

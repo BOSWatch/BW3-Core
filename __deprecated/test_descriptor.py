@@ -17,8 +17,8 @@
 import logging
 import pytest
 
-from module.descriptor import Descriptor
-from module.descriptor import DescriptionList
+# from module.descriptor import Descriptor
+# from module.descriptor import DescriptionList
 from boswatch.packet import Packet
 
 

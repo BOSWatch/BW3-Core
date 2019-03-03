@@ -16,6 +16,7 @@
 """
 import logging
 import yaml
+import yaml.parser
 
 logging.debug("- %s loaded", __name__)
 
@@ -46,9 +47,11 @@ class ConfigYAML:
                 # use safe_load instead load
                 self._config = yaml.safe_load(file)
             return True
-        except:  # pragma: no cover
-            logging.exception("cannot load config file")
-            return False
+        except FileNotFoundError:
+            logging.error("config file not found: %s", configPath)
+        except yaml.parser.ParserError:
+            logging.exception("error in config file")
+        return False
 
     def get(self, *args, default=None):
         tmp = self._config
