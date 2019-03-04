@@ -15,7 +15,6 @@
 @description: Class for the BOSWatch packet router manager class
 """
 
-
 # todo think about implement threading for routers and the plugin calls (THREAD SAFETY!!!)
 import logging
 import importlib
@@ -27,15 +26,24 @@ logging.debug("- %s loaded", __name__)
 
 
 class RouterManager:
+    """!Class to manage all routers"""
     def __init__(self):
+        """!Create new router"""
         self._routerDict = {}
 
     def __del__(self):
+        """!Destroy the internal routerDict
+        All routers and route point instances will be destroyed too
+        Also destroys all instances from modules or plugins"""
         # destroy all routers (also destroys all instances of modules/plugins)
         del self._routerDict
 
     # if there is an error, router list would be empty (see tmp variable)
     def buildRouter(self, config):
+        """!Initialize Routers from given config file
+
+        @param config: instance of ConfigYaml class
+        @return True or False"""
         self._routerDict = {}  # all routers and instances of modules/plugins would be destroyed
         routerDict_tmp = {}
         logging.debug("build routers")
@@ -91,6 +99,10 @@ class RouterManager:
         return True
 
     def runRouter(self, routerRunList, bwPacket):
+        """!Run given Routers
+
+        @param routerRunList: string or list of router names in string form
+        @param bwPacket: instance of Packet class"""
         if type(routerRunList) is str:  # convert single string name to list
             routerRunList = [routerRunList]
 
@@ -99,6 +111,7 @@ class RouterManager:
                 self._routerDict[routerName].runRouter(bwPacket)
 
     def _showRouterRoute(self):
+        """!Show the routes of all routers"""
         for name, routerObject in self._routerDict.items():
             logging.debug("Route for %s", name)
             counter = 0

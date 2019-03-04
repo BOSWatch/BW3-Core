@@ -17,14 +17,22 @@
 
 
 class Route:
+    """!Class for single routing points"""
     def __init__(self, name, callback):
+        """!Create a instance of an route point
+
+        @param name: name of the route point
+        @param callback: instance of the callback function
+        """
         self._name = name
         self._callback = callback
 
     @property
     def name(self):
+        """!Property to get the route point name"""
         return self._name
 
     @property
     def callback(self):
+        """!Porperty to get the callback function instance"""
         return self._callback
