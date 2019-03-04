@@ -14,7 +14,6 @@
 @author:      Bastian Schroll
 @description: Class for the BOSWatch packet router
 """
-# todo think about implement threading for routers and the plugin calls (THREAD SAFETY!!!)
 import logging
 import copy
 
