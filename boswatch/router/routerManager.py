@@ -9,69 +9,21 @@
                 German BOS Information Script
                      by Bastian Schroll
 
-@file:        router.py
-@date:        01.03.2019
+@file:        routerManager.py
+@date:        04.03.2019
 @author:      Bastian Schroll
-@description: Class for the BOSWatch packet router
+@description: Class for the BOSWatch packet router manager class
 """
+
+
 # todo think about implement threading for routers and the plugin calls (THREAD SAFETY!!!)
 import logging
-import copy
 import importlib
 from boswatch.configYaml import ConfigYAML
+from boswatch.router.router import Router
+from boswatch.router.route import Route
 
 logging.debug("- %s loaded", __name__)
-
-
-class _Route:
-    def __init__(self, name, callback):
-        self._name = name
-        self._callback = callback
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def callback(self):
-        return self._callback
-
-
-class _Router:
-    def __init__(self, name):
-        self._name = name
-        self._routeList = []
-        logging.debug("[%s] new router", self._name)
-
-    def addRoute(self, route):
-        logging.debug("[%s] add route: %s", self._name, route.name)
-        self._routeList.append(route)
-
-    def runRouter(self, bwPacket):
-        logging.debug("[%s] started", self._name)
-        for routeObject in self._routeList:
-            logging.debug("[%s] -> run route: %s", self._name, routeObject)
-            bwPacket_tmp = routeObject.callback(copy.deepcopy(bwPacket))  # copy bwPacket to prevent edit the original
-
-            if bwPacket_tmp is None:  # returning None doesnt change the bwPacket
-                continue
-
-            if bwPacket_tmp is False:  # returning False stops the router immediately
-                logging.debug("[%s] stopped", self._name)
-                break
-
-            bwPacket = bwPacket_tmp
-            logging.debug("[%s] <- bwPacket returned: %s", self._name, bwPacket)
-        logging.debug("[%s] ended", self._name)
-        return bwPacket
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def routeList(self):
-        return self._routeList
 
 
 class RouterManager:
@@ -97,7 +49,7 @@ class RouterManager:
             if router.get("name") in self._routerDict:
                 logging.error("duplicated router name: %s", router.get("name"))
                 return False
-            routerDict_tmp[router.get("name")] = _Router(router.get("name"))
+            routerDict_tmp[router.get("name")] = Router(router.get("name"))
 
         for router in config.get("router"):
             routerName = router.get("name")
@@ -115,15 +67,15 @@ class RouterManager:
                     if routeType == "plugin":
                         importedFile = importlib.import_module(routeType + "." + routeName)
                         loadedClass = importedFile.BoswatchPlugin(routeConfig)
-                        routerDict_tmp[routerName].addRoute(_Route(routeName, loadedClass._run))
+                        routerDict_tmp[routerName].addRoute(Route(routeName, loadedClass._run))
 
                     elif routeType == "module":
                         importedFile = importlib.import_module(routeType + "." + routeName)
                         loadedClass = importedFile.BoswatchModule(routeConfig)
-                        routerDict_tmp[routerName].addRoute(_Route(routeName, loadedClass._run))
+                        routerDict_tmp[routerName].addRoute(Route(routeName, loadedClass._run))
 
                     elif routeType == "router":
-                        routerDict_tmp[routerName].addRoute(_Route(routeName, routerDict_tmp[routeName].runRouter))
+                        routerDict_tmp[routerName].addRoute(Route(routeName, routerDict_tmp[routeName].runRouter))
 
                     else:
                         logging.error("unknown type '%s' in %s", routeType, route)

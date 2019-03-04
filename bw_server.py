@@ -43,7 +43,7 @@ from boswatch.network.server import TCPServer
 from boswatch.packet import Packet
 from boswatch.utils import header
 from boswatch.network.broadcast import BroadcastServer
-from boswatch.router import RouterManager
+from boswatch.router.routerManager import RouterManager
 
 
 header.logoToLog()
