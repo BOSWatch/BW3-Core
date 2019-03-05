@@ -79,13 +79,17 @@ try:
     bwClient = TCPClient()
     if bwClient.connect(ip, port):
 
+        testFile = open(paths.TEST_PATH + "testdata.list", "r")
+
         while 1:
 
-            for i in range(0, 5):  # todo implement real data receive
-                time.sleep(1)
-                print("Alarm Nr #" + str(i))
+            for testData in testFile:
 
-                bwPacket = Decoder.decode("ZVEI1: 12345")
+                if (len(testData.rstrip(' \t\n\r')) == 0) or ("#" in testData[0]):
+                    continue
+
+                logging.debug("Test: %s", testData)
+                bwPacket = Decoder.decode(testData)
 
                 if bwPacket:
                     bwPacket.printInfo()
