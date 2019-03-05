@@ -21,13 +21,14 @@ logging.debug("- %s loaded", __name__)
 
 
 class ProcessManager:
-    def __init__(self, process):
+    def __init__(self, process, textMode=False):
         self._args = []
         self._args.append(process)
         self._stdin = None
         self._stdout = subprocess.PIPE
-        self._stderr = subprocess.PIPE
+        self._stderr = subprocess.STDOUT
         self._processHandle = None
+        self._textMode = textMode
         pass
 
     def addArgument(self, arg):
@@ -41,12 +42,24 @@ class ProcessManager:
                                                stdin=self._stdin,
                                                stdout=self._stdout,
                                                stderr=self._stderr,
-                                               shell=True)
+                                               shell=False,
+                                               universal_newlines=self._textMode)
+
+    def stop(self):
+        if self._processHandle and self.isRunning:
+            self._processHandle.terminate()
+        while self.isRunning:
+            pass
 
     def readline(self):
         """!Read one line from stdout stream or None"""
-        if self._stdout is not None:
-            return self._processHandle.stdout.readline().strip()
+        if self.isRunning and self._stdout is not None:
+            try:
+                line = self._processHandle.stdout.readline().strip()
+            except UnicodeDecodeError:
+                return None
+            if line != "":
+                return line
         return None
 
     def setStdin(self, stdin):
@@ -70,3 +83,11 @@ class ProcessManager:
     def stderr(self):
         """!Get the stderr stream"""
         return self._processHandle.stderr
+
+    @property
+    def isRunning(self):
+        if self._processHandle:
+            if self._processHandle.poll() is None:
+                return True
+        return False
+
