@@ -22,6 +22,7 @@ logging.debug("- %s loaded", __name__)
 
 class ProcessManager:
     def __init__(self, process, textMode=False):
+        logging.debug("create process instance %s - textMode: %s", process, textMode)
         self._args = []
         self._args.append(process)
         self._stdin = None
@@ -29,27 +30,34 @@ class ProcessManager:
         self._stderr = subprocess.STDOUT
         self._processHandle = None
         self._textMode = textMode
-        pass
+
+    def __del__(self):
+        self.stop()
 
     def addArgument(self, arg):
+        logging.debug("add argument to process: %s -> %s", self._args[0], arg)
         self._args.append(arg)
 
     def clearArguments(self):
         self._args = []
 
-    def run(self):
+    def start(self):
+        logging.debug("start new process: %s", self._args[0])
         self._processHandle = subprocess.Popen(self._args,
                                                stdin=self._stdin,
                                                stdout=self._stdout,
                                                stderr=self._stderr,
-                                               shell=False,
                                                universal_newlines=self._textMode)
 
     def stop(self):
         if self._processHandle and self.isRunning:
+            logging.debug("stopping process: %s", self._args[0])
             self._processHandle.terminate()
-        while self.isRunning:
-            pass
+            while self.isRunning:
+                pass
+            return self._processHandle.returnCode
+        logging.debug("process not running: %s", self._args[0])
+        return 0
 
     def readline(self):
         """!Read one line from stdout stream or None"""
