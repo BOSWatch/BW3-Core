@@ -79,7 +79,7 @@ try:
     bwClient = TCPClient()
     if bwClient.connect(ip, port):
 
-        testFile = open(paths.TEST_PATH + "testdata.txt", "r")
+        testFile = open(paths.TEST_PATH + "testdata.list", "r")
 
         while 1:
 
