@@ -82,6 +82,7 @@ try:
         while 1:
             if incomingQueue.empty():  # pause only when no data
                 time.sleep(0.1)  # reduce cpu load (wait 100ms)
+                # in worst case a packet have to wait 100ms until it will be processed
 
             else:
                 data = incomingQueue.get()
