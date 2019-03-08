@@ -32,15 +32,12 @@ class ProcessManager:
         self._processHandle = None
         self._textMode = textMode
 
-    def __del__(self):
-        self.stop()
-
     def addArgument(self, arg):
         """!add a new argument
 
         @param arg: argument to add as string"""
         logging.debug("add argument to process: %s -> %s", self._args[0], arg)
-        self._args.append(arg)
+        self._args.append(arg.split())
 
     def clearArguments(self):
         """!clear all arguments"""
@@ -48,25 +45,24 @@ class ProcessManager:
 
     def start(self):
         """!start the new process"""
-        logging.debug("start new process: %s", self._args[0])
-        self._processHandle = subprocess.Popen(self._args,
-                                               stdin=self._stdin,
-                                               stdout=self._stdout,
-                                               stderr=self._stderr,
-                                               universal_newlines=self._textMode)
+        logging.debug("start new process: %s", self._args)
+        try:
+            self._processHandle = subprocess.Popen(self._args,
+                                                   stdin=self._stdin,
+                                                   stdout=self._stdout,
+                                                   stderr=self._stderr,
+                                                   universal_newlines=self._textMode)
+        except FileNotFoundError:
+            logging.error("File not found: %s", self._args[0])
 
     def stop(self):
-        """!Stop the process by sending SIGTERM and wait for ending
-
-        @return return code of process"""
+        """!Stop the process by sending SIGTERM and wait for ending"""
         if self._processHandle and self.isRunning:
             logging.debug("stopping process: %s", self._args[0])
             self._processHandle.terminate()
             while self.isRunning:
                 pass
-            return self._processHandle.returnCode
-        logging.debug("process not running: %s", self._args[0])
-        return 0
+        logging.debug("cannot stop - process not running: %s", self._args[0])
 
     def readline(self):
         """!Read one line from stdout stream
@@ -112,4 +108,4 @@ class ProcessManager:
             if self._processHandle.poll() is None:
                 return True
         return False
-
+

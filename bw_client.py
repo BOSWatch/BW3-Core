@@ -32,8 +32,6 @@ logging.debug("BOSWatch client has started ...")
 logging.debug("Import python modules")
 import argparse
 logging.debug("- argparse")
-import subprocess
-logging.debug("- subprocess")
 import time
 logging.debug("- time")
 
@@ -43,10 +41,30 @@ from boswatch.network.client import TCPClient
 from boswatch.network.broadcast import BroadcastClient
 from boswatch.decoder.decoder import Decoder
 from boswatch.utils import header
+from boswatch.processManager import ProcessManager
 
 
 header.logoToLog()
 header.infoToLog()
+
+# multimon = ProcessManager("_bin/win/multimon/multimon-ng.exe", True)
+# multimon.addArgument("-a POCSAG1200")
+# multimon.addArgument("-t raw")
+# multimon.addArgument("-v 3")
+# multimon.addArgument("poc1200.raw")
+#
+# multimon.setStderr(None)
+# multimon.start()
+#
+# logging.debug("go")
+#
+# while multimon.isRunning:
+#     data = multimon.readline()
+#     if data is not None:
+#         print(data)
+#
+#
+# exit()
 
 logging.debug("parse args")
 # With -h or --help you get the Args help
