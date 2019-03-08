@@ -43,7 +43,7 @@ from boswatch.network.server import TCPServer
 from boswatch.packet import Packet
 from boswatch.utils import header
 from boswatch.network.broadcast import BroadcastServer
-from boswatch.router import RouterManager
+from boswatch.router.routerManager import RouterManager
 
 
 header.logoToLog()
@@ -82,6 +82,7 @@ try:
         while 1:
             if incomingQueue.empty():  # pause only when no data
                 time.sleep(0.1)  # reduce cpu load (wait 100ms)
+                # in worst case a packet have to wait 100ms until it will be processed
 
             else:
                 data = incomingQueue.get()
