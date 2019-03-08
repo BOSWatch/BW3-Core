@@ -37,14 +37,17 @@ class ProcessManager:
 
         @param arg: argument to add as string"""
         logging.debug("add argument to process: %s -> %s", self._args[0], arg)
-        self._args.append(arg.split())
+        for splitArg in arg.split():
+            self._args.append(splitArg)
 
     def clearArguments(self):
         """!clear all arguments"""
         self._args = self._args[0:1]  # kept first element (process name)
 
     def start(self):
-        """!start the new process"""
+        """!start the new process
+
+        @return: True or False"""
         logging.debug("start new process: %s", self._args)
         try:
             self._processHandle = subprocess.Popen(self._args,
@@ -52,17 +55,24 @@ class ProcessManager:
                                                    stdout=self._stdout,
                                                    stderr=self._stderr,
                                                    universal_newlines=self._textMode)
+            if not self.isRunning:
+                logging.error("cannot start")
+                return False
+            return True
+
         except FileNotFoundError:
             logging.error("File not found: %s", self._args[0])
+            return False
 
     def stop(self):
         """!Stop the process by sending SIGTERM and wait for ending"""
-        if self._processHandle and self.isRunning:
-            logging.debug("stopping process: %s", self._args[0])
+        logging.debug("stopping process: %s", self._args[0])
+        if self.isRunning:
             self._processHandle.terminate()
             while self.isRunning:
                 pass
-        logging.debug("cannot stop - process not running: %s", self._args[0])
+        else:
+            logging.debug("process not running: %s", self._args[0])
 
     def readline(self):
         """!Read one line from stdout stream

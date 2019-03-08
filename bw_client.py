@@ -47,22 +47,51 @@ from boswatch.processManager import ProcessManager
 header.logoToLog()
 header.infoToLog()
 
+# sox = ProcessManager("_bin/win/sox/sox.exe")
+# rtl = ProcessManager("_bin/win/rtl_fm/rtl_fm.exe")
 # multimon = ProcessManager("_bin/win/multimon/multimon-ng.exe", True)
-# multimon.addArgument("-a POCSAG1200")
-# multimon.addArgument("-t raw")
-# multimon.addArgument("-v 3")
-# multimon.addArgument("poc1200.raw")
 #
-# multimon.setStderr(None)
-# multimon.start()
 #
-# logging.debug("go")
+# try:
+#     rtl.addArgument("-f 85.235MHz")
+#     rtl.addArgument("-d 1")
+#     rtl.addArgument("-M fm -s 22050 -g 100")
+#     rtl.setStderr(None)
+#     #rtl.start()
 #
-# while multimon.isRunning:
-#     data = multimon.readline()
-#     if data is not None:
-#         print(data)
+#     sox.addArgument("-t ogg 88022.ogg -esigned-integer -b16 -r 22050 -t raw -")
+#     sox.setStderr(None)
+#     sox.start()
 #
+#
+#     #.\_bin\win\sox\sox.exe -t ogg -esigned-integer -b16 -r 22050 88022.ogg -
+#
+#     multimon.addArgument("-a ZVEI1 -a FMSFSK")
+#     multimon.addArgument("-t raw")
+#     #multimon.addArgument("-v 3")
+#     multimon.addArgument("-")
+#     multimon.setStdin(sox.stdout)
+#     multimon.setStderr(None)
+#
+#     multimon.start()
+#
+#     logging.debug("go")
+#
+#     while multimon.isRunning:
+#         data = multimon.readline()
+#         if data is not None:
+#             print(data)
+#
+#     logging.debug("end")
+#
+# except:
+#     logging.exception("batsch")
+#
+# finally:
+#
+#     sox.stop()
+#     multimon.stop()
+#     rtl.stop()
 #
 # exit()
 
