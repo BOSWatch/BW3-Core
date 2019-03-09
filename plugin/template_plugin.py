@@ -29,7 +29,7 @@ class BoswatchPlugin(Plugin):
     """!Description of the Plugin"""
     def __init__(self, config):
         """!Do not change anything here!"""
-        super().__init__(__name__, config)  # you can access the config DICT by 'self._config'
+        super().__init__(__name__, config)  # you can access the config class on 'self.config'
 
     def onLoad(self):
         """!Called by import of the plugin"""

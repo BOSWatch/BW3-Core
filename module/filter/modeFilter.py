@@ -29,10 +29,11 @@ class BoswatchModule(Module):
     """!Filter of specific bwPacket mode"""
     def __init__(self, config):
         """!Do not change anything here!"""
-        super().__init__(__name__, config)  # you can access the config DICT by 'self._config'
+        super().__init__(__name__, config)  # you can access the config class on 'self.config'
 
     def onLoad(self):
         """!Called by import of the plugin"""
+        print(self.config)
         pass
 
     def doWork(self, bwPacket):
@@ -41,7 +42,7 @@ class BoswatchModule(Module):
         @param bwPacket: A BOSWatch packet instance
         @return bwPacket or False"""
 
-        for mode in self.config.get("allowed"):
+        for mode in self.config.get("allowed", default=[]):
             if bwPacket.get("mode") == mode:
                 logging.debug("mode is allowed: %s", bwPacket.get("mode"))
                 return None
