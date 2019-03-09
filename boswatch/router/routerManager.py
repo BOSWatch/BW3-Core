@@ -65,7 +65,7 @@ class RouterManager:
             for route in router.get("route"):
                 routeType = route.get("type")
                 routeName = route.get("name")
-                routeConfig = route.get("Config", default=ConfigYAML())  # if no config - build a empty
+                routeConfig = route.get("config", default=ConfigYAML())  # if no config - build a empty
 
                 if routeType is None or routeName is None:
                     logging.error("type or name not found in route: %s", route)

@@ -14,25 +14,13 @@ server:
 
 alarmRouter:
 - Router 1
-- Test
 
 router:
   - name: Router 1
     route:
       - type: module
-        name: template_module
+        name: filter.modeFilter
         config:
-          maxEntry: 30
-          ignoreTime: 10
-          checkMsg: no
-      - type: router
-        name: Router 2
-      - type: plugin
-        name: template_plugin
-        config:
-          user: test
-          pass: test
-  - name: Router 2
-    route:
-      - type: module
-        name: template_module
+          allowed:
+            - fms
+            - zvei
