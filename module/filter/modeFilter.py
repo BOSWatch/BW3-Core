@@ -33,7 +33,6 @@ class BoswatchModule(Module):
 
     def onLoad(self):
         """!Called by import of the plugin"""
-        print(self.config)
         pass
 
     def doWork(self, bwPacket):
