@@ -6,6 +6,7 @@ zwingend in die Konfiguration eingetragen werden.
 
 
 ### Client
+Nachfolgend alle Paramater der Client Konfiguration
 
 #### `client:`
 |Feld|Beschreibung|Default|
@@ -56,6 +57,7 @@ inputSource:
 
 ---
 ### Server
+Nachfolgend alle Paramater der Server Konfiguration
 
 #### `server:`
 |Feld|Beschreibung|Default|
@@ -105,11 +107,12 @@ router:
 
 ---
 ### Module
+Nachfolgend alle Paramater der Modul Konfigurationen
 #### `filter.modeFilter`
 
 |Feld|Beschreibung|Default|
 |----|------------|-------|
-|allowed|Liste der erlaubten Paket Typen (fms, zvei, pocsag)||
+|allowed|Liste der erlaubten Paket Typen `fms` `zvei` `pocsag`||
 
 Bsp:
 ```yaml
@@ -121,3 +124,4 @@ config:
 
 ---
 ### Plugins
+Nachfolgend alle Paramater der Plugin Konfigurationen
