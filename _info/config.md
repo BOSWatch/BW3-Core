@@ -89,7 +89,7 @@ Die einzelnen Routen werden wie folgt definiert
 
 |Feld|Beschreibung|Default|
 |----|------------|-------|
-|type|Art des Routenpunktes (module, plugin, router)||
+|type|Art des Routenpunktes (`module`, `plugin`, `router`)||
 |name|Zu ladende Resource (vollständige Liste siehe !!!TBD!!!)||
 |config|Konfigurationseinstellungen des Routenpunktes||
 
@@ -112,7 +112,7 @@ Nachfolgend alle Paramater der Modul Konfigurationen
 
 |Feld|Beschreibung|Default|
 |----|------------|-------|
-|allowed|Liste der erlaubten Paket Typen `fms` `zvei` `pocsag`||
+|allowed|Liste der erlaubten Paket Typen (`fms`, `zvei`, `pocsag`, `msg`)||
 
 Bsp:
 ```yaml
