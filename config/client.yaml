@@ -20,9 +20,9 @@ inputSource:
   sdr:
     device: 0
     frequency: 85.000M
-    PPMError: 0
-    Squelch: 0
-    Gain: 100
+    error: 0
+    squelch: 0
+    gain: 100
 
 decoder:
   fms: yes

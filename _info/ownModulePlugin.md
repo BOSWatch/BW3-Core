@@ -13,6 +13,7 @@ Die Modul Basisklasse bietet einige Methoden, welche vom Modul überschrieben we
 - `onLoad()` wird direkt beim Import des Moduls ausgeführt
 - `doWork(bwPacket)` wird bei der Ausführung aufgerufen
 - `onUnload()` wird beim Zerstören der Plugin Modul zum Programmende ausgeführt
+
 #### 2.2 Plugin
 Die Plugin Basisklasse bietet einige Methoden, welche vom Plugin überschrieben werden können.
 - `onLoad()` wird direkt beim Import des Plugins ausgeführt
@@ -39,6 +40,7 @@ Jedes Modul oder Plugin wird in einem Router folgendermaßen deklariert:
       - list 1
       - list 2
 ```
+Eine entsprechende Dokumentation der Parameter ist in der Config-Readme zu hinterlegen.
 
 #### 3.2 Konfiguration nutzen
 Wird der Instanz eine Konfiguration übergeben wird diese in `self.config`
@@ -74,11 +76,13 @@ Diese Änderungen werden im Router entsprechend weitergeleitet.
 Mögliche Rückgabewerte eines Moduls:
 - `return bwPacket` gibt das modifizierte bwPacket an den Router zurück
 - `return None` Router fährt mit dem unveränderten bwPacket fort (Input = Output)
-- `return False` Router stopt sofort die Ausführung (zB. in Filter verwendet)
+- `return False` Router stopt sofort die Ausführung (zB. in Filtern verwendet)
+
 #### 4.2 Zu beachten bei Plugins
 Plugins geben keine Pakete mehr zurück. Sie fungieren ausschließlich als Endpunkt.
-Die Plugin Basisklasse liefert intern immer ein `None` an den Router.
+Die Plugin Basisklasse liefert intern immer ein `None` an den Router zurück,
+was zur weiteren Ausführung des Routers führt.
  
-### 5 Wildcards parsen (NUR PLUGIN)
+### 5 Wildcards parsen (NUR IN PLUGIN)
 Das parsen der Wildcars funktioniert komfortabel über die interne Methode `self.parseWildcards(MSG)`.
 Die Platzhalter für die Wildcards findet man in `boswatch/utils/wildcard.py` oder in der `packet.md`.
