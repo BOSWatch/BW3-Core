@@ -3,6 +3,7 @@
 
 pyyaml
 
+# for develope only
 pytest
 pytest-cov
 pytest-pep8
