@@ -69,7 +69,8 @@ if not bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config):
 try:
 
     bwRoutMan = RouterManager()
-    bwRoutMan.buildRouter(bwConfig)
+    if not bwRoutMan.buildRouter(bwConfig):
+        exit()
 
     if bwConfig.get("server", "useBroadcast", default=False):
         bcServer = BroadcastServer()

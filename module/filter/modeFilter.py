@@ -9,13 +9,13 @@
                 German BOS Information Script
                      by Bastian Schroll
 
-@file:        template_module.py
-@date:        14.01.2018
+@file:        modeFilter.py
+@date:        09.03.2019
 @author:      Bastian Schroll
-@description: Template Plugin File
+@description: Filter module for the packet type
 """
 import logging
-from plugin.plugin import Plugin
+from module.module import Module
 
 # ###################### #
 # Custom plugin includes #
@@ -25,8 +25,8 @@ from plugin.plugin import Plugin
 logging.debug("- %s loaded", __name__)
 
 
-class BoswatchPlugin(Plugin):
-    """!Description of the Plugin"""
+class BoswatchModule(Module):
+    """!Filter of specific bwPacket mode"""
     def __init__(self, config):
         """!Do not change anything here!"""
         super().__init__(__name__, config)  # you can access the config class on 'self.config'
@@ -35,35 +35,18 @@ class BoswatchPlugin(Plugin):
         """!Called by import of the plugin"""
         pass
 
-    def setup(self):
-        """!Called before alarm"""
-        pass
+    def doWork(self, bwPacket):
+        """!start an rund of the module.
 
-    def fms(self, bwPacket):
-        """!Called on FMS alarm
+        @param bwPacket: A BOSWatch packet instance
+        @return bwPacket or False"""
 
-        @param bwPacket: bwPacket instance"""
-        pass
-
-    def pocsag(self, bwPacket):
-        """!Called on POCSAG alarm
-
-        @param bwPacket: bwPacket instance"""
-        pass
-
-    def zvei(self, bwPacket):
-        """!Called on ZVEI alarm
-
-        @param bwPacket: bwPacket instance"""
-
-    def msg(self, bwPacket):
-        """!Called on MSG packet
-
-        @param bwPacket: bwPacket instance"""
-
-    def teardown(self):
-        """!Called after alarm"""
-        pass
+        for mode in self.config.get("allowed", default=[]):
+            if bwPacket.get("mode") == mode:
+                logging.debug("mode is allowed: %s", bwPacket.get("mode"))
+                return None
+        logging.debug("mode is denied: %s", bwPacket.get("mode"))
+        return False
 
     def onUnload(self):
         """!Called by destruction of the plugin"""
