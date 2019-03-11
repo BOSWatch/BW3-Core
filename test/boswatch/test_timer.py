@@ -20,7 +20,7 @@ import logging
 import time
 import pytest
 
-from boswatch.utils.timer import RepeatedTimer
+from boswatch.timer import RepeatedTimer
 
 
 def setup_method(method):

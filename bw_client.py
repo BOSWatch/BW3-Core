@@ -41,59 +41,11 @@ from boswatch.network.client import TCPClient
 from boswatch.network.broadcast import BroadcastClient
 from boswatch.decoder.decoder import Decoder
 from boswatch.utils import header
-from boswatch.processManager import ProcessManager
+from boswatch.utils import misc
 
 
 header.logoToLog()
 header.infoToLog()
-
-# sox = ProcessManager("_bin/win/sox/sox.exe")
-# rtl = ProcessManager("_bin/win/rtl_fm/rtl_fm.exe")
-# multimon = ProcessManager("_bin/win/multimon/multimon-ng.exe", True)
-#
-#
-# try:
-#     rtl.addArgument("-f 85.235MHz")
-#     rtl.addArgument("-d 1")
-#     rtl.addArgument("-M fm -s 22050 -g 100")
-#     rtl.setStderr(None)
-#     #rtl.start()
-#
-#     sox.addArgument("-t ogg 88022.ogg -esigned-integer -b16 -r 22050 -t raw -")
-#     sox.setStderr(None)
-#     sox.start()
-#
-#
-#     #.\_bin\win\sox\sox.exe -t ogg -esigned-integer -b16 -r 22050 88022.ogg -
-#
-#     multimon.addArgument("-a ZVEI1 -a FMSFSK")
-#     multimon.addArgument("-t raw")
-#     #multimon.addArgument("-v 3")
-#     multimon.addArgument("-")
-#     multimon.setStdin(sox.stdout)
-#     multimon.setStderr(None)
-#
-#     multimon.start()
-#
-#     logging.debug("go")
-#
-#     while multimon.isRunning:
-#         data = multimon.readline()
-#         if data is not None:
-#             print(data)
-#
-#     logging.debug("end")
-#
-# except:
-#     logging.exception("batsch")
-#
-# finally:
-#
-#     sox.stop()
-#     multimon.stop()
-#     rtl.stop()
-#
-# exit()
 
 logging.debug("parse args")
 # With -h or --help you get the Args help
@@ -140,7 +92,7 @@ try:
 
                 if bwPacket:
                     bwPacket.printInfo()
-                    bwPacket.addClientData(bwConfig)
+                    misc.addClientDataToPacket(bwPacket, bwConfig)
                     bwClient.transmit(str(bwPacket))
 
                     # todo should we do this in an thread, to not block receiving ??? but then we should use transmit() and receive() with Lock()

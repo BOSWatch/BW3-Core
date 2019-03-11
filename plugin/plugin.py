@@ -17,7 +17,7 @@
 import logging
 import time
 
-from boswatch.utils import wildcard
+from boswatch import wildcard
 
 logging.debug("- %s loaded", __name__)
 

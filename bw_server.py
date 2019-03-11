@@ -44,6 +44,7 @@ from boswatch.packet import Packet
 from boswatch.utils import header
 from boswatch.network.broadcast import BroadcastServer
 from boswatch.router.routerManager import RouterManager
+from boswatch.utils import misc
 
 
 header.logoToLog()
@@ -93,7 +94,7 @@ try:
                 bwPacket = Packet((data[1]))
 
                 bwPacket.set("clientIP", data[0])
-                bwPacket.addServerData(bwConfig)
+                misc.addServerDataToPacket(bwPacket, bwConfig)
 
                 bwRoutMan.runRouter(bwConfig.get("alarmRouter"), bwPacket)
 
