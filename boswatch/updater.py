@@ -23,16 +23,14 @@ logging.debug("- %s loaded", __name__)
 
 
 class Updater:
-    def __init__(self):
-        self._url = "https://raw.githubusercontent.com/BOSWatch/BW3-Core/master/boswatch/version.py"
+    def __init__(self, branch):
         self._clientVersion = None
         self._serverVersion = None
         self._date = None
-        self._branch = None
+        self._branch = branch
 
-    def getVersion(self):
-        logging.debug("check for updates")
-        data = urllib.request.urlopen(self._url)
+    def _getOnlineVersion(self):
+        data = urllib.request.urlopen("https://raw.githubusercontent.com/BOSWatch/BW3-Core/" + self._branch + "/boswatch/version.py")
         for line in data:
             content = str(line, "utf8")
 
@@ -52,20 +50,36 @@ class Updater:
                 data = re.findall("(?:branch)(?:[ =\"]+)(\w*)", content)
                 self._branch = data[0]
 
-    def checkVersion(self):
+    def checkClientUpdate(self):
+        logging.debug("checking for client update")
+        self._getOnlineVersion()
         if version.client["major"] < self._clientVersion["major"] or \
                 version.client["minor"] < self._clientVersion["minor"] or \
                 version.client["patch"] < self._clientVersion["patch"]:
-            logging.info("There is a client update available: %d.%d.%d -> %d.%d.%d",
+            logging.info("There is a client update from available: %d.%d.%d (%d.%d.%d) -> %d.%d.%d (%d.%d.%d)",
                          version.client["major"], version.client["minor"], version.client["patch"],
-                         self._clientVersion["major"], self._clientVersion["minor"], self._clientVersion["patch"])
+                         version.date["day"], version.date["month"], version.date["year"],
+                         self._clientVersion["major"], self._clientVersion["minor"], self._clientVersion["patch"],
+                         self._date["day"], self._date["month"], self._date["year"])
+            return False
+        else:
+            logging.debug("client is up to date")
+            return True
 
+    def checkServerUpdate(self):
+        logging.debug("checking for server update")
+        self._getOnlineVersion()
         if version.server["major"] < self._serverVersion["major"] or \
                 version.server["minor"] < self._serverVersion["minor"] or \
                 version.server["patch"] < self._serverVersion["patch"]:
-            logging.info("There is a server update available: %d.%d.%d -> %d.%d.%d",
+            logging.info("There is a server update from %d.%d.%d available: %d.%d.%d -> %d.%d.%d",
+                         version.date["day"], version.date["month"], version.date["year"],
                          version.server["major"], version.server["minor"], version.server["patch"],
                          self._serverVersion["major"], self._serverVersion["minor"], self._serverVersion["patch"])
+            return False
+        else:
+            logging.debug("server is up to date")
+            return True
 
-
-
+    def doUpdate(self):
+        pass
