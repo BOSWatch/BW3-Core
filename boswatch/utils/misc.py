@@ -15,7 +15,7 @@
 @description: Some misc functions
 """
 import logging
-from boswatch import version
+from boswatch.utils import version
 
 logging.debug("- %s loaded", __name__)
 

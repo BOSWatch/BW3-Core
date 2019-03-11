@@ -16,7 +16,6 @@
 """
 import logging
 import time
-from boswatch import version
 
 logging.debug("- %s loaded", __name__)
 
