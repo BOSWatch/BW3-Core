@@ -21,7 +21,7 @@
 #
 
 # bitrate
-POCSAG512: Address: 1000512  Function: 1  Alpha:   BOSWatch-Test ÷ƒ‹ﬂ: okay
+POCSAG512: Address: 1000512  Function: 1  Alpha:   BOSWatch-Test √ñ√Ñ√ú√ü: okay
 POCSAG1200: Address: 1001200  Function: 1  Alpha:   BOSWatch-Test: okay
 POCSAG2400: Address: 1002400  Function: 1  Alpha:   BOSWatch-Test: okay
 
@@ -32,8 +32,8 @@ POCSAG512: Address: 1000002  Function: 2  Alpha:   BOSWatch-Test: okay
 POCSAG512: Address: 1000003  Function: 3  Alpha:   BOSWatch-Test: okay
 
 # german special sign
-POCSAG512: Address: 1200001  Function: 1  Alpha:   BOSWatch-Test ÷ƒ‹ﬂ: okay
-POCSAG512: Address: 1200001  Function: 1  Alpha:   BOSWatch-Test ˆ‰¸: okay
+POCSAG512: Address: 1200001  Function: 1  Alpha:   BOSWatch-Test √ñ√Ñ√ú√ü: okay
+POCSAG512: Address: 1200001  Function: 1  Alpha:   BOSWatch-Test √∂√§√º: okay
 
 # with csv
 POCSAG512: Address: 1234567  Function: 1  Alpha:   BOSWatch-Test: with csv
@@ -100,7 +100,7 @@ POCSAG1200: Address: 0860007  Function: 0
 POCSAG1200: Address: 0860008  Function: 0 
 POCSAG1200: Address: 0860009  Function: 0 
 POCSAG1200: Address: 0860010  Function: 0 
-POCSAG1200: Address: 0871003  Function: 0  Alpha:   B2 Feuer Geb‰ude Pers in Gefahr. bla bla bla<NUL>
+POCSAG1200: Address: 0871003  Function: 0  Alpha:   B2 Feuer Geb√§ude Pers in Gefahr. bla bla bla<NUL>
 
 # regEx-Filter?
 
