@@ -73,7 +73,7 @@ class Packet:
         self.set("clientVersion", version.client)
         self.set("clientBuildDate", version.date)
         self.set("clientBranch", version.branch)
-        self.set("inputSource", config.get("client", "inoutSource"))
+        self.set("inputSource", config.get("client", "inputSource"))
         self.set("frequency", config.get("inputSource", "sdr", "frequency"))
 
     def addServerData(self, config):
