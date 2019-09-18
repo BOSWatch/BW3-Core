@@ -1,6 +1,6 @@
 ## Konfiguration
 
-Die Konfiguration von BOSWatch 3 ist im YAML Format abgelegt und wird nachfolgend beschrieben.
+Die Konfiguration von BOSWatch 3 ist im YAML Format abgelegt und wird nachfolgend beschrieben.  
 Immer wenn für eine Einstellung ein **Default** Wert angegeben ist, muss diese Einstellung nicht
 zwingend in die Konfiguration eingetragen werden.
 
@@ -12,11 +12,12 @@ Nachfolgend alle Paramater der Client Konfiguration
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |name|Name zur Identifizierung der Client Instanz||
-|inoutSource|Art der zu nutzenden Input Quelle (aktuell nur `sdr`)||
+|inputSource|Art der zu nutzenden Input Quelle (aktuell nur `sdr`)||
 |useBroadcast|Verbindungsdaten per Broadcast beziehen|no|
 
 #### `server:`
-Der Abschnitt `server:` wird nur genutzt, wenn `useBroadcast: no` gesetzt ist.
+Der Abschnitt `server:` wird nur genutzt, wenn `useBroadcast: no` gesetzt ist.  
+Ansonsten wird versucht die Verbindungsdaten per Broadcast Paket direkt vom Server zu beziehen.
 
 |Feld|Beschreibung|Default|
 |----|------------|-------|
@@ -72,8 +73,8 @@ Enthält eine Liste der Router Namen, welche bei einem Alarm direkt gestartet we
 Bsp:
 ```yaml
 alarmRouter:
-- Name des Routers
-- ein weiter Router
+  - Name des Routers
+  - ein weiter Router
 ```
 
 #### `router:`
@@ -118,8 +119,8 @@ Bsp:
 ```yaml
 config:
   allowed:
-  - fms
-  - zvei
+    - fms
+    - zvei
 ```
 
 ---

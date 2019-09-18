@@ -1,17 +1,11 @@
-# Welcome to MkDocs
+# BOSWatch 3
 
-For full documentation visit [mkdocs.org](https://mkdocs.org).
+![BOSWatch](img/bw3.png "BOSWatch 3 Logo")
 
-## Commands
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs help` - Print this help message.
+**Es wird darauf hingewiesen, dass für die Teilnahme am BOS-Funk nur nach den Technischen Richtlinien der BOS zugelassene Funkanlagen verwendet werden dürfen.**
+**Der BOS-Funk ist ein nichtöffentlicher mobiler Landfunk. Privatpersonen gehören nicht zum Kreis der berechtigten Funkteilnehmer.** _(Quelle: TR-BOS)_
 
-## Project layout
+***
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+**The intercept of the German BOS radio is strictly prohibited and will be prosecuted. The use is only permitted for authorized personnel.**
