@@ -44,20 +44,22 @@ class ProcessManager:
         """!clear all arguments"""
         self._args = self._args[0:1]  # kept first element (process name)
 
-    def start(self):
+    def start(self, startAsShell=False):
         """!start the new process
 
         @return: True or False"""
-        logging.debug("start new process: %s", self._args)
+        logging.debug("start new process: %s %s", self._args[0], self._args[1:])
         try:
             self._processHandle = subprocess.Popen(self._args,
                                                    stdin=self._stdin,
                                                    stdout=self._stdout,
                                                    stderr=self._stderr,
-                                                   universal_newlines=self._textMode)
+                                                   universal_newlines=self._textMode,
+                                                   shell=startAsShell)
             if not self.isRunning:
                 logging.error("cannot start")
                 return False
+            logging.debug("process started with PID %d", self._processHandle.pid)
             return True
 
         except FileNotFoundError:
@@ -73,6 +75,7 @@ class ProcessManager:
                 pass
         else:
             logging.debug("process not running: %s", self._args[0])
+        logging.debug("process %s returned %d", self._args[0], self._processHandle.returncode)
 
     def readline(self):
         """!Read one line from stdout stream
@@ -83,8 +86,8 @@ class ProcessManager:
                 line = self._processHandle.stdout.readline().strip()
             except UnicodeDecodeError:
                 return None
-            if line != "":
-                return line
+
+            return line
         return None
 
     def setStdin(self, stdin):
@@ -118,4 +121,3 @@ class ProcessManager:
             if self._processHandle.poll() is None:
                 return True
         return False
-
