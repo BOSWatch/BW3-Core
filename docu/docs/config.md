@@ -1,21 +1,22 @@
-## Konfiguration
+# <center>Konfiguration</center>
 
 Die Konfiguration von BOSWatch 3 ist im YAML Format abgelegt und wird nachfolgend beschrieben.  
 Immer wenn für eine Einstellung ein **Default** Wert angegeben ist, muss diese Einstellung nicht
 zwingend in die Konfiguration eingetragen werden.
 
+---
+## Client
 
-### Client
-Nachfolgend alle Paramater der Client Konfiguration
 
-#### `client:`
+### `client:`
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |name|Name zur Identifizierung der Client Instanz||
 |inputSource|Art der zu nutzenden Input Quelle (aktuell nur `sdr`)||
 |useBroadcast|Verbindungsdaten per Broadcast beziehen|no|
 
-#### `server:`
+---
+### `server:`
 Der Abschnitt `server:` wird nur genutzt, wenn `useBroadcast: no` gesetzt ist.  
 Ansonsten wird versucht die Verbindungsdaten per Broadcast Paket direkt vom Server zu beziehen.
 
@@ -24,10 +25,17 @@ Ansonsten wird versucht die Verbindungsdaten per Broadcast Paket direkt vom Serv
 |ip|IP Adresse des Servers|127.0.0.1|
 |port|Port des Sever|8080|
 
-#### `inputSource:`
+Bsp:
+```yaml
+server:
+  ip: 10.10.10.2
+  port: 9123
+```
+---
+### `inputSource:`
 Aktuell gibt es nur `sdr:` als Input Quelle
 
-##### `sdr:`
+#### `sdr:`
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |device|rtl_fm Device ID|0|
@@ -47,7 +55,8 @@ inputSource:
     gain: 100
 ```
 
-#### `decoder:`
+---
+### `decoder:`
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |fms|FMS Decoder|no|
@@ -57,17 +66,18 @@ inputSource:
 |poc2400|POCSAG Decoder (Bitrate 2400)|no|
 
 ---
-### Server
+## Server
 Nachfolgend alle Paramater der Server Konfiguration
 
-#### `server:`
+### `server:`
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |port|Port auf dem der Server lauscht|8080
 |name|Name zur Identifizierung der Server Instanz||
 |useBroadcast|Verbindungsdaten per Broadcast Server bereitstellen|no|
 
-#### `alarmRouter:`
+---
+### `alarmRouter:`
 Enthält eine Liste der Router Namen, welche bei einem Alarm direkt gestartet werden sollen.
 
 Bsp:
@@ -77,22 +87,24 @@ alarmRouter:
   - ein weiter Router
 ```
 
-#### `router:`
-Mit den Routern kann der Verarbeitungsweg eines Alarm-Paketes festgelegt werden.
-Diese werden als Liste angegeben
+---
+### `router:`
+Mit den Routern kann der Verarbeitungsweg eines Alarm-Paketes festgelegt werden. DEs können beliebig viele Router in Form einer Liste angegeben werden.
 
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |name|Name des Routers||
 |route|Definiten des Routenverlaufs
 
-Die einzelnen Routen werden wie folgt definiert
+#### `route:`
+
+Jeder Router kann eine beliebige Anzahl einzelner Routenpunkte enthalten. Diese werden innerhalb des Routers sequentiel abgearbeitet. Mögliche Typen der Routenpunkte sind dabei ein Modul, ein Plugin oder ein anderer Router. Sie werden ebenfalls in Form einer Liste definiert.
 
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |type|Art des Routenpunktes (module, plugin, router)||
-|name|Zu ladende Resource (vollständige Liste siehe !!!TBD!!!)||
-|config|Konfigurationseinstellungen des Routenpunktes||
+|name|Zu ladende Resource (Siehe weiter unten)||
+|config|Konfigurationseinstellungen des Routenpunktes (Siehe weiter unten)||
 
 Bsp:
 ```yaml
@@ -107,9 +119,10 @@ router:
 ```
 
 ---
-### Module
+## Module
 Nachfolgend alle Paramater der Modul Konfigurationen
-#### `filter.modeFilter`
+
+### `filter.modeFilter`
 
 |Feld|Beschreibung|Default|
 |----|------------|-------|
@@ -124,5 +137,6 @@ config:
 ```
 
 ---
-### Plugins
+## Plugins
 Nachfolgend alle Paramater der Plugin Konfigurationen
+
