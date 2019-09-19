@@ -22,7 +22,7 @@ nav:
   - Entwickler:
     - Eigenes Modul/Plugin: develop/ModulPlugin.md
     - BOSWatch Packet Format: develop/packet.md
-    - BW3 Source Docu: /api/html/index.html
+    - BW3 Source Docu: api/html/index.html
   - Changelog: changelog.md
 
 use_directory_urls: false
