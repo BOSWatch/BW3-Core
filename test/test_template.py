@@ -29,7 +29,7 @@ def fixtureTemplate():
     return None
 
 
-@pytest.mark.skip
+@pytest.mark.skip("Reason why i will skipped")
 def test_skippedTest():
     pass
 

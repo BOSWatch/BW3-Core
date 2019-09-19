@@ -1,0 +1,18 @@
+site_name: BOSWatch3 Core
+site_author: Bastian Schroll & BW3 Dev team
+
+nav:
+ # - BW3: index.md
+  - Quick Start Guide: config.md
+ # - Module: index.md
+ # - Plugins: index.md
+  - Entwickler:
+    - Eigenes Modul/Plugin: develop/ModulPlugin.md
+    - BOSWatch Packet Format: develop/packet.md
+#    - BW3 Source Docu: /api/index.html
+  - Changelog: changelog.md
+
+theme:
+    name: mkdocs
+    highlightjs: true
+    hljs_style: github
