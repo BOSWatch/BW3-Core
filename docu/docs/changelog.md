@@ -1,1 +1,3 @@
-## Changelog
+# <center>Changelog</center>
+
+---
