@@ -6,24 +6,25 @@ edit_uri: edit/develop/docu/docs/
 
 nav:
   # - BW3: index.md
-  - Quick Start Guide:
+  - Quick Start:
 #      - Installation: tbd.md
       - Konfiguration: config.md
 #      - BOSWatch nutzen: tbd.md
 #      - BOSWatch als Service: tbd.md
-#  - Informationen:
+  - Informationen:
 #      - Server/Cient Prinzip: tbd.md
 #      - Broadcast Funktion: tbd.md
 #      - Modul/Plugin Konzept: tbd.md
 #      - Routing Mechanismus: tbd.md
+       - Changelog: changelog.md
   - Module:
       - Mode Filter: modul/mode_filter.md
-#  - Plugins: tbd.md
+  - Plugins: tbd.md
   - Entwickler:
-    - Eigenes Modul/Plugin: develop/ModulPlugin.md
-    - BOSWatch Packet Format: develop/packet.md
-    - BW3 Source Docu: api/html/index.html
-  - Changelog: changelog.md
+    - Eigenes Modul/Plugin schreiben: develop/ModulPlugin.md
+    - BOSWatch Alarmpaket Format: develop/packet.md
+    - BW3 Quellcode Dokumentation: api/html/index.html
+
 
 use_directory_urls: false
 
