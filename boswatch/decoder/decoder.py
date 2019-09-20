@@ -32,6 +32,7 @@ class Decoder:
         @param data: data to decode
         @return bwPacket instance"""
         logging.debug("search decoder")
+        data = str(data)
         if "FMS" in data:
             return FmsDecoder.decode(data)
         elif "POCSAG" in data:

@@ -70,20 +70,20 @@ class PocsagDecoder:
         @return bitrate
         @return ric
         @return subric"""
-        bitrate, ric, subric = 0, 0, 0
+        bitrate, ric, subric = "0", "0", "0"
 
         if "POCSAG512:" in data:
-            bitrate = 512
+            bitrate = "512"
             ric = data[20:27].replace(" ", "").zfill(7)
             subric = str(int(data[39]) + 1)
 
         elif "POCSAG1200:" in data:
-            bitrate = 1200
+            bitrate = "1200"
             ric = data[21:28].replace(" ", "").zfill(7)
             subric = str(int(data[40]) + 1)
 
         elif "POCSAG2400:" in data:
-            bitrate = 2400
+            bitrate = "2400"
             ric = data[21:28].replace(" ", "").zfill(7)
             subric = str(int(data[40]) + 1)
 
