@@ -19,8 +19,6 @@ Ein BOSWatch Datenpaket wird in einem Python Dict abgebildet. In der nachfolgend
 |timestamp|X|X|X|X|`{TIMES}`||
 |frequency|X|X|X|X|`{FREQ}`||
 |mode|X|X|X|X|`{MODE}`|(fms, pocsag, zvei, msg)|
-|descriptionShort|X|X|X||`{DESCS}`|Kann aus optinalem CSV File geladen werden|
-|descriptionLong|X|X|X||`{DESCL}`|Kann aus optinalem CSV File geladen werden|
 
 ---
 ## Speziell für POCSAG
