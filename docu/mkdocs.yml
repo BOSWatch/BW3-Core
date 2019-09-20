@@ -7,10 +7,10 @@ edit_uri: edit/develop/docu/docs/
 nav:
   # - BW3: index.md
   - Quick Start:
-#      - Installation: tbd.md
+      - Installation: tbd.md
       - Konfiguration: config.md
-#      - BOSWatch nutzen: tbd.md
-#      - BOSWatch als Service: tbd.md
+#      - BOSWatch benutzen: tbd.md
+#      - Als Service einrichten: tbd.md
   - Informationen:
 #      - Server/Cient Prinzip: tbd.md
        - Broadcast Service: information/broadcast.md

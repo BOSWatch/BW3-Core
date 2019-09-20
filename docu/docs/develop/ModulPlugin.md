@@ -1,9 +1,10 @@
 # <center>Eigenes Modul/Plugin schreiben</center> 
+
 Um ein eigenes Modul oder Plugin zu schreiben, sollte man sich am besten zuerst einmal das das `template` im entsprechenden Ordner ansehen. Dies kann als Vorlage für das eigene Modul oder Plugin genutzt werden.
 
 ---
-## Informationen anpassen
-- Dateikopf anpassen
+## Allgemeine Informationen
+Im ersten Schritt sollte eine Kopie des jeweiligen Templates (Modul oder Plugin) erstellt werden. Nun sollten im Dateikopf die Angaben angepasst werden.
 
 ---
 ## Benötigte Methoden überschreiben
@@ -14,7 +15,6 @@ Die Modul Basisklasse bietet einige Methoden, welche vom Modul überschrieben we
 - `doWork(bwPacket)` wird bei der Ausführung aufgerufen
 - `onUnload()` wird beim Zerstören der Plugin Modul zum Programmende ausgeführt
 
----
 ### Plugin
 Die Plugin Basisklasse bietet einige Methoden, welche vom Plugin überschrieben werden können.
 
@@ -70,11 +70,15 @@ Sollten weitere Unterelemente oder eine Liste exisitieren wird erneut ein Objekt
 
 ---
 ## Arbeiten mit dem bwPacket
-An das Modul bzw. Plugin wird eine Instanz eines BOSWatch-Packet Objekts übergeben.  
+An das Modul bzw. Plugin wird eine Instanz eines BOSWatch-Paket Objekts übergeben.  
 Aus dieser kann mittels `bwPacket.get(FIELDNAME)` das entsprechende Feld ausgelesen werden.  
 Mittels `bwPacket.set(FIELDNAME, VALUE)` kann ein Wert hinzugefügt oder modifiziert werden.  
-Eine Auflistung der bereitgestellten Informationen findet sich im entsprechenden [BOSWatch Paket](packet.md) Dokumentation.  
-Selbst vom Modul hinzugefügte Informationen müssen dokumentiert werden.
+Eine Auflistung der bereitgestellten Informationen findet sich im entsprechenden [BOSWatch Paket](packet.md) Dokumentation.
+
+Bitte beachten:
+
+- Selbst vom Modul hinzugefügte Felder **müssen** in der Modul Dokumentation unter `Paket Modifikation` aufgeführt werden.
+- Sollte ein Modul oder Plugin Felder benutzen, welche in einem anderen Modul erstellt werden, **muss** dies im Punkt `Abhänigkeiten` des jeweiligen Moduls oder Plugins zu dokumentieren.
 
 ### Zu beachten bei Module
 Module können Pakete beliebig verändern. Diese Änderungen werden im Router entsprechend weitergeleitet.
@@ -89,6 +93,10 @@ Mögliche Rückgabewerte eines Moduls:
 Plugins geben keine Pakete mehr zurück. Sie fungieren ausschließlich als Endpunkt.  
 Die Plugin Basisklasse liefert intern immer ein `None` an den Router zurück,
 was zur weiteren Ausführung des Routers mit dem original Paket führt. Daher macht es in Plugins keinen Sinn ein Paket zu modifizieren.
+ 
+---
+## Richtiges Logging
+ tbd ... 
  
 ---
 ## Wildcards parsen (Plugin only)

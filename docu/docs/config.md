@@ -4,9 +4,9 @@ Die Konfiguration von BOSWatch 3 ist im YAML Format abgelegt und wird nachfolgen
 Immer wenn für eine Einstellung ein **Default** Wert angegeben ist, muss diese Einstellung nicht
 zwingend in die Konfiguration eingetragen werden.
 
----
 ## Client
 
+---
 ### `client:`
 |Feld|Beschreibung|Default|
 |----|------------|-------|
@@ -30,6 +30,7 @@ server:
   ip: 10.10.10.2
   port: 9123
 ```
+
 ---
 ### `inputSource:`
 Aktuell gibt es nur `sdr:` als Input Quelle

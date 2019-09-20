@@ -1,4 +1,5 @@
 # <center>BOSWatch 3</center>
+---
 
 <center>![BOSWatch](img/bw3.png "BOSWatch 3 Logo")</center>
 

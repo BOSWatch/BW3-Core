@@ -1,5 +1,4 @@
 # <center>Changelog</center>
-
 ---
 
 ## Version [2.9.0] - date
