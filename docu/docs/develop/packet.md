@@ -1,9 +1,9 @@
-## BOSWatch Packet Format
+# <center>BOSWatch Packet Format</center>
 
 Ein BOSWatch Datenpaket wird in einem Python Dict abgebildet. In der nachfolgenden Tabelle sind die genutzten Felder abgebildet.
 
-### Allgemeine Informationen
-
+---
+## Allgemeine Informationen
 |Feldname|FMS|POCSAG|ZVEI|MSG|Wildcard|Beschreibung|
 |--------|:-:|:----:|:--:|:-:|--------|------------|
 |serverName|X|X|X|X|`{SNAME}`|Name der BOSWatch Server Instanz|
@@ -19,11 +19,9 @@ Ein BOSWatch Datenpaket wird in einem Python Dict abgebildet. In der nachfolgend
 |timestamp|X|X|X|X|`{TIMES}`||
 |frequency|X|X|X|X|`{FREQ}`||
 |mode|X|X|X|X|`{MODE}`|(fms, pocsag, zvei, msg)|
-|descriptionShort|X|X|X||`{DESCS}`|Kann aus optinalem CSV File geladen werden|
-|descriptionLong|X|X|X||`{DESCL}`|Kann aus optinalem CSV File geladen werden|
 
-### Speziell für POCSAG
-
+---
+## Speziell für POCSAG
 |Feldname|FMS|POCSAG|ZVEI|MSG|Wildcard|Beschreibung|
 |--------|:-:|:----:|:--:|:-:|--------|------------|
 |bitrate||X|||`{BIT}`||
@@ -32,14 +30,14 @@ Ein BOSWatch Datenpaket wird in einem Python Dict abgebildet. In der nachfolgend
 |subricText||X|||`{SRICT}`|(a, b, c, d)|
 |message||X||X|`{MSG}`|Kann außerdem für ein Message Paket genutzt werden|
 
-### Speziell für ZVEI
-
+---
+## Speziell für ZVEI
 |Feldname|FMS|POCSAG|ZVEI|MSG|Wildcard|Beschreibung|
 |--------|:-:|:----:|:--:|:-:|--------|------------|
 |tone|||X||`{TONE}`|5-Ton Sequenz nach ZVEI|
 
-### Speziell für FMS
-
+---
+## Speziell für FMS
 |Feldname|FMS|POCSAG|ZVEI|MSG|Wildcard|Beschreibung|
 |--------|:-:|:----:|:--:|:-:|--------|------------|
 |fms|X||||`{FMS}`||
@@ -54,7 +52,8 @@ Ein BOSWatch Datenpaket wird in einem Python Dict abgebildet. In der nachfolgend
 |vehicle|X||||`{VEC}`||
 |tacticalInfo|X||||`{TACI}`|(I, II, III, IV)|
 
-### Weitere Wildcards
+---
+## Weitere Wildcards
 - `{BR}` - Zeilenumbruch `\r\n`
 - `{LPAR}` - öffnende Klammer `(`
 - `{RPAR}` - schließende Klammer `)`

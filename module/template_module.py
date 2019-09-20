@@ -36,7 +36,7 @@ class BoswatchModule(Module):
         pass
 
     def doWork(self, bwPacket):
-        """!start an rund of the module.
+        """!start an run of the module.
 
         @param bwPacket: A BOSWatch packet instance
         @return bwPacket or False"""
