@@ -73,8 +73,6 @@ class ProcessManager:
             self._processHandle.terminate()
             while self.isRunning:
                 pass
-        else:
-            logging.debug("process not running: %s", self._args[0])
         logging.debug("process %s returned %d", self._args[0], self._processHandle.returncode)
 
     def readline(self):
@@ -91,7 +89,7 @@ class ProcessManager:
         return None
 
     def skipLines(self, line_cnt=1):
-        logging.debug("Skip %d lines from output", line_cnt)
+        logging.debug("skip %d lines from output", line_cnt)
         while line_cnt:
             self.readline()
             line_cnt -= 1

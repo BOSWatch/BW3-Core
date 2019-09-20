@@ -103,5 +103,9 @@ class TCPClient:
     def isConnected(self):
         """!Property of client connected state"""
         if self._sock:
-            return True
+            try:
+                self._sock.sendall(bytes("", "utf-8"))
+                return True
+            except AttributeError:
+                pass
         return False
