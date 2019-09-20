@@ -27,7 +27,8 @@ proc.start()
 proc.skipLines(5)
 while proc.isRunning:
     line = proc.readline()
-    Decoder.decode(line)
+    if line is not "":
+        Decoder.decode(line)
 
 
 proc.stop()
