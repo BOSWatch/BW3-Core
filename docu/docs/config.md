@@ -14,8 +14,8 @@ zwingend in die Konfiguration eingetragen werden.
 |inputSource|Art der zu nutzenden Input Quelle (aktuell nur `sdr`)|sdr|
 |useBroadcast|Verbindungsdaten per [Broadcast](information/broadcast.md) beziehen|no|
 |reconnectDelay|Verzögerung für erneuten Verbindungsversuch zum Server|3|
-|resendTries|Anzahl weiter Sendeversuche bei fehlender Bestätigung|3|
-|resendDelay|Verzögerung für einen erneuten Sendeversuch|3|
+|sendTries|Anzahl der Sendeversuche eines Pakets|3|
+|sendDelay|Verzögerung für einen erneuten Sendeversuch|3|
 
 ---
 ### `server:`

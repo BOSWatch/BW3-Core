@@ -12,8 +12,8 @@ client:
   inputSource: sdr        # atm only 'sdr' is possible
   useBroadcast: no        # use broadcast to find server automatically
   reconnectDelay: 3       # time in seconds to delay reconnect try
-  resendTries: 3          # how often a failed sending should retired
-  resendDelay: 3          # time in seconds to delay the resend try
+  sendTries: 3            # how often should tried to send a packet
+  sendDelay: 3            # time in seconds to delay the resend try
 
 server:                   # only used if useBroadcast = no
   ip:   127.0.0.1
