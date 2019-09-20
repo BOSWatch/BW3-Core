@@ -1,0 +1,3 @@
+python -m pytest -c "_gen/pytest.ini"
+_bin\win\doxygen\doxygen.exe _gen/doxygen.ini
+_bin\win\cloc_1_72\cloc-1.72.exe . --exclude-lang=XML --exclude-dir=_docu,_config,_info,doxygen.ini --by-file-by-lang

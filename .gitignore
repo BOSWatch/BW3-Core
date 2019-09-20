@@ -7,11 +7,11 @@
 #                     by Bastian Schroll
 
 # virtual environment
-\.venv/
+\venv/
 
 # generated files
 log/
-_docu/
+docu/docs/api/html
 docu/site/
 
 # Logo Photoshop file

@@ -107,6 +107,9 @@ except:  # pragma: no cover
     logging.exception("BOSWatch interrupted by an error")
 finally:  # pragma: no cover
 
+    logging.debug("Starting shutdown routine")
+    del bwRoutMan
+
     try:
         bwServer.stop()
     except NameError:

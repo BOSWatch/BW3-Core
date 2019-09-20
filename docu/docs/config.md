@@ -4,16 +4,15 @@ Die Konfiguration von BOSWatch 3 ist im YAML Format abgelegt und wird nachfolgen
 Immer wenn für eine Einstellung ein **Default** Wert angegeben ist, muss diese Einstellung nicht
 zwingend in die Konfiguration eingetragen werden.
 
----
 ## Client
 
-
+---
 ### `client:`
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |name|Name zur Identifizierung der Client Instanz||
 |inputSource|Art der zu nutzenden Input Quelle (aktuell nur `sdr`)||
-|useBroadcast|Verbindungsdaten per Broadcast beziehen|no|
+|useBroadcast|Verbindungsdaten per [Broadcast](information/broadcast.md) beziehen|no|
 
 ---
 ### `server:`
@@ -25,12 +24,13 @@ Ansonsten wird versucht die Verbindungsdaten per Broadcast Paket direkt vom Serv
 |ip|IP Adresse des Servers|127.0.0.1|
 |port|Port des Sever|8080|
 
-Bsp:
+**Beispiel:**
 ```yaml
 server:
   ip: 10.10.10.2
   port: 9123
 ```
+
 ---
 ### `inputSource:`
 Aktuell gibt es nur `sdr:` als Input Quelle
@@ -44,7 +44,7 @@ Aktuell gibt es nur `sdr:` als Input Quelle
 |squelch|Einstellung der Rauschsperre|0|
 |gain|Verstärkung des Eingangssignals|100|
 
-Bsp:
+**Beispiel:**
 ```yaml
 inputSource:
   sdr:
@@ -80,7 +80,7 @@ Nachfolgend alle Paramater der Server Konfiguration
 ### `alarmRouter:`
 Enthält eine Liste der Router Namen, welche bei einem Alarm direkt gestartet werden sollen.
 
-Bsp:
+**Beispiel:**
 ```yaml
 alarmRouter:
   - Name des Routers
@@ -106,7 +106,7 @@ Jeder Router kann eine beliebige Anzahl einzelner Routenpunkte enthalten. Diese 
 |name|Zu ladende Resource (Siehe weiter unten)||
 |config|Konfigurationseinstellungen des Routenpunktes (Siehe weiter unten)||
 
-Bsp:
+**Beispiel:**
 ```yaml
 router:
   - name: Router 1
@@ -119,24 +119,6 @@ router:
 ```
 
 ---
-## Module
-Nachfolgend alle Paramater der Modul Konfigurationen
+## Module/Plugins
 
-### `filter.modeFilter`
-
-|Feld|Beschreibung|Default|
-|----|------------|-------|
-|allowed|Liste der erlaubten Paket Typen `fms` `zvei` `pocsag`||
-
-Bsp:
-```yaml
-config:
-  allowed:
-    - fms
-    - zvei
-```
-
----
-## Plugins
-Nachfolgend alle Paramater der Plugin Konfigurationen
-
+Für die Konfiguration der Module und Plugins ist in den entsprechenden Kategorien eine ausführliche Beschreibung zu finden.
