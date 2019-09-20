@@ -13,7 +13,7 @@ nav:
 #      - BOSWatch als Service: tbd.md
   - Informationen:
 #      - Server/Cient Prinzip: tbd.md
-#      - Broadcast Funktion: tbd.md
+       - Broadcast Service: information/broadcast.md
 #      - Modul/Plugin Konzept: tbd.md
 #      - Routing Mechanismus: tbd.md
        - Changelog: changelog.md
