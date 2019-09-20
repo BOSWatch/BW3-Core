@@ -90,6 +90,12 @@ class ProcessManager:
             return line
         return None
 
+    def skipLines(self, line_cnt=1):
+        logging.debug("Skip %d lines from output", line_cnt)
+        while line_cnt:
+            self.readline()
+            line_cnt -= 1
+
     def setStdin(self, stdin):
         """!Set the stdin stream instance"""
         self._stdin = stdin
