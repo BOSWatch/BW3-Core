@@ -12,7 +12,7 @@ zwingend in die Konfiguration eingetragen werden.
 |----|------------|-------|
 |name|Name zur Identifizierung der Client Instanz||
 |inputSource|Art der zu nutzenden Input Quelle (aktuell nur `sdr`)||
-|useBroadcast|Verbindungsdaten per Broadcast beziehen|no|
+|useBroadcast|Verbindungsdaten per [Broadcast](information/broadcast.md) beziehen|no|
 
 ---
 ### `server:`

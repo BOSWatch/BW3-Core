@@ -22,6 +22,7 @@ import time
 logging.debug("- %s loaded", __name__)
 
 # todo check function and document + write an test
+# todo maybe this can be a module ???
 
 
 def replaceWildcards(message, bwPacket):
