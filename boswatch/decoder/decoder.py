@@ -16,9 +16,9 @@
 """
 import logging
 
-from boswatch.decoder.fmsdecoder import FmsDecoder
-from boswatch.decoder.pocsagdecoder import PocsagDecoder
-from boswatch.decoder.zveidecoder import ZveiDecoder
+from boswatch.decoder.fmsDecoder import FmsDecoder
+from boswatch.decoder.pocsagDecoder import PocsagDecoder
+from boswatch.decoder.zveiDecoder import ZveiDecoder
 
 logging.debug("- %s loaded", __name__)
 
