@@ -106,23 +106,9 @@ except SystemExit:  # pragma: no cover
     logging.error("BOSWatch interrupted by an error")
 except:  # pragma: no cover
     logging.exception("BOSWatch interrupted by an error")
-finally:  # pragma: no cover
-
+finally:
     logging.debug("Starting shutdown routine")
     del bwRoutMan
-
-    try:
-        bwServer.stop()
-    except NameError:
-        pass
-    except:
-        raise
-
-    try:
-        bcServer.stop()
-    except NameError:
-        pass
-    except:
-        raise
-
-    logging.debug("BOSWatch has ended ...")
+    bwServer.stop()
+    bcServer.stop()
+    logging.debug("BOSWatch server has stopped ...")
