@@ -15,8 +15,6 @@ from boswatch.decoder.decoder import Decoder
 import logging.config
 logging.config.fileConfig("config/logger_client.ini")
 
-#  ./multimon-ng -i -a POCSAG1200 -t raw /home/schrolli/Downloads/poc1200.raw
-
 sdrProc = ProcessManager("/usr/bin/rtl_fm")
 sdrProc.addArgument("-f 85M")
 sdrProc.addArgument("-m fm")
@@ -28,7 +26,6 @@ mmProc = ProcessManager("/opt/multimon/multimon-ng", textMode=True)
 mmProc.addArgument("-f aplha")
 mmProc.addArgument("-t raw /dev/stdin -")
 mmProc.setStdin(sdrProc.stdout)
-# mmProc.addArgument("./poc1200.raw")
 mmProc.start(True)
 mmProc.skipLines(5)
 while 1:
