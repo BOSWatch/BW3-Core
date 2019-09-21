@@ -83,12 +83,19 @@ try:
 
     # ========== INPUT CODE ==========
     def handleSDRInput(dataQueue, config):
+        sdrProc = ProcessManager("/usr/bin/rtl_fm")
+        sdrProc.addArgument("-f 85M")
+        sdrProc.addArgument("-m fm")
+        sdrProc.start(True)
+
         mmProc = ProcessManager("/opt/multimon/multimon-ng", textMode=True)
-        mmProc.addArgument("-i")
-        mmProc.addArgument("-a POCSAG1200")
-        mmProc.addArgument("-t raw")
-        mmProc.addArgument("./poc1200.raw")
-        mmProc.start()
+        #mmProc.addArgument("-i")
+        #mmProc.addArgument("-a POCSAG1200 -a FMSFSK -a ZVEI1")
+        mmProc.addArgument("-f aplha")
+        mmProc.addArgument("-t raw /dev/stdin -")
+        mmProc.setStdin(sdrProc.stdout)
+        #mmProc.addArgument("./poc1200.raw")
+        mmProc.start(True)
         mmProc.skipLines(5)
         while 1:
             if not mmProc.isRunning:
@@ -99,9 +106,10 @@ try:
             if line:
                 dataQueue.put_nowait((line, time.time()))
                 logging.debug("Add data to queue")
+                print(line)
     # ========== INPUT CODE ==========
 
-    mmThread = threading.Thread(target=handleSDRInput, name="mmReader", args=(inputQueue, bwConfig.get("inputSource")))
+    mmThread = threading.Thread(target=handleSDRInput, name="mmReader", args=(inputQueue, bwConfig.get("inputSource", "sdr")))
     mmThread.daemon = True
     mmThread.start()
 

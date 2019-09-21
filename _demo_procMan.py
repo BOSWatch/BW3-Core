@@ -17,19 +17,27 @@ logging.config.fileConfig("config/logger_client.ini")
 
 #  ./multimon-ng -i -a POCSAG1200 -t raw /home/schrolli/Downloads/poc1200.raw
 
-proc = ProcessManager("/opt/multimon/multimon-ng", textMode=True)
-proc.addArgument("-i")
-proc.addArgument("-a POCSAG1200")
-proc.addArgument("-t raw")
-proc.addArgument("./poc1200.raw")
-proc.start()
+sdrProc = ProcessManager("/usr/bin/rtl_fm")
+sdrProc.addArgument("-f 85M")
+sdrProc.addArgument("-m fm")
+sdrProc.start(True)
 
-proc.skipLines(5)
-while proc.isRunning:
-    line = proc.readline()
-    if line is not "":
-        Decoder.decode(line)
+mmProc = ProcessManager("/opt/multimon/multimon-ng", textMode=True)
+#mmProc.addArgument("-i")
+# mmProc.addArgument("-a POCSAG1200 -a FMSFSK -a ZVEI1")
+mmProc.addArgument("-f aplha")
+mmProc.addArgument("-t raw /dev/stdin -")
+mmProc.setStdin(sdrProc.stdout)
+# mmProc.addArgument("./poc1200.raw")
+mmProc.start(True)
+mmProc.skipLines(5)
+while 1:
+    if not mmProc.isRunning:
+        logging.warning("multimon was down - try to restart")
+        mmProc.start()
+        mmProc.skipLines(5)
+    line = mmProc.readline()
+    if line:
+        print(line)
 
-
-proc.stop()
 
