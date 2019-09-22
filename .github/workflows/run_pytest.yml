@@ -24,4 +24,4 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest
-        pytest -c test/pytest.ini
+        pytest
