@@ -14,148 +14,90 @@
 @author:      Bastian Schroll
 @description: BOSWatch server application
 """
+# pylint: disable=wrong-import-position
+# pylint: disable=wrong-import-order
 from boswatch.utils import paths
+
 if not paths.makeDirIfNotExist(paths.LOG_PATH):
     print("cannot find/create log directory: %s", paths.LOG_PATH)
     exit(1)
 
-try:
-    import logging
-    import logging.config
-    print(paths.CONFIG_PATH + "logger_server.ini")
-    logging.config.fileConfig(paths.CONFIG_PATH + "logger_server.ini")
-    logging.debug("")
-    logging.debug("######################## NEW LOG ############################")
-    logging.debug("BOSWatch server has started ...")
-except Exception as e:  # pragma: no cover
-    print("cannot load logger")
-    print(e)
+import logging.config
+logging.config.fileConfig(paths.CONFIG_PATH + "logger_server.ini")
+logging.debug("")
+logging.debug("######################## NEW LOG ############################")
+logging.debug("BOSWatch server has started ...")
+
+
+logging.debug("Import python modules")
+import argparse
+logging.debug("- argparse")
+import queue
+logging.debug("- queue")
+import time
+logging.debug("- time")
+
+logging.debug("Import BOSWatch modules")
+from boswatch.configYaml import ConfigYAML
+from boswatch.network.server import TCPServer
+from boswatch.packet import Packet
+from boswatch.utils import header
+from boswatch.network.broadcast import BroadcastServer
+from boswatch.router.routerManager import RouterManager
+
+
+header.logoToLog()
+header.infoToLog()
+
+logging.debug("parse args")
+# With -h or --help you get the Args help
+parser = argparse.ArgumentParser(prog="bw_server.py",
+                                 description="""BOSWatch is a Python Script to receive and
+                                 decode german BOS information with rtl_fm and multimon-NG""",
+                                 epilog="""More options you can find in the extern client.ini
+                                 file in the folder /config""")
+parser.add_argument("-c", "--config", help="Name to configuration File", required=True)
+args = parser.parse_args()
+
+
+bwConfig = ConfigYAML()
+if not bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config):
+    logging.error("cannot load config file")
     exit(1)
 
-
+# ############################# begin server system
 try:
-    logging.debug("Import python modules")
-    import argparse
-    logging.debug("- argparse")
-    # following is temp for testing
-    import time
-    import sys
-    import threading
-    import threading
 
-    logging.debug("Import BOSWatch modules")
-    from boswatch.config import Config
-    from boswatch.network.server import TCPServer
-    from boswatch.packet.packet import Packet
-    from boswatch.plugin.pluginManager import PluginManager
-    from boswatch.descriptor.descriptor import Descriptor
-    from boswatch.filter.doubeFilter import DoubleFilter
-    from boswatch.utils import header
-except Exception as e:  # pragma: no cover
-    logging.exception("cannot import modules")
-    print("cannot import modules")
-    print(e)
-    exit(1)
+    bwRoutMan = RouterManager()
+    if not bwRoutMan.buildRouter(bwConfig):
+        exit()
 
-try:
-    header.logoToLog()
-    header.infoToLog()
-    header.logoToScreen()
+    if bwConfig.get("server", "useBroadcast", default=False):
+        bcServer = BroadcastServer()
+        bcServer.start()
 
-    logging.debug("parse args")
-    # With -h or --help you get the Args help
-    parser = argparse.ArgumentParser(prog="bw_server.py",
-                                     description="""BOSWatch is a Python Script to receive and
-                                     decode german BOS information with rtl_fm and multimon-NG""",
-                                     epilog="""More options you can find in the extern client.ini
-                                     file in the folder /config""")
-    parser.add_argument("-c", "--config", help="Name to configuration File", required=True)
-    args = parser.parse_args()
-
-    bwConfig = Config()
-    if bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config, "serverConfig") is False:
-        logging.exception("cannot load config file")
-        print("cannot load config file")
-        exit(1)  # without config cannot run
-
-    bwPluginManager = PluginManager()
-    bwPluginManager.searchPluginDir()
-    bwPluginManager.importAllPlugins()
-    bwPluginManager.loadAllPlugins()
-
-    bwDescriptor = Descriptor()
-    if bwConfig.getBool("Description", "fms"):
-        bwDescriptor.loadDescription("fms")
-    if bwConfig.getBool("Description", "pocsag"):
-        bwDescriptor.loadDescription("pocsag")
-    if bwConfig.getBool("Description", "zvei"):
-        bwDescriptor.loadDescription("zvei")
-
-    bwDoubleFilter = DoubleFilter()
-
-    serverPaused = False  # flag to pause alarming of server
-    serverStop = False  # flag to stop the whole server application
-
-    # server flags test code
-    # ----------------------
-    # import threading
-    # def eins():
-    #     global serverPaused
-    #     serverPaused = True
-    # def zwei():
-    #     global serverPaused
-    #     serverPaused = False
-    def drei():
-        global serverStop
-        serverStop = True
-    #
-    # t1 = threading.Timer(1, eins)
-    # t2 = threading.Timer(5, zwei)
-    t3 = threading.Timer(15, drei)
-    # t1.start()
-    # t2.start()
-    t3.start()
-
-    bwServer = TCPServer(bwConfig.getInt("Server", "PORT"))
+    incomingQueue = queue.Queue()
+    bwServer = TCPServer(incomingQueue)
     if bwServer.start():
 
         while 1:
-            if serverPaused:
-                logging.warning("Server pause flag received ...")
-                logging.debug("But all received packages will be cached!")
-                packetsOld = 0
-                while serverPaused is True:
-                    time.sleep(0.2)  # reduce cpu load (run all 200ms)
-                    packetsNew = bwServer.countPacketsInQueue()
-                    if packetsNew is not packetsOld:
-                        logging.debug("%s packet(s) waiting in queue", packetsNew)
-                        packetsOld = packetsNew
-                logging.warning("Server resumed ...")
+            if incomingQueue.empty():  # pause only when no data
+                time.sleep(0.1)  # reduce cpu load (wait 100ms)
+                # in worst case a packet have to wait 100ms until it will be processed
 
-            if serverStop:
-                logging.warning("Server stop flag received ...")
-                break
+            else:
+                data = incomingQueue.get()
 
-            if not bwServer.countPacketsInQueue():  # pause only when no data
-                time.sleep(0.1)  # reduce cpu load (run all 100ms)
-
-            data = bwServer.getDataFromQueue()
-            if data is not None:
                 logging.info("get data from %s (waited in queue %0.3f sec.)", data[0], time.time() - data[2])
-                logging.debug("%s packet(s) waiting in queue", bwServer.countPacketsInQueue())
+                logging.debug("%s packet(s) still waiting in queue", incomingQueue.qsize())
                 bwPacket = Packet((data[1]))
 
-                if not bwDoubleFilter.filter(bwPacket):
-                    continue
-
                 bwPacket.set("clientIP", data[0])
-                bwPacket.addServerData()
+                bwPacket.addServerData(bwConfig)
 
-                if bwConfig.getBool("Description", bwPacket.get("mode")):
-                    bwDescriptor.addDescriptions(bwPacket)
+                bwRoutMan.runRouter(bwConfig.get("alarmRouter"), bwPacket)
 
-                bwPluginManager.runAllPlugins(bwPacket)
-                # print(bwPacket.get("clientVersion")["major"])
+                incomingQueue.task_done()
 
 except KeyboardInterrupt:  # pragma: no cover
     logging.warning("Keyboard interrupt")
@@ -164,14 +106,22 @@ except SystemExit:  # pragma: no cover
 except:  # pragma: no cover
     logging.exception("BOSWatch interrupted by an error")
 finally:  # pragma: no cover
-    # try-except-blocks are necessary because there is a change that the vars
-    # bwServer or bwPluginManager are not defined in case of an early error
+
+    logging.debug("Starting shutdown routine")
+    del bwRoutMan
+
     try:
         bwServer.stop()
-    except:  # pragma: no cover
+    except NameError:
         pass
+    except:
+        raise
+
     try:
-        bwPluginManager.unloadAllPlugins()
-    except:  # pragma: no cover
+        bcServer.stop()
+    except NameError:
         pass
+    except:
+        raise
+
     logging.debug("BOSWatch has ended ...")

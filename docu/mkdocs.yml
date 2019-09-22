@@ -1,0 +1,36 @@
+site_name: BOSWatch3 Core
+site_author: Bastian Schroll & BW3 Dev team
+
+repo_url: https://github.com/BOSWatch/BW3-Core
+edit_uri: edit/develop/docu/docs/
+
+nav:
+  # - BW3: index.md
+  - Quick Start:
+      - Installation: tbd.md
+      - Konfiguration: config.md
+#      - BOSWatch benutzen: tbd.md
+#      - Als Service einrichten: tbd.md
+  - Informationen:
+#      - Server/Cient Prinzip: tbd.md
+       - Broadcast Service: information/broadcast.md
+#      - Modul/Plugin Konzept: tbd.md
+#      - Routing Mechanismus: tbd.md
+       - Changelog: changelog.md
+  - Module:
+      - Mode Filter: modul/mode_filter.md
+  - Plugins: tbd.md
+  - Entwickler:
+    - Eigenes Modul/Plugin schreiben: develop/ModulPlugin.md
+    - BOSWatch Alarmpaket Format: develop/packet.md
+    - BW3 Quellcode Dokumentation: api/html/index.html
+
+
+use_directory_urls: false
+
+theme:
+  name: mkdocs
+  highlightjs: true
+  hljs_style: github
+
+

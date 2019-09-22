@@ -20,5 +20,5 @@ logging.debug("- %s loaded", __name__)
 
 client = {"major": 3, "minor": 0, "patch": 0}
 server = {"major": 3, "minor": 0, "patch": 0}
-date = {"day": 1, "month": 1, "year": 2018}
+date = {"day": 1, "month": 1, "year": 2019}
 branch = "develop"

@@ -14,89 +14,93 @@
 @author:      Bastian Schroll
 @description: BOSWatch client application
 """
+# pylint: disable=wrong-import-position
+# pylint: disable=wrong-import-order
 from boswatch.utils import paths
 
 if not paths.makeDirIfNotExist(paths.LOG_PATH):
     print("cannot find/create log directory: %s", paths.LOG_PATH)
     exit(1)
 
-try:
-    import logging
-    import logging.config
+import logging.config
+logging.config.fileConfig(paths.CONFIG_PATH + "logger_client.ini")
+logging.debug("")
+logging.debug("######################## NEW LOG ############################")
+logging.debug("BOSWatch client has started ...")
 
-    logging.config.fileConfig(paths.CONFIG_PATH + "logger_client.ini")
-    logging.debug("")
-    logging.debug("######################## NEW LOG ############################")
-    logging.debug("BOSWatch client has started ...")
-except Exception as e:  # pragma: no cover
-    print("cannot load logger")
-    print(e)
+
+logging.debug("Import python modules")
+import argparse
+logging.debug("- argparse")
+import subprocess
+logging.debug("- subprocess")
+import time
+logging.debug("- time")
+
+logging.debug("Import BOSWatch modules")
+from boswatch.configYaml import ConfigYAML
+from boswatch.network.client import TCPClient
+from boswatch.network.broadcast import BroadcastClient
+from boswatch.decoder.decoder import Decoder
+from boswatch.utils import header
+
+
+header.logoToLog()
+header.infoToLog()
+
+logging.debug("parse args")
+# With -h or --help you get the Args help
+parser = argparse.ArgumentParser(prog="bw_client.py",
+                                 description="""BOSWatch is a Python Script to receive and
+                                 decode german BOS information with rtl_fm and multimon-NG""",
+                                 epilog="""More options you can find in the extern client.ini
+                                 file in the folder /config""")
+parser.add_argument("-c", "--config", help="Name to configuration File", required=True)
+args = parser.parse_args()
+
+bwConfig = ConfigYAML()
+if not bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config):
+    logging.error("cannot load config file")
     exit(1)
 
+
+# ############################# begin client system
 try:
-    logging.debug("Import python modules")
-    import argparse
-    logging.debug("- argparse")
-    import subprocess
-    logging.debug("- subprocess")
-    # following is temp for testing
-    import time
 
-    logging.debug("Import BOSWatch modules")
-    from boswatch.config import Config
-    from boswatch.network.client import TCPClient
-    from boswatch.decoder.decoder import Decoder
-    from boswatch.utils import header
-except Exception as e:  # pragma: no cover
-    logging.exception("cannot import modules")
-    print("cannot import modules")
-    print(e)
-    exit(1)
+    ip = bwConfig.get("server", "ip", default="127.0.0.1")
+    port = bwConfig.get("server", "port", default="8080")
 
-try:
-    header.logoToLog()
-    header.infoToLog()
-    header.logoToScreen()
-
-    logging.debug("parse args")
-    # With -h or --help you get the Args help
-    parser = argparse.ArgumentParser(prog="bw_client.py",
-                                     description="""BOSWatch is a Python Script to receive and
-                                     decode german BOS information with rtl_fm and multimon-NG""",
-                                     epilog="""More options you can find in the extern client.ini
-                                     file in the folder /config""")
-    parser.add_argument("-c", "--config", help="Name to configuration File", required=True)
-    parser.add_argument("-t", "--test", help="Client will send some testdata", action="store_true")  # todo implement testmode
-    args = parser.parse_args()
-
-    bwConfig = Config()
-    if bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config, "clientConfig") is False:
-        logging.exception("cannot load config file")
-        print("cannot load config file")
-        exit(1)  # without config cannot _run
+    if bwConfig.get("client", "useBroadcast", default=False):
+        broadcastClient = BroadcastClient()
+        if broadcastClient.getConnInfo():
+            ip = broadcastClient.serverIP
+            port = broadcastClient.serverPort
 
     bwClient = TCPClient()
-    if bwClient.connect(bwConfig.getStr("Server", "IP"), bwConfig.getInt("Server", "PORT")):
+    if bwClient.connect(ip, port):
+
+        testFile = open(paths.TEST_PATH + "testdata.list", "r")
 
         while 1:
-            for i in range(0, 5):
-                time.sleep(1)
-                print("Alarm Nr #" + str(i))
 
-                data = "ZVEI1: 12345"
-                bwPacket = Decoder.decode(data)
+            for testData in testFile:
+
+                if (len(testData.rstrip(' \t\n\r')) == 0) or ("#" in testData[0]):
+                    continue
+
+                logging.debug("Test: %s", testData)
+                bwPacket = Decoder.decode(testData)
 
                 if bwPacket:
                     bwPacket.printInfo()
-                    bwPacket.addClientData()
+                    bwPacket.addClientData(bwConfig)
                     bwClient.transmit(str(bwPacket))
 
-                    # todo should we do this in an thread, to not block receiving ???
-                    # todo but then we should use transmit() and receive() with Lock()
+                    # todo should we do this in an thread, to not block receiving ??? but then we should use transmit() and receive() with Lock()
                     failedTransmits = 0
                     while not bwClient.receive() == "[ack]":  # wait for ack or timeout
                         if failedTransmits >= 3:
-                            logging.error("cannot transmit after 5 retires")
+                            logging.error("cannot transmit after 3 retires")
                             break
                         failedTransmits += 1
                         logging.warning("attempt %d to resend packet", failedTransmits)

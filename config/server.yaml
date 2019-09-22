@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #    ____  ____  ______       __      __       __       _____
 #   / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
 #  / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -6,32 +7,20 @@
 #                German BOS Information Script
 #                     by Bastian Schroll
 
-# virtual environment
-\venv/
+server:
+  port: 8080
+  name: BW3 Server        # name of the BW3 Server instance
+  useBroadcast: no        # serve server ip on broadcast request
 
-# generated files
-log/
-docu/docs/api/html
-docu/site/
+alarmRouter:
+- Router 1
 
-# Logo Photoshop file
-*.psd
-
-# Coverage Report
-\.coverage
-
-# Python precompiled
-*.pyc
-
-# Visual Studio Code
-\.vscode/
-\.pytest_cache/
-
-# PyCharm IDE
-\.cache/
-\.idea/
-
-# Eclipse IDE (PyDev)
-\.settings/
-\.project
-\.pydevproject
+router:
+- name: Router 1
+  route:
+  - type: module
+    name: filter.modeFilter
+    config:
+      allowed:
+        - fms
+        - zvei

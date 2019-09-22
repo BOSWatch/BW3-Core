@@ -13,7 +13,6 @@
 @date:        15.01.2018
 @author:      Bastian Schroll
 @description: Little Helper to replace wildcards in stings
-@todo not completed yet
 """
 import logging
 import time
@@ -23,6 +22,9 @@ import time
 logging.debug("- %s loaded", __name__)
 
 # todo check function and document + write an test
+# todo maybe can be a module instead of a native boswatch piece
+# idea: maybe this can be a class with a register_wildcard() method
+# so the list with wildcards can be modified by other modules
 
 
 def replaceWildcards(message, bwPacket):
@@ -34,10 +36,13 @@ def replaceWildcards(message, bwPacket):
         "{TIME}": time.time(),
 
         # info wildcards
+        # server
         "{SNAME}": bwPacket.getField("serverName"),
         "{SVERS}": bwPacket.getField("serverVersion"),
         "{SDATE}": bwPacket.getField("serverBuildDate"),
         "{SBRCH}": bwPacket.getField("serverBranch"),
+
+        # client
         "{CNAME}": bwPacket.getField("clientName"),
         "{CIP}": bwPacket.getField("clientIP"),
         "{CVERS}": bwPacket.getField("clientVersion"),
@@ -49,8 +54,6 @@ def replaceWildcards(message, bwPacket):
         "{TIMES}": bwPacket.getField("mode"),
         "{FREQ}": bwPacket.getField("frequency"),
         "{MODE}": bwPacket.getField("mode"),
-        "{DESCS}": bwPacket.getField("descriptionShort"),
-        "{DESCL}": bwPacket.getField("descriptionLong"),
 
         # fms wildcards
         "{FMS}": bwPacket.getField("fms"),
@@ -76,9 +79,6 @@ def replaceWildcards(message, bwPacket):
         # message for MSG packet is done in poc
     }
     for wildcard in _wildcards:
-        try:
-            message = message.replace(wildcard, _wildcards[wildcard])
-        except:
-            logging.exception("error in wildcard replacement")
+        message = message.replace(wildcard, _wildcards.get(wildcard))
 
     return message

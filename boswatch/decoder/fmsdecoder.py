@@ -18,7 +18,7 @@
 import logging
 import re
 
-from boswatch.packet import packet
+from boswatch.packet import Packet
 
 logging.debug("- %s loaded", __name__)
 
@@ -50,7 +50,7 @@ class FmsDecoder:
             if re.search("[0-9a-f]{8}[0-9a-f][01]", fms_id):
                 logging.debug("found valid FMS")
 
-                bwPacket = packet.Packet()
+                bwPacket = Packet()
                 bwPacket.set("mode", "fms")
                 bwPacket.set("fms", fms_id)
                 bwPacket.set("service", service)

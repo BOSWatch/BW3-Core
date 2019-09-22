@@ -18,7 +18,7 @@
 import logging
 import re
 
-from boswatch.packet import packet
+from boswatch.packet import Packet
 
 logging.debug("- %s loaded", __name__)
 
@@ -48,7 +48,7 @@ class PocsagDecoder:
 
             logging.debug("found valid POCSAG")
 
-            bwPacket = packet.Packet()
+            bwPacket = Packet()
             bwPacket.set("mode", "pocsag")
             bwPacket.set("bitrate", bitrate)
             bwPacket.set("ric", ric)

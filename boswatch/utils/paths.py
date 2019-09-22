@@ -20,12 +20,11 @@ import sys
 
 logging.debug("- %s loaded", __name__)
 
-# todo searching for root part is not a nice solution atm
+# note searching for root part is not a nice solution atm
 ROOT_PATH = os.path.dirname(sys.modules['boswatch'].__file__).replace("\\", "/") + "/../"
+
 LOG_PATH = ROOT_PATH + "log/"
 CONFIG_PATH = ROOT_PATH + "config/"
-PLUGIN_PATH = ROOT_PATH + "plugins/"
-CSV_PATH = ROOT_PATH + "csv/"
 BIN_PATH = ROOT_PATH + "_bin/"
 TEST_PATH = ROOT_PATH + "test/"
 
@@ -39,11 +38,7 @@ def makeDirIfNotExist(dirPath):
 
     @param dirPath: Path of the directory
     @return Path of the directory or False"""
-    try:
-        if not os.path.exists(dirPath):
-            os.mkdir(dirPath)
-            logging.debug("directory created: %s", dirPath)
-        return dirPath
-    except:  # pragma: no cover
-        logging.exception("error by creating a directory: %s", dirPath)
-        return False
+    if not os.path.exists(dirPath):
+        os.mkdir(dirPath)
+        logging.debug("directory created: %s", dirPath)
+    return dirPath
