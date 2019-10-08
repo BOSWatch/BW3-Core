@@ -21,7 +21,7 @@ sdrProc.addArgument("-m fm")
 sdrProc.start(True)
 
 mmProc = ProcessManager("/opt/multimon/multimon-ng", textMode=True)
-#mmProc.addArgument("-i")
+# mmProc.addArgument("-i")
 # mmProc.addArgument("-a POCSAG1200 -a FMSFSK -a ZVEI1")
 mmProc.addArgument("-f aplha")
 mmProc.addArgument("-t raw /dev/stdin -")
@@ -36,5 +36,3 @@ while 1:
     line = mmProc.readline()
     if line:
         print(line)
-
-

@@ -89,12 +89,12 @@ try:
         sdrProc.start(True)
 
         mmProc = ProcessManager("/opt/multimon/multimon-ng", textMode=True)
-        #mmProc.addArgument("-i")
-        #mmProc.addArgument("-a POCSAG1200 -a FMSFSK -a ZVEI1")
+        # mmProc.addArgument("-i")
+        # mmProc.addArgument("-a POCSAG1200 -a FMSFSK -a ZVEI1")
         mmProc.addArgument("-f aplha")
         mmProc.addArgument("-t raw /dev/stdin -")
         mmProc.setStdin(sdrProc.stdout)
-        #mmProc.addArgument("./poc1200.raw")
+        # mmProc.addArgument("./poc1200.raw")
         mmProc.start(True)
         mmProc.skipLines(5)
         while 1:
@@ -159,4 +159,3 @@ finally:
     logging.debug("Starting shutdown routine")
     bwClient.disconnect()
     logging.debug("BOSWatch client has stopped ...")
-
