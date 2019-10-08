@@ -11,8 +11,11 @@ zwingend in die Konfiguration eingetragen werden.
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |name|Name zur Identifizierung der Client Instanz||
-|inputSource|Art der zu nutzenden Input Quelle (aktuell nur `sdr`)||
+|inputSource|Art der zu nutzenden Input Quelle (aktuell nur `sdr`)|sdr|
 |useBroadcast|Verbindungsdaten per [Broadcast](information/broadcast.md) beziehen|no|
+|reconnectDelay|Verzögerung für erneuten Verbindungsversuch zum Server|3|
+|sendTries|Anzahl der Sendeversuche eines Pakets|3|
+|sendDelay|Verzögerung für einen erneuten Sendeversuch|3|
 
 ---
 ### `server:`
@@ -103,8 +106,8 @@ Jeder Router kann eine beliebige Anzahl einzelner Routenpunkte enthalten. Diese 
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |type|Art des Routenpunktes (module, plugin, router)||
-|name|Zu ladende Resource (Siehe weiter unten)||
-|config|Konfigurationseinstellungen des Routenpunktes (Siehe weiter unten)||
+|name|Zu ladende Resource (Siehe entsprechende Kapitel)||
+|config|Konfigurationseinstellungen des Routenpunktes (Siehe entsprechende Kapitel)||
 
 **Beispiel:**
 ```yaml
@@ -121,4 +124,6 @@ router:
 ---
 ## Module/Plugins
 
-Für die Konfiguration der Module und Plugins ist in den entsprechenden Kategorien eine ausführliche Beschreibung zu finden.
+|Feld|Beschreibung|Default|
+|----|------------|-------|
+|allowed|Liste der erlaubten Paket Typen `fms` `zvei` `pocsag`||

@@ -17,7 +17,7 @@
 import logging
 import platform  # for python version nr
 
-import boswatch.version
+from boswatch.utils import version
 
 logging.debug("- %s loaded", __name__)
 
@@ -43,19 +43,19 @@ def infoToLog():
     @return True or False on error"""
     logging.debug("BOSWatch and environment information")
     logging.debug("- Client version:   %d.%d.%d",
-                  boswatch.version.client["major"],
-                  boswatch.version.client["minor"],
-                  boswatch.version.client["patch"])
+                  version.client["major"],
+                  version.client["minor"],
+                  version.client["patch"])
     logging.debug("- Server version:   %d.%d.%d",
-                  boswatch.version.server["major"],
-                  boswatch.version.server["minor"],
-                  boswatch.version.server["patch"])
+                  version.server["major"],
+                  version.server["minor"],
+                  version.server["patch"])
     logging.debug("- Branch:           %s",
-                  boswatch.version.branch)
+                  version.branch)
     logging.debug("- Release date:     %02d.%02d.%4d",
-                  boswatch.version.date["day"],
-                  boswatch.version.date["month"],
-                  boswatch.version.date["year"])
+                  version.date["day"],
+                  version.date["month"],
+                  version.date["year"])
     logging.debug("- Python version:   %s", platform.python_version())
     logging.debug("- Python build:     %s", platform.python_build())
     logging.debug("- System:           %s", platform.system())
