@@ -73,8 +73,8 @@ try:
     if not bwRoutMan.buildRouter(bwConfig):
         exit()
 
+    bcServer = BroadcastServer()
     if bwConfig.get("server", "useBroadcast", default=False):
-        bcServer = BroadcastServer()
         bcServer.start()
 
     incomingQueue = queue.Queue()
