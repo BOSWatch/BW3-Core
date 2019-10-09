@@ -16,7 +16,7 @@ import logging.config
 logging.config.fileConfig("config/logger_client.ini")
 
 
-##### RTL_FM configuration
+# #### RTL_FM configuration
 sdrProc = ProcessManager("/usr/bin/rtl_fm")
 sdrProc.addArgument("-f 85M")
 # sdrProc.addArgument("-M fm")
@@ -25,7 +25,7 @@ if not sdrProc.start():
 sdrProc.skipLines(20)
 
 
-##### MULTIMON configuration
+# #### MULTIMON configuration
 mmProc = ProcessManager("/opt/multimon/multimon-ng", textMode=True)
 # mmProc.addArgument("-i")
 mmProc.addArgument("-a FMSFSK -a POCSAG512 -a POCSAG1200 -a POCSAG2400")
