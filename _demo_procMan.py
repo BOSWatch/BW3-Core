@@ -13,27 +13,30 @@
 from boswatch.processManager import ProcessManager
 from boswatch.decoder.decoder import Decoder
 import logging.config
-import subprocess
 logging.config.fileConfig("config/logger_client.ini")
 
-import time
 
+##### RTL_FM configuration
 sdrProc = ProcessManager("/usr/bin/rtl_fm")
 sdrProc.addArgument("-f 85M")
 # sdrProc.addArgument("-M fm")
 if not sdrProc.start():
     exit(0)
-
 sdrProc.skipLines(20)
 
+
+##### MULTIMON configuration
 mmProc = ProcessManager("/opt/multimon/multimon-ng", textMode=True)
 # mmProc.addArgument("-i")
 mmProc.addArgument("-a FMSFSK -a POCSAG512 -a POCSAG1200 -a POCSAG2400")
 # mmProc.addArgument("-f alpha")
 mmProc.addArgument("-t raw -")
 mmProc.setStdin(sdrProc.stdout)
-mmProc.start()
+if not mmProc.start():
+    exit(0)
 # mmProc.skipLines(5)
+
+
 while 1:
     if not mmProc.isRunning:
         logging.warning("multimon was down - try to restart")
