@@ -32,6 +32,9 @@ class ProcessManager:
         self._processHandle = None
         self._textMode = textMode
 
+    def __del__(self):
+        self.stop()
+
     def addArgument(self, arg):
         """!add a new argument
 
@@ -44,7 +47,7 @@ class ProcessManager:
         """!clear all arguments"""
         self._args = self._args[0:1]  # kept first element (process name)
 
-    def start(self, startAsShell=False):
+    def start(self):
         """!start the new process
 
         @return: True or False"""
@@ -55,7 +58,7 @@ class ProcessManager:
                                                    stdout=self._stdout,
                                                    stderr=self._stderr,
                                                    universal_newlines=self._textMode,
-                                                   shell=startAsShell)
+                                                   shell=False)
             if not self.isRunning:
                 logging.error("cannot start")
                 return False
