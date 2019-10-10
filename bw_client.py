@@ -85,9 +85,13 @@ try:
     # ========== INPUT CODE ==========
     def handleSDRInput(dataQueue, config):
         sdrProc = ProcessManager("/usr/bin/rtl_fm")
+        sdrProc.addArgument("-d " + str(config.get("device", default="0")))        # device id
         for freq in config.get("frequencies"):
-            sdrProc.addArgument("-f " + freq)
-        sdrProc.addArgument("-l 50")  # required fore scanning function
+            sdrProc.addArgument("-f " + freq)                                      # frequencies
+        sdrProc.addArgument("-p " + str(config.get("error", default="0")))         # frequency error in ppm
+        sdrProc.addArgument("-l " + str(config.get("squelch", default="1")))       # squelch
+        sdrProc.addArgument("-g " + str(config.get("gain", default="automatic")))  # gain
+        sdrProc.addArgument("-s 22050")                                            # bit rate of audio stream
         if not sdrProc.start():
             exit(0)
         # sdrProc.skipLines(20)
@@ -106,17 +110,17 @@ try:
                 logging.warning("rtl_fm was down - try to restart")
                 sdrProc.start()
                 # sdrProc.skipLines(20)
-            if not mmProc.isRunning:
+            elif not mmProc.isRunning:
                 logging.warning("multimon was down - try to restart")
                 mmProc.start()
                 mmProc.skipLines(5)
-            if sdrProc.isRunning and mmProc.isRunning:
+            elif sdrProc.isRunning and mmProc.isRunning:
                 line = mmProc.readline()
                 if line:
                     dataQueue.put_nowait((line, time.time()))
                     logging.debug("Add data to queue")
                     print(line)
-        logging.debug("stoping thread")
+        logging.debug("stopping thread")
         mmProc.stop()
         sdrProc.stop()
 

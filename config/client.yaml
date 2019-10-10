@@ -26,7 +26,7 @@ inputSource:
       - 85M
       - 86M
     error: 0
-    squelch: 0
+    squelch: 1
     gain: 100
 
 decoder:

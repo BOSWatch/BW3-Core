@@ -42,19 +42,21 @@ Aktuell gibt es nur `sdr:` als Input Quelle
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |device|rtl_fm Device ID|0|
-|frequency|Frequenz des Empfängers||
+|frequencies|Liste der zu empfangenden Frequenzen||
 |error|Frequenz Abweichung in ppm|0|
-|squelch|Einstellung der Rauschsperre|0|
-|gain|Verstärkung des Eingangssignals|100|
+|squelch|Einstellung der Rauschsperre|1|
+|gain|Verstärkung des Eingangssignals|automatic|
 
 **Beispiel:**
 ```yaml
 inputSource:
   sdr:
     device: 0
-    frequency: 85.000M
+    frequencies:
+      - 85.000M
+      - 86.0000M
     error: 0
-    squelch: 0
+    squelch: 1
     gain: 100
 ```
 
