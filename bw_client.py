@@ -80,33 +80,46 @@ try:
             port = broadcastClient.serverPort
 
     inputQueue = queue.Queue()
+    inputThreadRunning = True
 
     # ========== INPUT CODE ==========
     def handleSDRInput(dataQueue, config):
         sdrProc = ProcessManager("/usr/bin/rtl_fm")
-        sdrProc.addArgument("-f 85M")
-        sdrProc.addArgument("-m fm")
-        sdrProc.start(True)
+        for freq in config.get("frequencies"):
+            sdrProc.addArgument("-f " + freq)
+        sdrProc.addArgument("-l 50")  # required fore scanning function
+        if not sdrProc.start():
+            exit(0)
+        # sdrProc.skipLines(20)
 
         mmProc = ProcessManager("/opt/multimon/multimon-ng", textMode=True)
-        # mmProc.addArgument("-i")
-        # mmProc.addArgument("-a POCSAG1200 -a FMSFSK -a ZVEI1")
+        mmProc.addArgument("-a FMSFSK -a POCSAG512 -a POCSAG1200 -a POCSAG2400 -a ZVEI1")
         mmProc.addArgument("-f aplha")
-        mmProc.addArgument("-t raw /dev/stdin -")
+        mmProc.addArgument("-t raw -")
         mmProc.setStdin(sdrProc.stdout)
-        # mmProc.addArgument("./poc1200.raw")
-        mmProc.start(True)
+        if not mmProc.start():
+            exit(0)
         mmProc.skipLines(5)
-        while 1:
+
+        while inputThreadRunning:
+            if not sdrProc.isRunning:
+                logging.warning("rtl_fm was down - try to restart")
+                sdrProc.start()
+                # sdrProc.skipLines(20)
             if not mmProc.isRunning:
                 logging.warning("multimon was down - try to restart")
                 mmProc.start()
                 mmProc.skipLines(5)
-            line = mmProc.readline()
-            if line:
-                dataQueue.put_nowait((line, time.time()))
-                logging.debug("Add data to queue")
-                print(line)
+            if sdrProc.isRunning and mmProc.isRunning:
+                line = mmProc.readline()
+                if line:
+                    dataQueue.put_nowait((line, time.time()))
+                    logging.debug("Add data to queue")
+                    print(line)
+        logging.debug("stoping thread")
+        mmProc.stop()
+        sdrProc.stop()
+
     # ========== INPUT CODE ==========
 
     mmThread = threading.Thread(target=handleSDRInput, name="mmReader", args=(inputQueue, bwConfig.get("inputSource", "sdr")))
@@ -158,4 +171,6 @@ except:  # pragma: no cover
 finally:
     logging.debug("Starting shutdown routine")
     bwClient.disconnect()
+    inputThreadRunning = False
+    mmThread.join()
     logging.debug("BOSWatch client has stopped ...")

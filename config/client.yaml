@@ -22,7 +22,9 @@ server:                   # only used if useBroadcast = no
 inputSource:
   sdr:
     device: 0
-    frequency: 85.000M
+    frequencies:
+      - 85M
+      - 86M
     error: 0
     squelch: 0
     gain: 100

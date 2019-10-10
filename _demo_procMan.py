@@ -28,7 +28,7 @@ sdrProc.skipLines(20)
 # #### MULTIMON configuration
 mmProc = ProcessManager("/opt/multimon/multimon-ng", textMode=True)
 # mmProc.addArgument("-i")
-mmProc.addArgument("-a FMSFSK -a POCSAG512 -a POCSAG1200 -a POCSAG2400")
+mmProc.addArgument("-a FMSFSK -a POCSAG512 -a POCSAG1200 -a POCSAG2400 -a ZVEI1")
 # mmProc.addArgument("-f alpha")
 mmProc.addArgument("-t raw -")
 mmProc.setStdin(sdrProc.stdout)
