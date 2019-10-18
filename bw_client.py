@@ -86,8 +86,7 @@ try:
     def handleSDRInput(dataQueue, sdrConfig, decoderConfig):
         sdrProc = ProcessManager("/usr/bin/rtl_fm")
         sdrProc.addArgument("-d " + str(sdrConfig.get("device", default="0")))     # device id
-        for freq in sdrConfig.get("frequencies"):
-            sdrProc.addArgument("-f " + freq)                                      # frequencies
+        sdrProc.addArgument("-f " + sdrConfig.get("frequency"))                    # frequencies
         sdrProc.addArgument("-p " + str(sdrConfig.get("error", default="0")))      # frequency error in ppm
         sdrProc.addArgument("-l " + str(sdrConfig.get("squelch", default="1")))    # squelch
         sdrProc.addArgument("-g " + str(sdrConfig.get("gain", default="100")))     # gain

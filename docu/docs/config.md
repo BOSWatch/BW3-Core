@@ -42,7 +42,7 @@ Aktuell gibt es nur `sdr:` als Input Quelle
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |device|rtl_fm Device ID|0|
-|frequencies|Liste der zu empfangenden Frequenzen||
+|frequency|Zu empfangende Frequenz||
 |error|Frequenz Abweichung in ppm|0|
 |squelch|Einstellung der Rauschsperre|1|
 |gain|Verstärkung des Eingangssignals|100|
