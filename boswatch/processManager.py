@@ -91,11 +91,24 @@ class ProcessManager:
             return line
         return None
 
-    def skipLines(self, line_cnt=1):
-        logging.debug("skip %d lines from output", line_cnt)
-        while line_cnt:
+    def skipLines(self, lineCount=1):
+        """!Skip given number of lines from the output
+
+        @param lineCount: number of lines to skip
+        """
+        logging.debug("skip %d lines from output", lineCount)
+        while lineCount:
             self.readline()
-            line_cnt -= 1
+            lineCount -= 1
+
+    def skipLinesUntil(self, matchText):
+        """!Skip lines from the output until the given string is in it
+
+        @param matchText: string to search for in output
+        """
+        logging.debug("skip lines till %s from output", matchText)
+        while not matchText in self.readline():
+            pass
 
     def setStdin(self, stdin):
         """!Set the stdin stream instance"""
