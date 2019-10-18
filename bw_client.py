@@ -114,6 +114,7 @@ try:
         mmProc.start()
         mmProc.skipLinesUntil("Enabled Demodulators:")
 
+        logging.info("start decoding")
         while inputThreadRunning:
             if not sdrProc.isRunning:
                 logging.warning("rtl_fm was down - try to restart")
