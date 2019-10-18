@@ -107,6 +107,8 @@ class ProcessManager:
         @param matchText: string to search for in output
         """
         logging.debug("skip lines till %s from output", matchText)
+        if not self._textMode:
+            matchText = bytes(matchText, "utf-8")
         while matchText not in self.readline():
             pass
 
