@@ -35,7 +35,7 @@ def addClientDataToPacket(bwPacket, config):
     bwPacket.set("clientVersion", version.client)
     bwPacket.set("clientBuildDate", version.date)
     bwPacket.set("clientBranch", version.branch)
-    bwPacket.set("inputSource", config.get("client", "inoutSource"))
+    bwPacket.set("inputSource", config.get("client", "inputSource"))
     bwPacket.set("frequency", config.get("inputSource", "sdr", "frequency"))
 
 
