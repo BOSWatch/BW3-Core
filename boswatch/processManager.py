@@ -107,7 +107,7 @@ class ProcessManager:
         @param matchText: string to search for in output
         """
         logging.debug("skip lines till %s from output", matchText)
-        while not matchText in self.readline():
+        while matchText not in self.readline():
             pass
 
     def setStdin(self, stdin):
