@@ -12,7 +12,7 @@ nav:
 #      - BOSWatch benutzen: tbd.md
 #      - Als Service einrichten: tbd.md
   - Informationen:
-#      - Server/Cient Prinzip: tbd.md
+       - Server/Cient Prinzip: information/serverclient.md
        - Broadcast Service: information/broadcast.md
 #      - Modul/Plugin Konzept: tbd.md
 #      - Routing Mechanismus: tbd.md
