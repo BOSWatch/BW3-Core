@@ -90,7 +90,9 @@ try:
             sdrProc.addArgument("-f " + freq)                                      # frequencies
         sdrProc.addArgument("-p " + str(config.get("error", default="0")))         # frequency error in ppm
         sdrProc.addArgument("-l " + str(config.get("squelch", default="1")))       # squelch
-        sdrProc.addArgument("-g " + str(config.get("gain", default="automatic")))  # gain
+        sdrProc.addArgument("-g " + str(config.get("gain", default="100")))         # gain
+        sdrProc.addArgument("-M fm")                                               # set mode to fm
+        sdrProc.addArgument("-E DC")                                               # set DC filter
         sdrProc.addArgument("-s 22050")                                            # bit rate of audio stream
         if not sdrProc.start():
             exit(0)
@@ -109,11 +111,11 @@ try:
             if not sdrProc.isRunning:
                 logging.warning("rtl_fm was down - try to restart")
                 sdrProc.start()
-                # sdrProc.skipLines(20)
+                sdrProc.skipLinesUntil("Output at")  # last line form rtl_fm before data
             elif not mmProc.isRunning:
                 logging.warning("multimon was down - try to restart")
                 mmProc.start()
-                mmProc.skipLines(5)
+                mmProc.skipLinesUntil("Enabled Demodulators:")  # last line from mm before data
             elif sdrProc.isRunning and mmProc.isRunning:
                 line = mmProc.readline()
                 if line:

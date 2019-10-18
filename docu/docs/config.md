@@ -45,7 +45,7 @@ Aktuell gibt es nur `sdr:` als Input Quelle
 |frequencies|Liste der zu empfangenden Frequenzen||
 |error|Frequenz Abweichung in ppm|0|
 |squelch|Einstellung der Rauschsperre|1|
-|gain|Verstärkung des Eingangssignals|automatic|
+|gain|Verstärkung des Eingangssignals|100|
 
 **Beispiel:**
 ```yaml

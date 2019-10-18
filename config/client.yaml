@@ -24,7 +24,6 @@ inputSource:
     device: 0
     frequencies:
       - 85M
-      - 86M
     error: 0
     squelch: 1
     gain: 100
