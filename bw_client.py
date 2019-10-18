@@ -83,29 +83,32 @@ try:
     inputThreadRunning = True
 
     # ========== INPUT CODE ==========
-    def handleSDRInput(dataQueue, config):
+    def handleSDRInput(dataQueue, sdrConfig, decoderConfig):
         sdrProc = ProcessManager("/usr/bin/rtl_fm")
-        sdrProc.addArgument("-d " + str(config.get("device", default="0")))        # device id
-        for freq in config.get("frequencies"):
+        sdrProc.addArgument("-d " + str(sdrConfig.get("device", default="0")))        # device id
+        for freq in sdrConfig.get("frequencies"):
             sdrProc.addArgument("-f " + freq)                                      # frequencies
-        sdrProc.addArgument("-p " + str(config.get("error", default="0")))         # frequency error in ppm
-        sdrProc.addArgument("-l " + str(config.get("squelch", default="1")))       # squelch
-        sdrProc.addArgument("-g " + str(config.get("gain", default="100")))         # gain
+        sdrProc.addArgument("-p " + str(sdrConfig.get("error", default="0")))         # frequency error in ppm
+        sdrProc.addArgument("-l " + str(sdrConfig.get("squelch", default="1")))       # squelch
+        sdrProc.addArgument("-g " + str(sdrConfig.get("gain", default="100")))         # gain
         sdrProc.addArgument("-M fm")                                               # set mode to fm
         sdrProc.addArgument("-E DC")                                               # set DC filter
         sdrProc.addArgument("-s 22050")                                            # bit rate of audio stream
-        if not sdrProc.start():
-            exit(0)
-        # sdrProc.skipLines(20)
 
         mmProc = ProcessManager("/opt/multimon/multimon-ng", textMode=True)
-        mmProc.addArgument("-a FMSFSK -a POCSAG512 -a POCSAG1200 -a POCSAG2400 -a ZVEI1")
+        if decoderConfig.get("fms", default=0):
+            mmProc.addArgument("-a FMSFSK")
+        if decoderConfig.get("zvei", default=0):
+            mmProc.addArgument("-a ZVEI1")
+        if decoderConfig.get("poc512", default=0):
+            mmProc.addArgument("-a POCSAG512")
+        if decoderConfig.get("poc1200", default=0):
+            mmProc.addArgument("-a POCSAG1200")
+        if decoderConfig.get("poc2400", default=0):
+            mmProc.addArgument("-a POCSAG2400")
         mmProc.addArgument("-f aplha")
         mmProc.addArgument("-t raw -")
         mmProc.setStdin(sdrProc.stdout)
-        if not mmProc.start():
-            exit(0)
-        mmProc.skipLines(5)
 
         while inputThreadRunning:
             if not sdrProc.isRunning:
@@ -128,7 +131,7 @@ try:
 
     # ========== INPUT CODE ==========
 
-    mmThread = threading.Thread(target=handleSDRInput, name="mmReader", args=(inputQueue, bwConfig.get("inputSource", "sdr")))
+    mmThread = threading.Thread(target=handleSDRInput, name="mmReader", args=(inputQueue, bwConfig.get("inputSource", "sdr"), bwConfig.get("decoder")))
     mmThread.daemon = True
     mmThread.start()
 
