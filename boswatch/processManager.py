@@ -60,7 +60,7 @@ class ProcessManager:
                                                    universal_newlines=self._textMode,
                                                    shell=False)
             if not self.isRunning:
-                logging.error("cannot start")
+                logging.error("cannot start process")
                 return False
             logging.debug("process started with PID %d", self._processHandle.pid)
             return True
@@ -87,7 +87,6 @@ class ProcessManager:
                 line = self._processHandle.stdout.readline().strip()
             except UnicodeDecodeError:
                 return None
-
             return line
         return None
 
@@ -97,7 +96,7 @@ class ProcessManager:
         @param lineCount: number of lines to skip
         """
         logging.debug("skip %d lines from output", lineCount)
-        while lineCount:
+        while self.isRunning and lineCount:
             self.readline()
             lineCount -= 1
 
@@ -106,10 +105,10 @@ class ProcessManager:
 
         @param matchText: string to search for in output
         """
-        logging.debug("skip lines till %s from output", matchText)
+        logging.debug("skip lines till '%s' from output", matchText)
         if not self._textMode:
             matchText = bytes(matchText, "utf-8")
-        while matchText not in self.readline():
+        while self.isRunning and matchText not in self.readline():
             pass
 
     def setStdin(self, stdin):
