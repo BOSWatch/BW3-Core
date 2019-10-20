@@ -164,7 +164,7 @@ def test_serverStopsWhileConnected(getRunningServer, getClient):
     """!Shutdown server while client is connected"""
     getClient.connect()
     getRunningServer.stop()
-    time.sleep(1)
+    time.sleep(0.1)
     assert getClient.isConnected  # todo check why the first always return true here
     assert not getClient.isConnected
 
