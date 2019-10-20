@@ -69,8 +69,9 @@ class _ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
                 self.request.sendall(bytes(header + data, "utf-8"))
             self.request.close()
 
-        except (ConnectionResetError, ConnectionAbortedError):  # pragma: no cover
-            logging.debug("%s connection closed", req_name)
+        except socket.error as e:
+            logging.error(e)
+            return False
         finally:
             del self.server.clientsConnected[threading.current_thread().name]
             logging.info("Client disconnected: %s", self.client_address[0])
@@ -129,8 +130,9 @@ class TCPServer:
                 self._server_thread.start()
                 logging.debug("TCPServer started in Thread: %s", self._server_thread.name)
                 return True
-            except OSError:
-                logging.exception("Socket Error")
+            except socket.error as e:
+                logging.error(e)
+                return False
 
         else:
             logging.warning("server always started")
