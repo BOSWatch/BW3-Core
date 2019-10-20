@@ -107,7 +107,7 @@ try:
             mmProc.addArgument("-a POCSAG1200")
         if decoderConfig.get("poc2400", default=0):
             mmProc.addArgument("-a POCSAG2400")
-        mmProc.addArgument("-f aplha")
+        mmProc.addArgument("-f alpha")
         mmProc.addArgument("-t raw -")
         mmProc.setStdin(sdrProc.stdout)
         mmProc.start()
