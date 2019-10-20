@@ -109,5 +109,7 @@ class TCPClient:
             self._sock.sendall(bytes(header + aliveMsg, "utf-8"))
             return True
         except socket.error as e:
+            if e.errno is 32:  # broken pipe - no one will read from this pipe anymore
+                return False
             logging.error(e)
         return False

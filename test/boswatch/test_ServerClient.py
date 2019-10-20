@@ -173,7 +173,7 @@ def test_serverStopsWhileConnected(getRunningServer, getClient):
     getRunningServer.stop()
     timeout = 10
     while getClient.isConnected:
-        print(timeout)
+        time.sleep(0.1)
         timeout = timeout - 1
         if timeout is 0:
             assert 0
