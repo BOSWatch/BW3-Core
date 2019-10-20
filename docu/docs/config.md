@@ -52,9 +52,7 @@ Aktuell gibt es nur `sdr:` als Input Quelle
 inputSource:
   sdr:
     device: 0
-    frequencies:
-      - 85.000M
-      - 86.0000M
+    frequency: 85.000M
     error: 0
     squelch: 1
     gain: 100
