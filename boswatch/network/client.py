@@ -16,8 +16,11 @@
 """
 import logging
 import socket
+import select
 
 logging.debug("- %s loaded", __name__)
+
+HEADERSIZE = 10
 
 
 class TCPClient:
@@ -61,7 +64,7 @@ class TCPClient:
                 self._sock = None
                 logging.debug("disconnected")
                 return True
-            logging.warning("client not connected")
+            logging.warning("client always disconnected")
             return True
         except AttributeError:
             logging.error("cannot disconnect - no connection established")
@@ -74,7 +77,8 @@ class TCPClient:
         @return True or False"""
         try:
             logging.debug("transmitting: %s", data)
-            self._sock.sendall(bytes(data + "\n", "utf-8"))
+            header = str(len(data)).ljust(HEADERSIZE)
+            self._sock.sendall(bytes(header + data, "utf-8"))
             logging.debug("transmitted...")
             return True
         except AttributeError:
@@ -88,8 +92,17 @@ class TCPClient:
 
         @return received data"""
         try:
-            received = str(self._sock.recv(1024), "utf-8")
-            logging.debug("received: %s", received)
+            if not self._sock:  # check if socket is still available
+                return False
+            read, _, _ = select.select([self._sock], [], [], 1)
+            if not read:  # check if there is something to read
+                return False
+            header = self._sock.recv(HEADERSIZE)
+            if not len(header):  # check if there data
+                return False
+            length = int(header.decode("utf-8").strip())
+            received = self._sock.recv(length).decode("utf-8")
+            logging.debug("received %d bytes: %s", length, received)
             return received
         except AttributeError:
             logging.error("cannot receive - no connection established")
@@ -104,8 +117,10 @@ class TCPClient:
         """!Property of client connected state"""
         if self._sock:
             try:
-                self._sock.sendall(bytes("", "utf-8"))
+                aliveMsg = "<alive>"
+                header = str(len(aliveMsg)).ljust(HEADERSIZE)
+                self._sock.sendall(bytes(header + aliveMsg, "utf-8"))
                 return True
-            except AttributeError:
+            except (AttributeError, BrokenPipeError):
                 pass
         return False

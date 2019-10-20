@@ -83,7 +83,7 @@ try:
     inputThreadRunning = True
 
     # ========== INPUT CODE ==========
-    def handleSDRInput(dataQueue, sdrConfig, decoderConfig):
+    def handleSDRInput(dataQueue, sdrConfig, decoderConfig):  # todo exception handling inside
         sdrProc = ProcessManager("/usr/bin/rtl_fm")
         sdrProc.addArgument("-d " + str(sdrConfig.get("device", default="0")))     # device id
         sdrProc.addArgument("-f " + sdrConfig.get("frequency"))                    # frequencies
@@ -111,7 +111,7 @@ try:
         mmProc.addArgument("-t raw -")
         mmProc.setStdin(sdrProc.stdout)
         mmProc.start()
-        mmProc.skipLinesUntil("Enabled Demodulators:")
+        mmProc.skipLinesUntil("Available demodulators:")
 
         logging.info("start decoding")
         while inputThreadRunning:
@@ -122,7 +122,7 @@ try:
             elif not mmProc.isRunning:
                 logging.warning("multimon was down - try to restart")
                 mmProc.start()
-                mmProc.skipLinesUntil("Enabled Demodulators:")  # last line from mm before data
+                mmProc.skipLinesUntil("Available demodulators:")  # last line from mm before data
             elif sdrProc.isRunning and mmProc.isRunning:
                 line = mmProc.readline()
                 if line:

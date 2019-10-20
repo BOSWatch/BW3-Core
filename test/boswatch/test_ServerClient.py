@@ -160,6 +160,15 @@ def test_serverDoubleStart():
     assert testServer2.stop()
 
 
+def test_serverStopsWhileConnected(getRunningServer, getClient):
+    """!Shutdown server while client is connected"""
+    getClient.connect()
+    getRunningServer.stop()
+    time.sleep(1)
+    assert getClient.isConnected  # todo check why the first always return true here
+    assert not getClient.isConnected
+
+
 @pytest.mark.skip("needs fixture for more than one client")
 def test_serverGetOutput(getRunningServer):
     """!Send data to server with 2 clients, check '[ack]' and data on server queue"""
