@@ -122,5 +122,7 @@ class TCPClient:
                 self._sock.sendall(bytes(header + aliveMsg, "utf-8"))
                 return True
             except (AttributeError, BrokenPipeError):
+                logging.exception("Unknown error: ")
+            except ConnectionResetError:
                 pass
         return False

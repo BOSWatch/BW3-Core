@@ -164,9 +164,12 @@ def test_serverStopsWhileConnected(getRunningServer, getClient):
     """!Shutdown server while client is connected"""
     getClient.connect()
     getRunningServer.stop()
-    time.sleep(0.1)
-    assert getClient.isConnected  # todo check why the first always return true here
-    assert not getClient.isConnected
+    timeout = 10
+    while getClient.isConnected:
+        print(timeout)
+        timeout = timeout - 1
+        if timeout is 0:
+            assert 0
 
 
 @pytest.mark.skip("needs fixture for more than one client")
