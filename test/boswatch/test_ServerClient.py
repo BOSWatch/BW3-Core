@@ -82,6 +82,13 @@ def test_clientConnect(getClient, getRunningServer):
     assert getClient.disconnect()
 
 
+def test_doubleConnect(getClient, getRunningServer):
+    """!Connect to a server twice"""
+    assert getClient.connect()
+    assert getClient.connect()
+    assert getClient.disconnect()
+
+
 def test_clientReconnect(getClient, getRunningServer):
     """!Try a reconnect after a established connection"""
     assert getClient.connect()

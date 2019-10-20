@@ -76,13 +76,14 @@ class TCPClient:
         @param data: data to send to the server
         @return True or False"""
         try:
+            if not self._sock:  # check if socket is still available
+                logging.error("cannot receive - no connection established")
+                return False
             logging.debug("transmitting: %s", data)
             header = str(len(data)).ljust(HEADERSIZE)
             self._sock.sendall(bytes(header + data, "utf-8"))
             logging.debug("transmitted...")
             return True
-        except AttributeError:
-            logging.error("cannot transmit - no connection established")
         except ConnectionResetError:
             logging.error("cannot transmit - host closed connection")
         return False
@@ -93,6 +94,7 @@ class TCPClient:
         @return received data"""
         try:
             if not self._sock:  # check if socket is still available
+                logging.error("cannot receive - no connection established")
                 return False
             read, _, _ = select.select([self._sock], [], [], 1)
             if not read:  # check if there is something to read
@@ -104,8 +106,6 @@ class TCPClient:
             received = self._sock.recv(length).decode("utf-8")
             logging.debug("received %d bytes: %s", length, received)
             return received
-        except AttributeError:
-            logging.error("cannot receive - no connection established")
         except ConnectionResetError:
             logging.error("cannot receive - host closed connection")
         except socket.timeout:  # pragma: no cover
@@ -122,7 +122,7 @@ class TCPClient:
                 self._sock.sendall(bytes(header + aliveMsg, "utf-8"))
                 return True
             except (AttributeError, BrokenPipeError):
-                logging.exception("Unknown error: ")
+                logging.error("Unknown error: ")
             except ConnectionResetError:
                 pass
         return False
