@@ -92,7 +92,7 @@ alarmRouter:
 
 ---
 ### `router:`
-Mit den Routern kann der Verarbeitungsweg eines Alarm-Paketes festgelegt werden. DEs können beliebig viele Router in Form einer Liste angegeben werden.
+Mit den Routern kann der Verarbeitungsweg eines Alarm-Paketes festgelegt werden. Es können beliebig viele Router in Form einer Liste angegeben werden.
 
 |Feld|Beschreibung|Default|
 |----|------------|-------|
@@ -124,6 +124,4 @@ router:
 ---
 ## Module/Plugins
 
-|Feld|Beschreibung|Default|
-|----|------------|-------|
-|allowed|Liste der erlaubten Paket Typen `fms` `zvei` `pocsag`||
+Die möglichen Einstellungen der einzelnen Module und Plugins sind im jeweiligen Kapitel aufgelistet.
