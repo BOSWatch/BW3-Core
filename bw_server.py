@@ -63,7 +63,7 @@ args = parser.parse_args()
 
 bwConfig = ConfigYAML()
 if not bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config):
-    logging.error("cannot load config file")
+    logging.fatal("cannot load config file")
     exit(1)
 
 # ############################# begin server system
@@ -71,7 +71,8 @@ try:
 
     bwRoutMan = RouterManager()
     if not bwRoutMan.buildRouter(bwConfig):
-        exit()
+        logging.fatal("Error while building routers")
+        exit(1)
 
     bcServer = BroadcastServer()
     if bwConfig.get("server", "useBroadcast", default=False):
