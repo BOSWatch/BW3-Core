@@ -56,6 +56,12 @@ def test_loadConfigFileNotFound(getConfig):
     assert getConfig.loadConfigFile(paths.TEST_PATH + "test_configNotFound.yaml") is False
 
 
+def test_getConfigAsString(getFilledConfig):
+    """!Get the string representation of the config"""
+    assert type(str(getFilledConfig)) is str
+    logging.debug(getFilledConfig)
+
+
 def test_getTypes(getFilledConfig):
     """!Get and check different data types in config"""
     assert type(getFilledConfig.get("types")) is ConfigYAML
@@ -63,6 +69,11 @@ def test_getTypes(getFilledConfig):
     assert type(getFilledConfig.get("types", "bool")) is bool
     assert type(getFilledConfig.get("types", "integer")) is int
     assert type(getFilledConfig.get("types", "float")) is float
+
+
+def test_getDefaultValue(getFilledConfig):
+    """!Get the default value of an not existent entry"""
+    assert getFilledConfig.get("notExistent", default="defaultValue") == "defaultValue"
 
 
 def test_getNestedConfig(getFilledConfig):
@@ -78,4 +89,17 @@ def test_configIterationList(getFilledConfig):
     for item in getFilledConfig.get("list"):
         assert type(item) is str
         counter += 1
-    assert counter == 3
+    assert counter is 3
+
+
+def test_configIterationListWithNestedList(getFilledConfig):
+    """!Try to iterate over a list in the config where its elements are lists itself"""
+    listCnt = 0
+    strCnt = 0
+    for item in getFilledConfig.get("list1"):
+        if type(item) is ConfigYAML:
+            listCnt += 1
+        if type(item) is str:
+            strCnt += 1
+    assert listCnt == 2
+    assert strCnt == 1
