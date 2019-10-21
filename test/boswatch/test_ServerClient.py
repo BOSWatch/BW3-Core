@@ -172,7 +172,7 @@ def test_serverStartTwoInstances():
     assert testServer1.isRunning
     assert not testServer2.start()
     assert testServer1.isRunning
-    assert testServer2.isRunning
+    assert not testServer2.isRunning
     assert testServer1.stop()
     assert testServer2.stop()
 

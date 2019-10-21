@@ -115,7 +115,7 @@ class TCPServer:
         @return True or False"""
         if not self.isRunning:
             try:
-                socketserver.TCPServer.allow_reuse_address = True
+                socketserver.TCPServer.allow_reuse_address = False  # because we can start two instances on same port elsewhere
                 self._server = _ThreadedTCPServer(("", port), _ThreadedTCPRequestHandler)
                 self._server.timeout = self._timeout
                 self._server.alarmQueue = self._alarmQueue
