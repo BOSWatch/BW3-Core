@@ -133,7 +133,6 @@ class TCPServer:
             except socket.error as e:
                 logging.error(e)
                 return False
-
         else:
             logging.warning("server always started")
             return True

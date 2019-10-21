@@ -170,7 +170,7 @@ def test_serverStartTwoInstances():
     testServer2 = TCPServer(dataQueue)
     assert testServer1.start()
     assert testServer1.isRunning
-    assert testServer2.start()
+    assert not testServer2.start()
     assert testServer1.isRunning
     assert testServer2.isRunning
     assert testServer1.stop()
