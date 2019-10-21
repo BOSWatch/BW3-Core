@@ -69,5 +69,5 @@ class ConfigYAML:
                 return ConfigYAML(tmp)
             else:
                 return tmp
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             return default

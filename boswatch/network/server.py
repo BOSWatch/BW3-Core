@@ -135,8 +135,8 @@ class TCPServer:
                 return False
 
         else:
-            logging.error("server always started")
-            return False
+            logging.warning("server always started")
+            return True
 
     def stop(self):
         """!Stops the TCP socket server
