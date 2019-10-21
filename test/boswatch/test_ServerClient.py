@@ -162,7 +162,10 @@ def test_serverDoubleStart():
     testServer1 = TCPServer(dataQueue)
     testServer2 = TCPServer(dataQueue)
     assert testServer1.start()
-    assert not testServer2.start()
+    assert testServer1.isRunning
+    assert testServer2.start()
+    assert testServer1.isRunning
+    assert testServer2.isRunning
     assert testServer1.stop()
     assert testServer2.stop()
 
