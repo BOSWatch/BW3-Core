@@ -46,16 +46,20 @@ Aktuell gibt es nur `sdr:` als Input Quelle
 |error|Frequenz Abweichung in ppm|0|
 |squelch|Einstellung der Rauschsperre|1|
 |gain|Verstärkung des Eingangssignals|100|
+|rtlPath|Pfad zur rtl_fm Binary|rtl_fm|
+|mmPath|Pfad zur multimon-ng Binary|multimon-ng|
 
 **Beispiel:**
 ```yaml
 inputSource:
   sdr:
     device: 0
-    frequency: 85.000M
+    frequency: 85M
     error: 0
     squelch: 1
     gain: 100
+    rtlPath: /usr/bin/rtl-fm
+    mmPath: /opt/multimon/multimon-ng
 ```
 
 ---

@@ -26,6 +26,8 @@ inputSource:
     error: 0
     squelch: 1
     gain: 100
+    rtlPath: /usr/bin/rtl-fm
+    mmPath: /opt/multimon/multimon-ng
 
 decoder:
   fms: yes

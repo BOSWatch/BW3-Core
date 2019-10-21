@@ -84,7 +84,7 @@ try:
 
     # ========== INPUT CODE ==========
     def handleSDRInput(dataQueue, sdrConfig, decoderConfig):  # todo exception handling inside
-        sdrProc = ProcessManager("/usr/bin/rtl_fm")
+        sdrProc = ProcessManager(str(sdrConfig.get("rtlPath", default="rtl_fm")))
         sdrProc.addArgument("-d " + str(sdrConfig.get("device", default="0")))     # device id
         sdrProc.addArgument("-f " + sdrConfig.get("frequency"))                    # frequencies
         sdrProc.addArgument("-p " + str(sdrConfig.get("error", default="0")))      # frequency error in ppm
@@ -96,7 +96,7 @@ try:
         sdrProc.start()
         sdrProc.skipLinesUntil("Output at")
 
-        mmProc = ProcessManager("/opt/multimon/multimon-ng", textMode=True)
+        mmProc = ProcessManager(str(sdrConfig.get("mmPath", default="multimon-ng")), textMode=True)
         if decoderConfig.get("fms", default=0):
             mmProc.addArgument("-a FMSFSK")
         if decoderConfig.get("zvei", default=0):
