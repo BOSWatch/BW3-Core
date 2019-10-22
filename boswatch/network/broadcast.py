@@ -99,7 +99,7 @@ class BroadcastServer:
         self._serverShutdown = False
         self._servePort = servePort
 
-    def __del__(self):
+    def __del__(self):  # pragma: no cover
         if self.isRunning:
             self.stop()
             while self.isRunning:

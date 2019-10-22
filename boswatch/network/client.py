@@ -16,8 +16,11 @@
 """
 import logging
 import socket
+import select
 
 logging.debug("- %s loaded", __name__)
+
+HEADERSIZE = 10
 
 
 class TCPClient:
@@ -27,8 +30,8 @@ class TCPClient:
         """!Create a new instance
 
         @param timeout: timeout for the client in sec. (3)"""
-        self._sock = None
-        self._timeout = timeout
+        socket.setdefaulttimeout(timeout)
+        self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def connect(self, host="localhost", port=8080):
         """!Connect to the server
@@ -38,17 +41,14 @@ class TCPClient:
         @return True or False"""
         try:
             if not self.isConnected:
-                self._sock = socket
-                self._sock.setdefaulttimeout(self._timeout)
-                self._sock = socket.create_connection((host, port))
+                self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self._sock.connect((host, port))
                 logging.debug("connected to %s:%s", host, port)
                 return True
             logging.warning("client always connected")
             return True
-        except ConnectionRefusedError:
-            logging.error("cannot connect to %s:%s - connection refused", host, port)
-        except socket.timeout:  # pragma: no cover
-            logging.warning("cannot connect to %s:%s - timeout after %s sec", host, port, self._timeout)
+        except socket.error as e:
+            logging.error(e)
         return False
 
     def disconnect(self):
@@ -58,13 +58,12 @@ class TCPClient:
         try:
             if self.isConnected:
                 self._sock.close()
-                self._sock = None
                 logging.debug("disconnected")
                 return True
-            logging.warning("client not connected")
+            logging.warning("client always disconnected")
             return True
-        except AttributeError:
-            logging.error("cannot disconnect - no connection established")
+        except socket.error as e:
+            logging.error(e)
         return False
 
     def transmit(self, data):
@@ -74,13 +73,12 @@ class TCPClient:
         @return True or False"""
         try:
             logging.debug("transmitting: %s", data)
-            self._sock.sendall(bytes(data + "\n", "utf-8"))
+            header = str(len(data)).ljust(HEADERSIZE)
+            self._sock.sendall(bytes(header + data, "utf-8"))
             logging.debug("transmitted...")
             return True
-        except AttributeError:
-            logging.error("cannot transmit - no connection established")
-        except ConnectionResetError:
-            logging.error("cannot transmit - host closed connection")
+        except socket.error as e:
+            logging.error(e)
         return False
 
     def receive(self):
@@ -88,20 +86,30 @@ class TCPClient:
 
         @return received data"""
         try:
-            received = str(self._sock.recv(1024), "utf-8")
-            logging.debug("received: %s", received)
+            read, _, _ = select.select([self._sock], [], [], 1)
+            if not read:  # check if there is something to read
+                return False
+            header = self._sock.recv(HEADERSIZE)
+            if not len(header):  # check if there data
+                return False
+            length = int(header.decode("utf-8").strip())
+            received = self._sock.recv(length).decode("utf-8")
+            logging.debug("received %d bytes: %s", length, received)
             return received
-        except AttributeError:
-            logging.error("cannot receive - no connection established")
-        except ConnectionResetError:
-            logging.error("cannot receive - host closed connection")
-        except socket.timeout:  # pragma: no cover
-            logging.warning("cannot receive - timeout after %s sec", self._timeout)
+        except socket.error as e:
+            logging.error(e)
         return False
 
     @property
     def isConnected(self):
         """!Property of client connected state"""
-        if self._sock:
+        try:
+            aliveMsg = "<alive>"
+            header = str(len(aliveMsg)).ljust(HEADERSIZE)
+            self._sock.sendall(bytes(header + aliveMsg, "utf-8"))
             return True
+        except socket.error as e:
+            if e.errno is 32:  # broken pipe - no one will read from this pipe anymore
+                return False
+            logging.error(e)
         return False

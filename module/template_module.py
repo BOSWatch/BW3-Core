@@ -36,10 +36,19 @@ class BoswatchModule(Module):
         pass
 
     def doWork(self, bwPacket):
-        """!start an rund of the module.
+        """!start an run of the module.
 
         @param bwPacket: A BOSWatch packet instance
         @return bwPacket or False"""
+        if bwPacket.get("mode") == "fms":
+            pass
+        elif bwPacket.get("mode") == "zvei":
+            pass
+        elif bwPacket.get("mode") == "pocsag":
+            pass
+        elif bwPacket.get("mode") == "msg":
+            pass
+
         return bwPacket
 
     def onUnload(self):

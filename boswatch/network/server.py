@@ -15,14 +15,18 @@
 @description: Class implementation for a threaded TCP socket server
 """
 import logging
+import socket
 import socketserver
 import threading
 import time
+import select
 
 logging.debug("- %s loaded", __name__)
 
+HEADERSIZE = 10
 
-class _ThreadedTCPRequestHandler(socketserver.ThreadingMixIn, socketserver.BaseRequestHandler):
+
+class _ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
     """!ThreadedTCPRequestHandler class for our TCPServer class."""
 
     def handle(self):
@@ -33,26 +37,41 @@ class _ThreadedTCPRequestHandler(socketserver.ThreadingMixIn, socketserver.BaseR
             self.server.clientsConnected[threading.current_thread().name] = {"address": self.client_address[0], "timestamp": time.time()}
 
         logging.info("Client connected: %s", self.client_address[0])
-        data = 1  # to enter while loop
         cur_thread = threading.current_thread().name
         req_name = str(cur_thread) + " " + self.client_address[0]
 
         try:
-            while data:
-                data = str(self.request.recv(1024).strip(), 'utf-8')
-                if data != "":
-                    logging.debug("%s recv: %s", req_name, data)
+            while self.server.isActive:
+                read, _, _ = select.select([self.request], [], [], 0.5)
+                if not read:
+                    continue  # nothing to read on the socket
 
-                    # add a new entry and the decoded data dict as an string in utf-8 and an timestamp
-                    self.server.alarmQueue.put_nowait((self.client_address[0], data, time.time()))  # queue is threadsafe
-                    logging.debug("Add data to queue")
+                header = self.request.recv(HEADERSIZE)
+                if not len(header):
+                    break  # empty data -> socked closed
 
-                    logging.debug("%s send: [ack]", req_name)
-                    self.request.sendall(bytes("[ack]", "utf-8"))
+                length = int(header.decode("utf-8").strip())
+                data = self.request.recv(length).decode("utf-8")
+
+                if data == "<alive>":
+                    continue
+
+                logging.debug("%s recv %d bytes: %s", req_name, length, data)
+
+                # add a new entry and the decoded data dict as an string in utf-8 and an timestamp
+                self.server.alarmQueue.put_nowait((self.client_address[0], data, time.time()))  # queue is threadsafe
+                logging.debug("Add data to queue")
+
+                logging.debug("%s send: [ack]", req_name)
+
+                data = "[ack]"
+                header = str(len(data)).ljust(HEADERSIZE)
+                self.request.sendall(bytes(header + data, "utf-8"))
             self.request.close()
 
-        except (ConnectionResetError, ConnectionAbortedError):  # pragma: no cover
-            logging.debug("%s connection closed", req_name)
+        except socket.error as e:
+            logging.error(e)
+            return False
         finally:
             del self.server.clientsConnected[threading.current_thread().name]
             logging.info("Client disconnected: %s", self.client_address[0])
@@ -96,9 +115,11 @@ class TCPServer:
         @return True or False"""
         if not self.isRunning:
             try:
+                socketserver.TCPServer.allow_reuse_address = False  # because we can start two instances on same port elsewhere
                 self._server = _ThreadedTCPServer(("", port), _ThreadedTCPRequestHandler)
                 self._server.timeout = self._timeout
                 self._server.alarmQueue = self._alarmQueue
+                self._server.isActive = True
 
                 self._server.clientsConnectedLock = self._clientsConnectedLock
                 self._server.clientsConnected = self._clientsConnected
@@ -109,9 +130,9 @@ class TCPServer:
                 self._server_thread.start()
                 logging.debug("TCPServer started in Thread: %s", self._server_thread.name)
                 return True
-            except OSError:
-                logging.exception("Socket Error")
-
+            except socket.error as e:
+                logging.error(e)
+                return False
         else:
             logging.warning("server always started")
             return True
@@ -122,6 +143,7 @@ class TCPServer:
         @return True or False"""
         if self.isRunning:
             self._server.shutdown()
+            self._server.isActive = False
             self._server_thread.join()
             self._server_thread = None
             self._server = None

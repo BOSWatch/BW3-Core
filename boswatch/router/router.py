@@ -58,7 +58,7 @@ class Router:
 
             bwPacket = bwPacket_tmp
             logging.debug("[%s] <- bwPacket returned: %s", self._name, bwPacket)
-        logging.debug("[%s] ended", self._name)
+        logging.debug("[%s] finished", self._name)
         return bwPacket
 
     @property

@@ -44,6 +44,7 @@ from boswatch.packet import Packet
 from boswatch.utils import header
 from boswatch.network.broadcast import BroadcastServer
 from boswatch.router.routerManager import RouterManager
+from boswatch.utils import misc
 
 
 header.logoToLog()
@@ -62,7 +63,7 @@ args = parser.parse_args()
 
 bwConfig = ConfigYAML()
 if not bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config):
-    logging.error("cannot load config file")
+    logging.fatal("cannot load config file")
     exit(1)
 
 # ############################# begin server system
@@ -70,10 +71,11 @@ try:
 
     bwRoutMan = RouterManager()
     if not bwRoutMan.buildRouter(bwConfig):
-        exit()
+        logging.fatal("Error while building routers")
+        exit(1)
 
+    bcServer = BroadcastServer()
     if bwConfig.get("server", "useBroadcast", default=False):
-        bcServer = BroadcastServer()
         bcServer.start()
 
     incomingQueue = queue.Queue()
@@ -93,7 +95,7 @@ try:
                 bwPacket = Packet((data[1]))
 
                 bwPacket.set("clientIP", data[0])
-                bwPacket.addServerData(bwConfig)
+                misc.addServerDataToPacket(bwPacket, bwConfig)
 
                 bwRoutMan.runRouter(bwConfig.get("alarmRouter"), bwPacket)
 
@@ -105,20 +107,9 @@ except SystemExit:  # pragma: no cover
     logging.error("BOSWatch interrupted by an error")
 except:  # pragma: no cover
     logging.exception("BOSWatch interrupted by an error")
-finally:  # pragma: no cover
-
-    try:
-        bwServer.stop()
-    except NameError:
-        pass
-    except:
-        raise
-
-    try:
-        bcServer.stop()
-    except NameError:
-        pass
-    except:
-        raise
-
-    logging.debug("BOSWatch has ended ...")
+finally:
+    logging.debug("Starting shutdown routine")
+    del bwRoutMan
+    bwServer.stop()
+    bcServer.stop()
+    logging.debug("BOSWatch server has stopped ...")

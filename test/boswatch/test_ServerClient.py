@@ -82,6 +82,13 @@ def test_clientConnect(getClient, getRunningServer):
     assert getClient.disconnect()
 
 
+def test_doubleConnect(getClient, getRunningServer):
+    """!Connect to a server twice"""
+    assert getClient.connect()
+    assert getClient.connect()
+    assert getClient.disconnect()
+
+
 def test_clientReconnect(getClient, getRunningServer):
     """!Try a reconnect after a established connection"""
     assert getClient.connect()
@@ -149,15 +156,38 @@ def test_serverStopFailed(getServer):
     assert getServer.stop()
 
 
-def test_serverDoubleStart():
+def test_serverDoubleStart(getServer):
     """!Test to start the server twice"""
+    assert getServer.start()
+    assert getServer.start()
+    assert getServer.stop()
+
+
+def test_serverStartTwoInstances():
+    """!Test to start two server different server instances"""
     dataQueue = queue.Queue()
     testServer1 = TCPServer(dataQueue)
     testServer2 = TCPServer(dataQueue)
     assert testServer1.start()
+    assert testServer1.isRunning
     assert not testServer2.start()
+    assert testServer1.isRunning
+    assert not testServer2.isRunning
     assert testServer1.stop()
     assert testServer2.stop()
+
+
+def test_serverStopsWhileConnected(getRunningServer, getClient):
+    """!Shutdown server while client is connected"""
+    getClient.connect()
+    getRunningServer.stop()
+    timeout = 10
+    while getClient.isConnected:
+        time.sleep(0.1)
+        timeout = timeout - 1
+        if timeout is 0:
+            break
+    assert timeout
 
 
 @pytest.mark.skip("needs fixture for more than one client")

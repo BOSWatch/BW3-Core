@@ -16,7 +16,6 @@
 """
 import logging
 import time
-from boswatch import version
 
 logging.debug("- %s loaded", __name__)
 
@@ -57,38 +56,6 @@ class Packet:
         except:
             logging.warning("field not found: %s", fieldName)
             return None
-
-    def addClientData(self, config):
-        """!Add the client information to the decoded data
-
-        This function adds the following data to the bwPacket:
-        - clientName
-        - clientVersion
-        - clientBuildDate
-        - clientBranch
-        - inputSource
-        - frequency"""
-        logging.debug("add client data to bwPacket")
-        self.set("clientName", config.get("client", "name"))
-        self.set("clientVersion", version.client)
-        self.set("clientBuildDate", version.date)
-        self.set("clientBranch", version.branch)
-        self.set("inputSource", config.get("client", "inoutSource"))
-        self.set("frequency", config.get("inputSource", "sdr", "frequency"))
-
-    def addServerData(self, config):
-        """!Add the server information to the decoded data
-
-        This function adds the following data to the bwPacket:
-        - serverName
-        - serverVersion
-        - serverBuildDate
-        - serverBranch"""
-        logging.debug("add server data to bwPacket")
-        self.set("serverName", config.get("server", "name"))
-        self.set("serverVersion", version.server)
-        self.set("serverBuildDate", version.date)
-        self.set("serverBranch", version.branch)
 
     def printInfo(self):
         """!Print a info message to the log on INFO level.

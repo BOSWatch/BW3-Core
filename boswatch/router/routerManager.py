@@ -109,6 +109,8 @@ class RouterManager:
         for routerName in routerRunList:
             if routerName in self._routerDict:
                 self._routerDict[routerName].runRouter(bwPacket)
+            else:
+                logging.warning("unknown router: %s", routerName)
 
     def _showRouterRoute(self):
         """!Show the routes of all routers"""

@@ -11,6 +11,9 @@ client:
   name: BW3 Client        # name of the BW3 Client instance
   inputSource: sdr        # atm only 'sdr' is possible
   useBroadcast: no        # use broadcast to find server automatically
+  reconnectDelay: 3       # time in seconds to delay reconnect try
+  sendTries: 3            # how often should tried to send a packet
+  sendDelay: 3            # time in seconds to delay the resend try
 
 server:                   # only used if useBroadcast = no
   ip:   127.0.0.1
@@ -19,10 +22,12 @@ server:                   # only used if useBroadcast = no
 inputSource:
   sdr:
     device: 0
-    frequency: 85.000M
+    frequency: 85M
     error: 0
-    squelch: 0
+    squelch: 1
     gain: 100
+    rtlPath: /usr/bin/rtl_fm
+    mmPath: /opt/multimon/multimon-ng
 
 decoder:
   fms: yes

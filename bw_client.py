@@ -32,8 +32,10 @@ logging.debug("BOSWatch client has started ...")
 logging.debug("Import python modules")
 import argparse
 logging.debug("- argparse")
-import subprocess
-logging.debug("- subprocess")
+import threading
+logging.debug("- threading")
+import queue
+logging.debug("- queue")
 import time
 logging.debug("- time")
 
@@ -41,8 +43,10 @@ logging.debug("Import BOSWatch modules")
 from boswatch.configYaml import ConfigYAML
 from boswatch.network.client import TCPClient
 from boswatch.network.broadcast import BroadcastClient
+from boswatch.processManager import ProcessManager
 from boswatch.decoder.decoder import Decoder
 from boswatch.utils import header
+from boswatch.utils import misc
 
 
 header.logoToLog()
@@ -56,6 +60,7 @@ parser = argparse.ArgumentParser(prog="bw_client.py",
                                  epilog="""More options you can find in the extern client.ini
                                  file in the folder /config""")
 parser.add_argument("-c", "--config", help="Name to configuration File", required=True)
+parser.add_argument("-t", "--test", help="Start Client with testdata-set")
 args = parser.parse_args()
 
 bwConfig = ConfigYAML()
@@ -63,10 +68,8 @@ if not bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config):
     logging.error("cannot load config file")
     exit(1)
 
-
-# ############################# begin client system
+# ========== CLIENT CODE ==========
 try:
-
     ip = bwConfig.get("server", "ip", default="127.0.0.1")
     port = bwConfig.get("server", "port", default="8080")
 
@@ -76,41 +79,101 @@ try:
             ip = broadcastClient.serverIP
             port = broadcastClient.serverPort
 
+    inputQueue = queue.Queue()
+    inputThreadRunning = True
+
+    # ========== INPUT CODE ==========
+    def handleSDRInput(dataQueue, sdrConfig, decoderConfig):  # todo exception handling inside
+        sdrProc = ProcessManager(str(sdrConfig.get("rtlPath", default="rtl_fm")))
+        sdrProc.addArgument("-d " + str(sdrConfig.get("device", default="0")))     # device id
+        sdrProc.addArgument("-f " + sdrConfig.get("frequency"))                    # frequencies
+        sdrProc.addArgument("-p " + str(sdrConfig.get("error", default="0")))      # frequency error in ppm
+        sdrProc.addArgument("-l " + str(sdrConfig.get("squelch", default="1")))    # squelch
+        sdrProc.addArgument("-g " + str(sdrConfig.get("gain", default="100")))     # gain
+        sdrProc.addArgument("-M fm")                                               # set mode to fm
+        sdrProc.addArgument("-E DC")                                               # set DC filter
+        sdrProc.addArgument("-s 22050")                                            # bit rate of audio stream
+        sdrProc.start()
+        sdrProc.skipLinesUntil("Output at")
+
+        mmProc = ProcessManager(str(sdrConfig.get("mmPath", default="multimon-ng")), textMode=True)
+        if decoderConfig.get("fms", default=0):
+            mmProc.addArgument("-a FMSFSK")
+        if decoderConfig.get("zvei", default=0):
+            mmProc.addArgument("-a ZVEI1")
+        if decoderConfig.get("poc512", default=0):
+            mmProc.addArgument("-a POCSAG512")
+        if decoderConfig.get("poc1200", default=0):
+            mmProc.addArgument("-a POCSAG1200")
+        if decoderConfig.get("poc2400", default=0):
+            mmProc.addArgument("-a POCSAG2400")
+        mmProc.addArgument("-f alpha")
+        mmProc.addArgument("-t raw -")
+        mmProc.setStdin(sdrProc.stdout)
+        mmProc.start()
+        mmProc.skipLinesUntil("Available demodulators:")
+
+        logging.info("start decoding")
+        while inputThreadRunning:
+            if not sdrProc.isRunning:
+                logging.warning("rtl_fm was down - try to restart")
+                sdrProc.start()
+                sdrProc.skipLinesUntil("Output at")  # last line form rtl_fm before data
+            elif not mmProc.isRunning:
+                logging.warning("multimon was down - try to restart")
+                mmProc.start()
+                mmProc.skipLinesUntil("Available demodulators:")  # last line from mm before data
+            elif sdrProc.isRunning and mmProc.isRunning:
+                line = mmProc.readline()
+                if line:
+                    dataQueue.put_nowait((line, time.time()))
+                    logging.debug("Add data to queue")
+                    print(line)
+        logging.debug("stopping thread")
+        mmProc.stop()
+        sdrProc.stop()
+
+    # ========== INPUT CODE ==========
+
+    mmThread = threading.Thread(target=handleSDRInput, name="mmReader", args=(inputQueue, bwConfig.get("inputSource", "sdr"), bwConfig.get("decoder")))
+    mmThread.daemon = True
+    mmThread.start()
+
     bwClient = TCPClient()
-    if bwClient.connect(ip, port):
+    bwClient.connect(ip, port)
+    while 1:
 
-        testFile = open(paths.TEST_PATH + "testdata.list", "r")
+        if not bwClient.isConnected:
+            logging.warning("connection to server lost - sleep %d seconds", bwConfig.get("client", "reconnectDelay", default="3"))
+            time.sleep(bwConfig.get("client", "reconnectDelay", default="3"))
+            bwClient.connect(ip, port)
 
-        while 1:
+        elif not inputQueue.empty():
+            data = inputQueue.get()
+            logging.info("get data from queue (waited %0.3f sec.)", time.time() - data[1])
+            logging.debug("%s packet(s) still waiting in queue", inputQueue.qsize())
 
-            for testData in testFile:
+            bwPacket = Decoder.decode(data[0])
+            inputQueue.task_done()
 
-                if (len(testData.rstrip(' \t\n\r')) == 0) or ("#" in testData[0]):
-                    continue
+            if bwPacket is None:
+                continue
 
-                logging.debug("Test: %s", testData)
-                bwPacket = Decoder.decode(testData)
+            bwPacket.printInfo()
+            misc.addClientDataToPacket(bwPacket, bwConfig)
 
-                if bwPacket:
-                    bwPacket.printInfo()
-                    bwPacket.addClientData(bwConfig)
-                    bwClient.transmit(str(bwPacket))
-
-                    # todo should we do this in an thread, to not block receiving ??? but then we should use transmit() and receive() with Lock()
-                    failedTransmits = 0
-                    while not bwClient.receive() == "[ack]":  # wait for ack or timeout
-                        if failedTransmits >= 3:
-                            logging.error("cannot transmit after 3 retires")
-                            break
-                        failedTransmits += 1
-                        logging.warning("attempt %d to resend packet", failedTransmits)
-                        bwClient.transmit(str(bwPacket))  # try to resend
-
+            for sendCnt in range(bwConfig.get("client", "sendTries", default="3")):
+                bwClient.transmit(str(bwPacket))
+                if bwClient.receive() == "[ack-]":
                     logging.debug("ack ok")
+                    break
+                logging.warning("cannot send packet - sleep %d seconds", bwConfig.get("client", "sendDelay", default="3"))
+                time.sleep(bwConfig.get("client", "sendDelay", default="3"))
 
-            bwClient.disconnect()
-            break
-# test for server ####################################
+        else:
+            time.sleep(0.1)  # reduce cpu load (wait 100ms)
+            # in worst case a packet have to wait 100ms until it will be processed
+
 
 except KeyboardInterrupt:  # pragma: no cover
     logging.warning("Keyboard interrupt")
@@ -118,5 +181,9 @@ except SystemExit:  # pragma: no cover
     logging.error("BOSWatch interrupted by an error")
 except:  # pragma: no cover
     logging.exception("BOSWatch interrupted by an error")
-finally:  # pragma: no cover
-    logging.debug("BOSWatch has ended ...")
+finally:
+    logging.debug("Starting shutdown routine")
+    bwClient.disconnect()
+    inputThreadRunning = False
+    mmThread.join()
+    logging.debug("BOSWatch client has stopped ...")

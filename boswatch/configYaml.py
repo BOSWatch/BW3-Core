@@ -34,6 +34,7 @@ class ConfigYAML:
                 yield item
 
     def __str__(self):
+        """!Returns the string representation of the internal config dict"""
         return str(self._config)
 
     def loadConfigFile(self, configPath):
@@ -54,6 +55,12 @@ class ConfigYAML:
         return False
 
     def get(self, *args, default=None):
+        """!Get a single value from the config
+        or a value set in a new configYAML class instance
+
+        @param *args: Config section (one ore more strings)
+        @param default: Default value if section not found (None)
+        @return: A single value, a value set in an configYAML instance, the default value"""
         tmp = self._config
         try:
             for arg in args:
@@ -62,5 +69,5 @@ class ConfigYAML:
                 return ConfigYAML(tmp)
             else:
                 return tmp
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             return default

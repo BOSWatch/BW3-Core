@@ -16,9 +16,9 @@
 """
 import logging
 
-from boswatch.decoder.fmsdecoder import FmsDecoder
-from boswatch.decoder.pocsagdecoder import PocsagDecoder
-from boswatch.decoder.zveidecoder import ZveiDecoder
+from boswatch.decoder.fmsDecoder import FmsDecoder
+from boswatch.decoder.pocsagDecoder import PocsagDecoder
+from boswatch.decoder.zveiDecoder import ZveiDecoder
 
 logging.debug("- %s loaded", __name__)
 
@@ -32,6 +32,7 @@ class Decoder:
         @param data: data to decode
         @return bwPacket instance"""
         logging.debug("search decoder")
+        data = str(data)
         if "FMS" in data:
             return FmsDecoder.decode(data)
         elif "POCSAG" in data:
@@ -39,5 +40,5 @@ class Decoder:
         elif "ZVEI" in data:
             return ZveiDecoder.decode(data)
         else:
-            logging.error("no decoder found for: %s", data)
+            logging.warning("no decoder found for: %s", data)
             return None

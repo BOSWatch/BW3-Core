@@ -19,3 +19,14 @@ list:
   - one
   - two
   - three
+
+list1:
+  - list11:
+      - one
+      - two
+      - three
+  - list12:
+    - one
+    - two
+    - three
+  - string1
