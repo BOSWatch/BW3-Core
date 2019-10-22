@@ -137,7 +137,8 @@ try:
 
     # ========== INPUT CODE ==========
 
-    mmThread = threading.Thread(target=handleSDRInput, name="mmReader", args=(inputQueue, bwConfig.get("inputSource", "sdr"), bwConfig.get("decoder")))
+    mmThread = threading.Thread(target=handleSDRInput, name="mmReader",
+                                args=(inputQueue, bwConfig.get("inputSource", "sdr"), bwConfig.get("decoder")))
     mmThread.daemon = True
     mmThread.start()
 
@@ -146,8 +147,9 @@ try:
     while 1:
 
         if not bwClient.isConnected:
-            logging.warning("connection to server lost - sleep %d seconds", bwConfig.get("client", "reconnectDelay", default="3"))
-            time.sleep(bwConfig.get("client", "reconnectDelay", default="3"))
+            reconnectDelay = bwConfig.get("client", "reconnectDelay", default="3")
+            logging.warning("connection to server lost - sleep %d seconds", reconnectDelay)
+            time.sleep(reconnectDelay)
             bwClient.connect(ip, port)
 
         elif not inputQueue.empty():
@@ -169,8 +171,9 @@ try:
                 if bwClient.receive() == "[ack-]":
                     logging.debug("ack ok")
                     break
-                logging.warning("cannot send packet - sleep %d seconds", bwConfig.get("client", "sendDelay", default="3"))
-                time.sleep(bwConfig.get("client", "sendDelay", default="3"))
+                sendDelay = bwConfig.get("client", "sendDelay", default="3")
+                logging.warning("cannot send packet - sleep %d seconds", sendDelay)
+                time.sleep(sendDelay)
 
         else:
             time.sleep(0.1)  # reduce cpu load (wait 100ms)
