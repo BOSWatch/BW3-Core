@@ -93,8 +93,9 @@ try:
         sdrProc.addArgument("-M fm")                                               # set mode to fm
         sdrProc.addArgument("-E DC")                                               # set DC filter
         sdrProc.addArgument("-s 22050")                                            # bit rate of audio stream
+        sdrProc.setStderr(open(paths.LOG_PATH + "rtl_fm.log", "a"))
         sdrProc.start()
-        sdrProc.skipLinesUntil("Output at")
+        # sdrProc.skipLinesUntil("Output at")
 
         mmProc = ProcessManager(str(sdrConfig.get("mmPath", default="multimon-ng")), textMode=True)
         if decoderConfig.get("fms", default=0):
@@ -110,19 +111,20 @@ try:
         mmProc.addArgument("-f alpha")
         mmProc.addArgument("-t raw -")
         mmProc.setStdin(sdrProc.stdout)
+        mmProc.setStderr(open(paths.LOG_PATH + "multimon-ng.log", "a"))
         mmProc.start()
-        mmProc.skipLinesUntil("Available demodulators:")
+        # mmProc.skipLinesUntil("Available demodulators:")
 
         logging.info("start decoding")
         while inputThreadRunning:
             if not sdrProc.isRunning:
                 logging.warning("rtl_fm was down - try to restart")
                 sdrProc.start()
-                sdrProc.skipLinesUntil("Output at")  # last line form rtl_fm before data
+                # sdrProc.skipLinesUntil("Output at")  # last line form rtl_fm before data
             elif not mmProc.isRunning:
                 logging.warning("multimon was down - try to restart")
                 mmProc.start()
-                mmProc.skipLinesUntil("Available demodulators:")  # last line from mm before data
+                # mmProc.skipLinesUntil("Available demodulators:")  # last line from mm before data
             elif sdrProc.isRunning and mmProc.isRunning:
                 line = mmProc.readline()
                 if line:
