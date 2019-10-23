@@ -23,6 +23,7 @@ import pytest
 
 from boswatch.network.server import TCPServer
 from boswatch.network.client import TCPClient
+import threading
 
 
 def setup_method(method):
@@ -137,7 +138,7 @@ def test_clientMultiCommunicate(getServer):
     assert testClient2.receive() == "[ack]"
     assert testClient1.receive() == "[ack]"
     # check server msg queue
-    assert dataQueue.qsize() == 3
+    assert getRunningServer._alarmQueue.qsize() == 3
     # disconnect all
     assert testClient1.disconnect()
     assert testClient2.disconnect()
@@ -206,10 +207,41 @@ def test_serverGetOutput(getRunningServer):
     assert testClient1.receive() == "[ack]"
     assert testClient2.receive() == "[ack]"
     # _check server output data
-    assert dataQueue.qsize() == 2
-    assert dataQueue.get(True, 1)[1] == "test1"
-    assert dataQueue.get(True, 1)[1] == "test2"
-    assert dataQueue.qsize() is 0  # Last _check must be None
+    assert getRunningServer._alarmQueue.qsize() == 2
+    assert getRunningServer._alarmQueue.get(True, 1)[1] == "test1"
+    assert getRunningServer._alarmQueue.get(True, 1)[1] == "test2"
+    assert getRunningServer._alarmQueue.qsize() is 0  # Last _check must be None
     # disconnect all
     assert testClient1.disconnect()
     assert testClient2.disconnect()
+
+
+def test_serverHighLoad(getRunningServer):
+    """!High load server test with 10 send threads each will send 100 msg with 324 bytes size"""
+    logging.debug("start sendThreads")
+    threads = []
+    for thr_id in range(10):
+        thr = threading.Thread(target=sendThread, name="sendThread-"+str(thr_id))
+        thr.daemon = True
+        thr.start()
+        threads.append(thr)
+    for thread in threads:
+        thread.join()
+    logging.debug("finished sendThreads")
+    assert getRunningServer._alarmQueue.qsize() == 1000
+
+
+def sendThread():
+    client = TCPClient()
+    client.connect()
+    time.sleep(0.1)
+    for i in range(100):
+        # actually this string is 324 bytes long
+        client.transmit("HigLoadTestString-HigLoadTestString-HigLoadTestString-HigLoadTestString-HigLoadTestString-HigLoadTestString-"
+                        "HigLoadTestString-HigLoadTestString-HigLoadTestString-HigLoadTestString-HigLoadTestString-HigLoadTestString-"
+                        "HigLoadTestString-HigLoadTestString-HigLoadTestString-HigLoadTestString-HigLoadTestString-HigLoadTestString-")
+        if not client.receive() == "[ack]":
+            logging.error("missing [ACK]")
+
+    time.sleep(0.1)
+    client.disconnect()
