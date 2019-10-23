@@ -89,7 +89,8 @@ class RouterManager:
                         logging.error("unknown type '%s' in %s", routeType, route)
                         return False
 
-                except ModuleNotFoundError:
+                # except ModuleNotFoundError:  # only since Py3.6
+                except ImportError:
                     logging.error("%s not found: %s", route.get("type"), route.get("name"))
                     return False
 
