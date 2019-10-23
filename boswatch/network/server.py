@@ -51,10 +51,13 @@ class _ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
                 if not len(header):
                     break  # empty data -> socked closed
 
-                logging.debug("%s recv header: '%s'", req_name, header)
                 length = int(header.decode("utf-8").strip())
                 data = self.request.recv(length).decode("utf-8")
 
+                if data == "<keep-alive>":
+                    continue
+
+                logging.debug("%s recv header: '%s'", req_name, header)
                 logging.debug("%s recv %d bytes:\n%s", req_name, length, pformat(data))
 
                 # add a new entry and the decoded data dict as an string in utf-8 and an timestamp
@@ -66,12 +69,12 @@ class _ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
                 data = "[ack]"
                 header = str(len(data)).ljust(HEADERSIZE)
                 self.request.sendall(bytes(header + data, "utf-8"))
-            self.request.close()
 
         except socket.error as e:
             logging.error(e)
             return False
         finally:
+            self.request.close()
             del self.server.clientsConnected[threading.current_thread().name]
             logging.info("Client disconnected: %s", self.client_address[0])
 
@@ -114,7 +117,7 @@ class TCPServer:
         @return True or False"""
         if not self.isRunning:
             try:
-                socketserver.TCPServer.allow_reuse_address = False  # because we can start two instances on same port elsewhere
+                socketserver.TCPServer.allow_reuse_address = True  # because we can start two instances on same port elsewhere
                 self._server = _ThreadedTCPServer(("", port), _ThreadedTCPRequestHandler)
                 self._server.timeout = self._timeout
                 self._server.alarmQueue = self._alarmQueue
@@ -143,6 +146,7 @@ class TCPServer:
         if self.isRunning:
             self._server.shutdown()
             self._server.isActive = False
+            self._server.server_close()
             self._server_thread.join()
             self._server_thread = None
             self._server = None

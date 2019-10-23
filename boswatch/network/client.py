@@ -110,9 +110,14 @@ class TCPClient:
             if self._sock:
                 _, write, _ = select.select([], [self._sock], [], 0.1)
                 if write:
-                    self._sock.send(bytes("", "utf-8"))
+                    data = "<keep-alive>"
+                    header = str(len(data)).ljust(HEADERSIZE)
+                    self._sock.sendall(bytes(header + data, "utf-8"))
                     return True
             return False
-        except:
-            logging.exception("cannot check connection status")
+        except socket.error as e:
+            if e.errno != 32:
+                logging.exception(e)
+            return False
+        except ValueError:
             return False
