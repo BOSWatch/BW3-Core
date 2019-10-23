@@ -105,13 +105,7 @@ class TCPClient:
     @property
     def isConnected(self):
         """!Property of client connected state"""
-        try:
-            aliveMsg = "<alive>"
-            header = str(len(aliveMsg)).ljust(HEADERSIZE)
-            self._sock.sendall(bytes(header + aliveMsg, "utf-8"))
+        _, write, _ = select.select([], [self._sock], [], 0.1)
+        if write:
             return True
-        except socket.error as e:
-            if e.errno is 32:  # broken pipe - no one will read from this pipe anymore
-                return False
-            logging.error(e)
         return False

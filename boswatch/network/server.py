@@ -55,9 +55,6 @@ class _ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
                 length = int(header.decode("utf-8").strip())
                 data = self.request.recv(length).decode("utf-8")
 
-                if data == "<alive>":
-                    continue
-
                 logging.debug("%s recv %d bytes:\n%s", req_name, length, pformat(data))
 
                 # add a new entry and the decoded data dict as an string in utf-8 and an timestamp
