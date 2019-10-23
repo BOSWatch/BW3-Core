@@ -82,12 +82,13 @@ class TCPClient:
             logging.error(e)
         return False
 
-    def receive(self):
+    def receive(self, timeout=1):
         """!Receive data from the server
 
+        @param: timeout to wait for incoming data in seconds
         @return received data"""
         try:
-            read, _, _ = select.select([self._sock], [], [], 1)
+            read, _, _ = select.select([self._sock], [], [], timeout)
             if not read:  # check if there is something to read
                 return False
             header = self._sock.recv(HEADERSIZE)
