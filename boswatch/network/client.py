@@ -108,8 +108,9 @@ class TCPClient:
         """!Property of client connected state"""
         try:
             if self._sock:
-                read, write, _ = select.select([], [self._sock], [], 0.1)
-                if read and write:
+                _, write, _ = select.select([], [self._sock], [], 0.1)
+                if write:
+                    self._sock.send(bytes("", "utf-8"))
                     return True
             return False
         except:
