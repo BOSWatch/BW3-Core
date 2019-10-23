@@ -89,7 +89,7 @@ def test_configIterationList(getFilledConfig):
     for item in getFilledConfig.get("list"):
         assert type(item) is str
         counter += 1
-    assert counter is 3
+    assert counter == 3
 
 
 def test_configIterationListWithNestedList(getFilledConfig):

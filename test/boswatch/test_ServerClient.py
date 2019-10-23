@@ -186,7 +186,7 @@ def test_serverStopsWhileConnected(getRunningServer, getClient):
     while getClient.isConnected:
         time.sleep(0.1)
         timeout = timeout - 1
-        if timeout is 0:
+        if timeout == 0:
             break
     assert timeout
 
@@ -210,7 +210,7 @@ def test_serverGetOutput(getRunningServer):
     assert getRunningServer._alarmQueue.qsize() == 2
     assert getRunningServer._alarmQueue.get(True, 1)[1] == "test1"
     assert getRunningServer._alarmQueue.get(True, 1)[1] == "test2"
-    assert getRunningServer._alarmQueue.qsize() is 0  # Last _check must be None
+    assert getRunningServer._alarmQueue.qsize() == 0  # Last _check must be None
     # disconnect all
     assert testClient1.disconnect()
     assert testClient2.disconnect()

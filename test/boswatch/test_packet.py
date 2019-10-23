@@ -34,19 +34,19 @@ def buildPacket():
 
 def test_createPacket(buildPacket):
     """!Create a packet"""
-    assert buildPacket is not ""
+    assert buildPacket != ""
 
 
 def test_copyPacket(buildPacket):
     """!Copy a packet to an new instance"""
     bwCopyPacket = Packet(buildPacket.__str__())
-    assert bwCopyPacket is not ""
+    assert bwCopyPacket != ""
 
 
 def test_getPacketString(buildPacket):
     """!get the intern packet dict as string"""
     assert type(buildPacket.__str__()) is str
-    assert buildPacket.__str__() is not ""
+    assert buildPacket.__str__() != ""
 
 
 def test_getNotSetField(buildPacket):
@@ -57,4 +57,4 @@ def test_getNotSetField(buildPacket):
 def test_setGetField(buildPacket):
     """!set and get a field"""
     buildPacket.set("testField", "test")
-    assert buildPacket.get("testField") is "test"
+    assert buildPacket.get("testField") == "test"
