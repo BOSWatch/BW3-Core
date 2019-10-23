@@ -168,7 +168,7 @@ try:
 
             for sendCnt in range(bwConfig.get("client", "sendTries", default="3")):
                 bwClient.transmit(str(bwPacket))
-                if bwClient.receive() == "[ack-]":
+                if bwClient.receive() == "[ack]":
                     logging.debug("ack ok")
                     break
                 sendDelay = bwConfig.get("client", "sendDelay", default="3")
