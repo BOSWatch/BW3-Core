@@ -62,7 +62,6 @@ class FmsDecoder:
                 bwPacket.set("directionText", directionText)
                 bwPacket.set("tacticalInfo", tacticalInfo)
 
-                logging.debug(bwPacket)
                 return bwPacket
 
             logging.warning("no valid data")

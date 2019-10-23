@@ -17,6 +17,7 @@
 import logging
 import socket
 import select
+from pprint import pformat
 
 logging.debug("- %s loaded", __name__)
 
@@ -72,7 +73,7 @@ class TCPClient:
         @param data: data to send to the server
         @return True or False"""
         try:
-            logging.debug("transmitting: %s", data)
+            logging.debug("transmitting:\n%s", pformat(data))
             header = str(len(data)).ljust(HEADERSIZE)
             self._sock.sendall(bytes(header + data, "utf-8"))
             logging.debug("transmitted...")
@@ -92,6 +93,7 @@ class TCPClient:
             header = self._sock.recv(HEADERSIZE)
             if not len(header):  # check if there data
                 return False
+            logging.debug("recv header: '%s'", header)
             length = int(header.decode("utf-8").strip())
             received = self._sock.recv(length).decode("utf-8")
             logging.debug("received %d bytes: %s", length, received)

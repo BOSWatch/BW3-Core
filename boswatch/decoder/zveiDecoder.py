@@ -44,7 +44,6 @@ class ZveiDecoder:
             bwPacket.set("mode", "zvei")
             bwPacket.set("zvei", ZveiDecoder._solveDoubleTone(data[7:12]))
 
-            logging.debug(bwPacket)
             return bwPacket
 
         logging.warning("no valid data")

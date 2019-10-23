@@ -20,6 +20,7 @@ import socketserver
 import threading
 import time
 import select
+from pprint import pformat
 
 logging.debug("- %s loaded", __name__)
 
@@ -50,13 +51,14 @@ class _ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
                 if not len(header):
                     break  # empty data -> socked closed
 
+                logging.debug("%s recv header: '%s'", req_name, header)
                 length = int(header.decode("utf-8").strip())
                 data = self.request.recv(length).decode("utf-8")
 
                 if data == "<alive>":
                     continue
 
-                logging.debug("%s recv %d bytes: %s", req_name, length, data)
+                logging.debug("%s recv %d bytes:\n%s", req_name, length, pformat(data))
 
                 # add a new entry and the decoded data dict as an string in utf-8 and an timestamp
                 self.server.alarmQueue.put_nowait((self.client_address[0], data, time.time()))  # queue is threadsafe

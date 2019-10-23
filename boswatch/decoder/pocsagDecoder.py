@@ -56,7 +56,6 @@ class PocsagDecoder:
             bwPacket.set("subricText", subricText)
             bwPacket.set("message", message)
 
-            logging.debug(bwPacket)
             return bwPacket
 
         logging.warning("no valid data")
