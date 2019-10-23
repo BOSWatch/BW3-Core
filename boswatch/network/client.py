@@ -105,7 +105,12 @@ class TCPClient:
     @property
     def isConnected(self):
         """!Property of client connected state"""
-        _, write, _ = select.select([], [self._sock], [], 0.1)
-        if write:
-            return True
-        return False
+        try:
+            if self._sock:
+                read, write, _ = select.select([], [self._sock], [], 0.1)
+                if read and write:
+                    return True
+            return False
+        except:
+            logging.exception("cannot check connection status")
+            return False

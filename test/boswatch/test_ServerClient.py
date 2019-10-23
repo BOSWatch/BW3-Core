@@ -182,7 +182,7 @@ def test_serverStopsWhileConnected(getRunningServer, getClient):
     """!Shutdown server while client is connected"""
     getClient.connect()
     getRunningServer.stop()
-    timeout = 10
+    timeout = 5
     while getClient.isConnected:
         time.sleep(0.1)
         timeout = timeout - 1
@@ -221,7 +221,7 @@ def test_serverHighLoad(getRunningServer):
     logging.debug("start sendThreads")
     threads = []
     for thr_id in range(10):
-        thr = threading.Thread(target=sendThread, name="sendThread-"+str(thr_id))
+        thr = threading.Thread(target=sendThread, name="sendThread-" + str(thr_id))
         thr.daemon = True
         thr.start()
         threads.append(thr)
