@@ -48,7 +48,6 @@ from boswatch.decoder.decoder import Decoder
 from boswatch.utils import header
 from boswatch.utils import misc
 
-
 header.logoToLog()
 header.infoToLog()
 
@@ -144,7 +143,7 @@ try:
     else:
         logging.warning("STARTING TESTMODE!")
         logging.debug("reading testdata from file")
-        testFile = open("test/testdata.list", "r")
+        testFile = open("test/testdata.list", mode="r", encoding="utf-8")
         for testData in testFile:
             if (len(testData.rstrip(' \t\n\r')) > 1) and ("#" not in testData[0]):
                 logging.info("Testdata: %s", testData.rstrip(' \t\n\r'))
