@@ -185,6 +185,8 @@ try:
                 time.sleep(sendDelay)
 
         else:
+            if args.test:
+                break
             time.sleep(0.1)  # reduce cpu load (wait 100ms)
             # in worst case a packet have to wait 100ms until it will be processed
 
