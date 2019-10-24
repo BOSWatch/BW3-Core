@@ -34,7 +34,6 @@ class Module:
         # for time counting
         self._cumTime = 0
         self._moduleTime = 0
-        self._tmpTime = 0
 
         # for statistics
         self._runCount = 0
@@ -57,14 +56,14 @@ class Module:
         self._runCount += 1
         logging.debug("[%s] run #%d", self._moduleName, self._runCount)
 
-        self._tmpTime = time.time()
+        tmpTime = time.time()
         try:
             logging.debug("[%s] doWork()", self._moduleName)
             bwPacket = self.doWork(bwPacket)
         except:
             self._moduleErrorCount += 1
             logging.exception("[%s] alarm error", self._moduleName)
-        self._moduleTime = time.time() - self._tmpTime
+        self._moduleTime = time.time() - tmpTime
 
         self._cumTime += self._moduleTime
 

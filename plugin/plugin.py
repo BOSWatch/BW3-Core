@@ -42,7 +42,6 @@ class Plugin:
         self._setupTime = 0
         self._alarmTime = 0
         self._teardownTime = 0
-        self._tmpTime = 0
 
         # for statistics
         self._runCount = 0
@@ -70,7 +69,7 @@ class Plugin:
 
         self._bwPacket = bwPacket
 
-        self._tmpTime = time.time()
+        tmpTime = time.time()
         try:
             logging.debug("[%s] setup()", self._pluginName)
             self.setup()
@@ -78,8 +77,8 @@ class Plugin:
             self._setupErrorCount += 1
             logging.exception("[%s] error in setup()", self._pluginName)
 
-        self._setupTime = time.time() - self._tmpTime
-        self._tmpTime = time.time()
+        self._setupTime = time.time() - tmpTime
+        tmpTime = time.time()
         try:
 
             if bwPacket.get("mode") == "fms":
@@ -98,8 +97,8 @@ class Plugin:
             self._alarmErrorCount += 1
             logging.exception("[%s] alarm error", self._pluginName)
 
-        self._alarmTime = time.time() - self._tmpTime
-        self._tmpTime = time.time()
+        self._alarmTime = time.time() - tmpTime
+        tmpTime = time.time()
         try:
             logging.debug("[%s] teardown()", self._pluginName)
             self.teardown()
@@ -107,7 +106,7 @@ class Plugin:
             self._teardownErrorCount += 1
             logging.exception("[%s] error in teardown()", self._pluginName)
 
-        self._teardownTime = time.time() - self._tmpTime
+        self._teardownTime = time.time() - tmpTime
         self._sumTime = self._setupTime + self._alarmTime + self._teardownTime
         self._cumTime += self._sumTime
 
