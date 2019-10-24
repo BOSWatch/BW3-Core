@@ -25,13 +25,13 @@ logging.debug("- %s loaded", __name__)
 class Plugin:
     """!Main plugin class"""
 
-    _pluginsActive = 0
+    _pluginsActive = []
 
     def __init__(self, pluginName, config):
         """!init preload some needed locals and then call onLoad() directly"""
         self._pluginName = pluginName
         self.config = config
-        self._pluginsActive += 1
+        self._pluginsActive.append(self)
 
         # to save the packet while alarm is running for other functions
         self._bwPacket = None
@@ -56,7 +56,7 @@ class Plugin:
     def __del__(self):
         """!Destructor calls onUnload() directly"""
         logging.debug("[%s] onUnload()", self._pluginName)
-        self._pluginsActive -= 1
+        self._pluginsActive.remove(self)
         self.onUnload()
 
     def _run(self, bwPacket):
@@ -137,50 +137,50 @@ class Plugin:
 
     def onLoad(self):
         """!Called by import of the plugin
-        Must be inherit"""
+        can be inherited"""
         pass
 
     def setup(self):
         """!Called before alarm
-        Must be inherit"""
+        can be inherited"""
         pass
 
     def fms(self, bwPacket):
         """!Called on FMS alarm
-        Must be inherit
+        can be inherited
 
         @param bwPacket: bwPacket instance"""
         logging.warning("ZVEI not implemented in %s", self._pluginName)
 
     def pocsag(self, bwPacket):
         """!Called on POCSAG alarm
-        Must be inherit
+        can be inherited
 
         @param bwPacket: bwPacket instance"""
         logging.warning("POCSAG not implemented in %s", self._pluginName)
 
     def zvei(self, bwPacket):
         """!Called on ZVEI alarm
-        Must be inherit
+        can be inherited
 
         @param bwPacket: bwPacket instance"""
         logging.warning("ZVEI not implemented in %s", self._pluginName)
 
     def msg(self, bwPacket):
         """!Called on MSG packet
-        Must be inherit
+        can be inherited
 
         @param bwPacket: bwPacket instance"""
         logging.warning("MSG not implemented in %s", self._pluginName)
 
     def teardown(self):
         """!Called after alarm
-        Must be inherit"""
+        can be inherited"""
         pass
 
     def onUnload(self):
-        """!Called by destruction of the plugin
-        Must be inherit"""
+        """!Called on shutdown of boswatch
+        can be inherited"""
         pass
 
     def parseWildcards(self, msg):

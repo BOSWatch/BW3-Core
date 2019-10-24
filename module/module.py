@@ -23,13 +23,13 @@ logging.debug("- %s loaded", __name__)
 class Module:
     """!Main module class"""
 
-    _modulesActive = 0
+    _modulesActive = []
 
     def __init__(self, moduleName, config):
         """!init preload some needed locals and then call onLoad() directly"""
         self._moduleName = moduleName
         self.config = config
-        self._modulesActive += 1
+        self._modulesActive.append(self)
 
         # for time counting
         self._cumTime = 0
@@ -46,11 +46,11 @@ class Module:
     def __del__(self):
         """!Destructor calls onUnload() directly"""
         logging.debug("[%s] onUnload()", self._moduleName)
-        self._modulesActive -= 1
+        self._modulesActive.remove(self)
         self.onUnload()
 
     def _run(self, bwPacket):
-        """!start an rund of the module.
+        """!start an run of the module.
 
         @param bwPacket: A BOSWatch packet instance
         @return bwPacket or False"""
@@ -84,17 +84,17 @@ class Module:
 
     def onLoad(self):
         """!Called by import of the module
-        Must be inherit"""
+        can be inherited"""
         pass
 
     def doWork(self, bwPacket):
         """!Called module run
-        Must be inherit
+        can be inherited
 
         @param bwPacket: bwPacket instance"""
         logging.warning("no functionality in module %s", self._moduleName)
 
     def onUnload(self):
-        """!Called by destruction of the module
-        Must be inherit"""
+        """!Called on shutdown of boswatch
+        can be inherited"""
         pass
