@@ -22,8 +22,8 @@ import pytest
 from boswatch.packet import Packet
 
 
-def setup_method(method):
-    logging.debug("[TEST] %s.%s", method.__module__, method.__name__)
+def setup_function(function):
+    logging.debug("[TEST] %s.%s", function.__module__, function.__name__)
 
 
 @pytest.fixture()
