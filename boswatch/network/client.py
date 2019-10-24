@@ -58,7 +58,7 @@ class TCPClient:
         @return True or False"""
         try:
             if self.isConnected:
-                self._sock.shutdown()
+                self._sock.shutdown(socket.SHUT_RDWR)
                 self._sock.close()
                 logging.debug("disconnected")
                 return True
