@@ -20,7 +20,6 @@ import socketserver
 import threading
 import time
 import select
-from pprint import pformat
 
 logging.debug("- %s loaded", __name__)
 
@@ -47,18 +46,18 @@ class _ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
                 if not read:
                     continue  # nothing to read on the socket
 
-                header = self.request.recv(HEADERSIZE)
+                header = self.request.recv(HEADERSIZE).decode("utf-8")
                 if not len(header):
                     break  # empty data -> socked closed
 
-                length = int(header.decode("utf-8").strip())
+                length = int(header.strip())
                 data = self.request.recv(length).decode("utf-8")
 
                 if data == "<keep-alive>":
                     continue
 
-                logging.debug("%s recv header: %s", req_name, header)
-                logging.debug("%s recv %d bytes:\n%s", req_name, len(data), pformat(data))
+                logging.debug("%s recv header: '%s'", req_name, header)
+                logging.debug("%s recv %d bytes:\n%s", req_name, len(data), data)
 
                 # add a new entry and the decoded data dict as an string in utf-8 and an timestamp
                 self.server.alarmQueue.put_nowait((self.client_address[0], data, time.time()))  # queue is threadsafe
@@ -66,9 +65,9 @@ class _ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
                 logging.debug("%s send: [ack]", req_name)
 
-                data = "[ack]"
-                header = str(len(data)).ljust(HEADERSIZE)
-                self.request.sendall(bytes(header + data, "utf-8"))
+                data = "[ack]".encode("utf-8")
+                header = str(len(data)).ljust(HEADERSIZE).encode("utf-8")
+                self.request.sendall(header + data)
 
         except socket.error as e:
             logging.error(e)

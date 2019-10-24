@@ -17,7 +17,6 @@
 import logging
 import socket
 import select
-from pprint import pformat
 
 logging.debug("- %s loaded", __name__)
 
@@ -74,9 +73,10 @@ class TCPClient:
         @param data: data to send to the server
         @return True or False"""
         try:
-            logging.debug("transmitting:\n%s", pformat(data))
-            header = str(len(data)).ljust(HEADERSIZE)
-            self._sock.sendall(bytes(header + data, "utf-8"))
+            logging.debug("transmitting:\n%s", data)
+            data = data.encode("utf-8")
+            header = str(len(data)).ljust(HEADERSIZE).encode("utf-8")
+            self._sock.sendall(header + data)
             logging.debug("transmitted...")
             return True
         except socket.error as e:
@@ -92,12 +92,15 @@ class TCPClient:
             read, _, _ = select.select([self._sock], [], [], timeout)
             if not read:  # check if there is something to read
                 return False
-            header = self._sock.recv(HEADERSIZE)
+
+            header = self._sock.recv(HEADERSIZE).decode("utf-8")
             if not len(header):  # check if there data
                 return False
-            logging.debug("recv header: %s", header)
-            length = int(header.decode("utf-8").strip())
+
+            length = int(header.strip())
             received = self._sock.recv(length).decode("utf-8")
+
+            logging.debug("recv header: '%s'", header)
             logging.debug("received %d bytes: %s", len(received), received)
             return received
         except socket.error as e:
@@ -111,9 +114,9 @@ class TCPClient:
             if self._sock:
                 _, write, _ = select.select([], [self._sock], [], 0.1)
                 if write:
-                    data = "<keep-alive>"
-                    header = str(len(data)).ljust(HEADERSIZE)
-                    self._sock.sendall(bytes(header + data, "utf-8"))
+                    data = "<keep-alive>".encode("utf-8")
+                    header = str(len(data)).ljust(HEADERSIZE).encode("utf-8")
+                    self._sock.sendall(header + data)
                     return True
             return False
         except socket.error as e:
