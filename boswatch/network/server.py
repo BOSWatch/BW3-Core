@@ -57,8 +57,8 @@ class _ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
                 if data == "<keep-alive>":
                     continue
 
-                logging.debug("%s recv header: '%s'", req_name, header)
-                logging.debug("%s recv %d bytes:\n%s", req_name, length, pformat(data))
+                logging.debug("%s recv header: %s", req_name, header)
+                logging.debug("%s recv %d bytes:\n%s", req_name, len(data), pformat(data))
 
                 # add a new entry and the decoded data dict as an string in utf-8 and an timestamp
                 self.server.alarmQueue.put_nowait((self.client_address[0], data, time.time()))  # queue is threadsafe

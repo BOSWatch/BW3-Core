@@ -58,6 +58,7 @@ class TCPClient:
         @return True or False"""
         try:
             if self.isConnected:
+                self._sock.shutdown()
                 self._sock.close()
                 logging.debug("disconnected")
                 return True
@@ -94,10 +95,10 @@ class TCPClient:
             header = self._sock.recv(HEADERSIZE)
             if not len(header):  # check if there data
                 return False
-            logging.debug("recv header: '%s'", header)
+            logging.debug("recv header: %s", header)
             length = int(header.decode("utf-8").strip())
             received = self._sock.recv(length).decode("utf-8")
-            logging.debug("received %d bytes: %s", length, received)
+            logging.debug("received %d bytes: %s", len(received), received)
             return received
         except socket.error as e:
             logging.error(e)
