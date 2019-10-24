@@ -60,7 +60,7 @@ parser = argparse.ArgumentParser(prog="bw_client.py",
                                  epilog="""More options you can find in the extern client.ini
                                  file in the folder /config""")
 parser.add_argument("-c", "--config", help="Name to configuration File", required=True)
-parser.add_argument("-t", "--test", help="Start Client with testdata-set")
+parser.add_argument("-t", "--test", help="Start Client with testdata-set", action="store_true")
 args = parser.parse_args()
 
 bwConfig = ConfigYAML()
@@ -78,9 +78,6 @@ try:
         if broadcastClient.getConnInfo():
             ip = broadcastClient.serverIP
             port = broadcastClient.serverPort
-
-    inputQueue = queue.Queue()
-    inputThreadRunning = True
 
     # ========== INPUT CODE ==========
     def handleSDRInput(dataQueue, sdrConfig, decoderConfig):  # todo exception handling inside
@@ -134,13 +131,25 @@ try:
         logging.debug("stopping thread")
         mmProc.stop()
         sdrProc.stop()
-
     # ========== INPUT CODE ==========
 
-    mmThread = threading.Thread(target=handleSDRInput, name="mmReader",
-                                args=(inputQueue, bwConfig.get("inputSource", "sdr"), bwConfig.get("decoder")))
-    mmThread.daemon = True
-    mmThread.start()
+    inputQueue = queue.Queue()
+
+    if not args.test:
+        inputThreadRunning = True
+        mmThread = threading.Thread(target=handleSDRInput, name="mmReader",
+                                    args=(inputQueue, bwConfig.get("inputSource", "sdr"), bwConfig.get("decoder")))
+        mmThread.daemon = True
+        mmThread.start()
+    else:
+        logging.warning("STARTING TESTMODE!")
+        logging.debug("reading testdata from file")
+        testFile = open("test/testdata.list", "r")
+        for testData in testFile:
+            if (len(testData.rstrip(' \t\n\r')) > 1) and ("#" not in testData[0]):
+                logging.info("Testdata: %s", testData.rstrip(' \t\n\r'))
+                inputQueue.put_nowait((testData.rstrip(' \t\n\r'), time.time()))
+        logging.debug("finished reading testdata")
 
     bwClient = TCPClient()
     bwClient.connect(ip, port)
