@@ -68,6 +68,9 @@ if not bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config):
     exit(1)
 
 # ========== CLIENT CODE ==========
+mmThread = None
+bwClient = None
+
 try:
     ip = bwConfig.get("server", "ip", default="127.0.0.1")
     port = bwConfig.get("server", "port", default="8080")
@@ -198,7 +201,9 @@ except:  # pragma: no cover
     logging.exception("BOSWatch interrupted by an error")
 finally:
     logging.debug("Starting shutdown routine")
-    bwClient.disconnect()
+    if bwClient:
+        bwClient.disconnect()
     inputThreadRunning = False
-    mmThread.join()
+    if mmThread:
+        mmThread.join()
     logging.debug("BOSWatch client has stopped ...")

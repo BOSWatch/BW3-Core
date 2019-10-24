@@ -46,7 +46,6 @@ from boswatch.network.broadcast import BroadcastServer
 from boswatch.router.routerManager import RouterManager
 from boswatch.utils import misc
 
-
 header.logoToLog()
 header.infoToLog()
 
@@ -67,8 +66,11 @@ if not bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config):
     exit(1)
 
 # ############################# begin server system
-try:
+bwRoutMan = None
+bwServer = None
+bcServer = None
 
+try:
     bwRoutMan = RouterManager()
     if not bwRoutMan.buildRouter(bwConfig):
         logging.fatal("Error while building routers")
@@ -109,7 +111,10 @@ except:  # pragma: no cover
     logging.exception("BOSWatch interrupted by an error")
 finally:
     logging.debug("Starting shutdown routine")
-    del bwRoutMan
-    bwServer.stop()
-    bcServer.stop()
+    if bwRoutMan:
+        del bwRoutMan
+    if bwServer:
+        bwServer.stop()
+    if bcServer:
+        bcServer.stop()
     logging.debug("BOSWatch server has stopped ...")
