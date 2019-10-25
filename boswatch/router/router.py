@@ -78,7 +78,6 @@ class Router:
 
         return bwPacket
 
-
     def _getStatistics(self):
         """!Returns statistical information's from last router run
 
