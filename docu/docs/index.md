@@ -6,7 +6,8 @@
 
 Falls du uns unterstützen möchtest würden wir uns über eine Spende freuen.  
 Server, Hosting, Domain sowie Kaffee kosten leider Geld ;-)  
-[![](https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CLK9VBN2MSLZY&source=url)
+
+[![](https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donate_LG.gif)](https://www.paypal.me/BSchroll)
 </center>
 
 **Es wird darauf hingewiesen, dass für die Teilnahme am BOS-Funk nur nach den Technischen Richtlinien der BOS zugelassene Funkanlagen verwendet werden dürfen.**
