@@ -99,7 +99,7 @@ try:
                 bwPacket.set("clientIP", data[0])
                 misc.addServerDataToPacket(bwPacket, bwConfig)
 
-                bwRoutMan.runRouter(bwConfig.get("alarmRouter"), bwPacket)
+                bwRoutMan.runRouters(bwConfig.get("alarmRouter"), bwPacket)
 
                 incomingQueue.task_done()
 

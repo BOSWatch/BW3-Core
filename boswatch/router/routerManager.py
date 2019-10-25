@@ -101,7 +101,7 @@ class RouterManager:
         self._showRouterRoute()
         return True
 
-    def runRouter(self, routerRunList, bwPacket):
+    def runRouters(self, routerRunList, bwPacket):
         """!Run given Routers
 
         @param routerRunList: string or list of router names in string form
