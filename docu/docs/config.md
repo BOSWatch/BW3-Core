@@ -110,7 +110,8 @@ Jeder Router kann eine beliebige Anzahl einzelner Routenpunkte enthalten. Diese 
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |type|Art des Routenpunktes (module, plugin, router)||
-|name|Zu ladende Resource (Siehe entsprechende Kapitel)||
+|res|Zu ladende Resource (Siehe entsprechende Kapitel)||
+|name|Optionaler Name des Routenpunktes|gleich wie Resource|
 |config|Konfigurationseinstellungen des Routenpunktes (Siehe entsprechende Kapitel)||
 
 **Beispiel:**
@@ -119,7 +120,8 @@ router:
   - name: Router 1
     route:
       - type: module
-        name: filter.modeFilter
+        res: filter.modeFilter
+        name: Filter Fms/Zvei
         config:
           allowed:
             - fms

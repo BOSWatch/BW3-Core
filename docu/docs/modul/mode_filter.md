@@ -16,7 +16,7 @@ Mit diesem Modul ist es Möglich, die Pakete auf bestimmte Modes (FMS, POCSAG, Z
 **Beispiel:**
 ```yaml
 - type: module
-  name: filter.modeFilter
+  res: filter.modeFilter
   config:
     allowed:
       - fms

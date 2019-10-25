@@ -64,23 +64,25 @@ class RouterManager:
 
             for route in router.get("route"):
                 routeType = route.get("type")
-                routeName = route.get("name")
+                routeRes = route.get("res")
+                routeName = route.get("name", default=routeRes)
+
                 routeConfig = route.get("config", default=ConfigYAML())  # if no config - build a empty
 
-                if routeType is None or routeName is None:
+                if routeType is None or routeRes is None:
                     logging.error("type or name not found in route: %s", route)
                     return False
 
                 try:
                     if routeType == "plugin":
-                        importedFile = importlib.import_module(routeType + "." + routeName)
+                        importedFile = importlib.import_module(routeType + "." + routeRes)
                         loadedClass = importedFile.BoswatchPlugin(routeConfig)
-                        routerDict_tmp[routerName].addRoute(Route(routeName, loadedClass._run))
+                        routerDict_tmp[routerName].addRoute(Route(routeName, loadedClass))
 
                     elif routeType == "module":
-                        importedFile = importlib.import_module(routeType + "." + routeName)
+                        importedFile = importlib.import_module(routeType + "." + routeRes)
                         loadedClass = importedFile.BoswatchModule(routeConfig)
-                        routerDict_tmp[routerName].addRoute(Route(routeName, loadedClass._run))
+                        routerDict_tmp[routerName].addRoute(Route(routeName, loadedClass))
 
                     elif routeType == "router":
                         routerDict_tmp[routerName].addRoute(Route(routeName, routerDict_tmp[routeName].runRouter))
@@ -91,7 +93,7 @@ class RouterManager:
 
                 # except ModuleNotFoundError:  # only since Py3.6
                 except ImportError:
-                    logging.error("%s not found: %s", route.get("type"), route.get("name"))
+                    logging.error("%s not found: %s", route.get("type"), route.get("res"))
                     return False
 
         logging.debug("finished building routers")

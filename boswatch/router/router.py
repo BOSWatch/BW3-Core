@@ -28,7 +28,7 @@ class Router:
         @param name: name of the router"""
         self._name = name
         self._routeList = []
-        logging.debug("[%s] new router", self._name)
+        logging.debug("[%s] add new router", self._name)
 
     def addRoute(self, route):
         """!Adds a route point to the router
@@ -46,8 +46,8 @@ class Router:
         """
         logging.debug("[%s] started", self._name)
         for routeObject in self._routeList:
-            logging.debug("[%s] -> run route: %s", self._name, routeObject)
-            bwPacket_tmp = routeObject.callback(copy.deepcopy(bwPacket))  # copy bwPacket to prevent edit the original
+            logging.debug("[%s] -> run route: %s", self._name, routeObject.name)
+            bwPacket_tmp = routeObject.callback._run(copy.deepcopy(bwPacket))  # copy bwPacket to prevent edit the original
 
             if bwPacket_tmp is None:  # returning None doesnt change the bwPacket
                 continue
