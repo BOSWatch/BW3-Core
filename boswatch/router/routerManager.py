@@ -34,7 +34,7 @@ class RouterManager:
         self._startTime = int(time.time())
 
     # if there is an error, router list would be empty (see tmp variable)
-    def buildRouter(self, config):
+    def buildRouters(self, config):
         """!Initialize Routers from given config file
 
         @param config: instance of ConfigYaml class

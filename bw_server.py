@@ -72,7 +72,7 @@ bcServer = None
 
 try:
     bwRoutMan = RouterManager()
-    if not bwRoutMan.buildRouter(bwConfig):
+    if not bwRoutMan.buildRouters(bwConfig):
         logging.fatal("Error while building routers")
         exit(1)
 
