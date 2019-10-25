@@ -33,13 +33,6 @@ class RouterManager:
         self._routerDict = {}
         self._startTime = int(time.time())
 
-    def __del__(self):
-        """!Destroy the internal routerDict
-        All routers and route point instances will be destroyed too
-        Also destroys all instances from modules or plugins"""
-        # destroy all routers (also destroys all instances of modules/plugins)
-        del self._routerDict
-
     # if there is an error, router list would be empty (see tmp variable)
     def buildRouter(self, config):
         """!Initialize Routers from given config file
@@ -79,12 +72,18 @@ class RouterManager:
                     if routeType == "plugin":
                         importedFile = importlib.import_module(routeType + "." + routeRes)
                         loadedClass = importedFile.BoswatchPlugin(routeConfig)
-                        routerDict_tmp[routerName].addRoute(Route(routeName, loadedClass._run, loadedClass._getStatistics))
+                        routerDict_tmp[routerName].addRoute(Route(routeName,
+                                                                  loadedClass._run,
+                                                                  loadedClass._getStatistics,
+                                                                  loadedClass._cleanup))
 
                     elif routeType == "module":
                         importedFile = importlib.import_module(routeType + "." + routeRes)
                         loadedClass = importedFile.BoswatchModule(routeConfig)
-                        routerDict_tmp[routerName].addRoute(Route(routeName, loadedClass._run, loadedClass._getStatistics))
+                        routerDict_tmp[routerName].addRoute(Route(routeName,
+                                                                  loadedClass._run,
+                                                                  loadedClass._getStatistics,
+                                                                  loadedClass._cleanup))
 
                     elif routeType == "router":
                         routerDict_tmp[routerName].addRoute(Route(routeName, routerDict_tmp[routeName].runRouter))
@@ -119,6 +118,14 @@ class RouterManager:
 
         self._saveStats()  # write stats to stats file
 
+    def cleanup(self):
+        """!Run cleanup routines for all loaded route points"""
+        for name, routerObject in self._routerDict.items():
+            logging.debug("Start cleanup for %s", name)
+            for routePoint in routerObject.routeList:
+                if routePoint.cleanup:
+                    routePoint.cleanup()
+
     def _showRouterRoute(self):
         """!Show the routes of all routers"""
         for name, routerObject in self._routerDict.items():
@@ -133,7 +140,7 @@ class RouterManager:
         lines = []
         for name, routerObject in self._routerDict.items():
             lines.append("[" + name + "]")
-            lines.append("loaded route points: " + str(len(routerObject.routeList)))
+            lines.append(" - Route points:    " + str(len(routerObject.routeList)))
             for routePoint in routerObject.routeList:
                 lines.append("[+] " + routePoint.name)
                 if routePoint.statistics:

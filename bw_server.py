@@ -112,7 +112,7 @@ except:  # pragma: no cover
 finally:
     logging.debug("Starting shutdown routine")
     if bwRoutMan:
-        del bwRoutMan
+        bwRoutMan.cleanup()
     if bwServer:
         bwServer.stop()
     if bcServer:

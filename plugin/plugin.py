@@ -52,8 +52,8 @@ class Plugin:
         logging.debug("[%s] onLoad()", pluginName)
         self.onLoad()
 
-    def __del__(self):
-        """!Destructor calls onUnload() directly"""
+    def _cleanup(self):
+        """!Cleanup routine calls onUnload() directly"""
         logging.debug("[%s] onUnload()", self._pluginName)
         self._pluginsActive.remove(self)
         self.onUnload()

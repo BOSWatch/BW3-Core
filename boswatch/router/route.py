@@ -18,13 +18,15 @@
 
 class Route:
     """!Class for single routing points"""
-    def __init__(self, name, callback, statsCallback=None):
+    def __init__(self, name, callback, statsCallback=None, cleanupCallback=None):
         """!Create a instance of an route point
 
         @param name: name of the route point
         @param callback: instance of the callback function
         @param statsCallback: instance of the callback to get statistics (None)
+        @param cleanupCallback: instance of the callback to run a cleanup method (None)
         """
         self.name = name
         self.callback = callback
         self.statistics = statsCallback
+        self.cleanup = cleanupCallback

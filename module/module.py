@@ -42,8 +42,8 @@ class Module:
         logging.debug("[%s] onLoad()", moduleName)
         self.onLoad()
 
-    def __del__(self):
-        """!Destructor calls onUnload() directly"""
+    def _cleanup(self):
+        """!Cleanup routine calls onUnload() directly"""
         logging.debug("[%s] onUnload()", self._moduleName)
         self._modulesActive.remove(self)
         self.onUnload()
