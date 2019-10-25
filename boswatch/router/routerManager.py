@@ -141,6 +141,7 @@ class RouterManager:
         for name, routerObject in self._routerDict.items():
             lines.append("[" + name + "]")
             lines.append(" - Route points:    " + str(len(routerObject.routeList)))
+            lines.append(" - Runs:            " + str(routerObject._getStatistics()['runCount']))
             for routePoint in routerObject.routeList:
                 lines.append("[+] " + routePoint.name)
                 if routePoint.statistics:

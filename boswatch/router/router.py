@@ -16,6 +16,7 @@
 """
 import logging
 import copy
+import time
 
 logging.debug("- %s loaded", __name__)
 
@@ -28,6 +29,14 @@ class Router:
         @param name: name of the router"""
         self.name = name
         self.routeList = []
+
+        # for time counting
+        self._cumTime = 0
+        self._routerTime = 0
+
+        # for statistics
+        self._runCount = 0
+
         logging.debug("[%s] add new router", self.name)
 
     def addRoute(self, route):
@@ -44,7 +53,11 @@ class Router:
         @param bwPacket: instance of Packet class
         @return a instance of Packet class
         """
+        self._runCount += 1
+        tmpTime = time.time()
+
         logging.debug("[%s] started", self.name)
+
         for routeObject in self.routeList:
             logging.debug("[%s] -> run route: %s", self.name, routeObject.name)
             bwPacket_tmp = routeObject.callback(copy.deepcopy(bwPacket))  # copy bwPacket to prevent edit the original
@@ -59,4 +72,19 @@ class Router:
             bwPacket = bwPacket_tmp
             logging.debug("[%s] <- bwPacket returned: %s", self.name, bwPacket)
         logging.debug("[%s] finished", self.name)
+
+        self._routerTime = time.time() - tmpTime
+        self._cumTime += self._routerTime
+
         return bwPacket
+
+
+    def _getStatistics(self):
+        """!Returns statistical information's from last router run
+
+        @return Statistics as pyton dict"""
+        stats = {"type": "router",
+                 "runCount": self._runCount,
+                 "cumTime": self._cumTime,
+                 "moduleTime": self._routerTime}
+        return stats

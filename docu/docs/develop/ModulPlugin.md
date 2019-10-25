@@ -78,7 +78,7 @@ Eine Auflistung der bereitgestellten Informationen findet sich im entsprechenden
 Bitte beachten:
 
 - Selbst vom Modul hinzugefügte Felder **müssen** in der Modul Dokumentation unter `Paket Modifikation` aufgeführt werden.
-- Sollte ein Modul oder Plugin Felder benutzen, welche in einem anderen Modul erstellt werden, **muss** dies im Punkt `Abhänigkeiten` des jeweiligen Moduls oder Plugins zu dokumentieren.
+- Sollte ein Modul oder Plugin Felder benutzen, welche in einem anderen Modul erstellt werden, **muss** dies im Punkt `Abhänigkeiten` des jeweiligen Moduls oder Plugins dokumentiert werden.
 
 ### Zu beachten bei Module
 Module können Pakete beliebig verändern. Diese Änderungen werden im Router entsprechend weitergeleitet.
