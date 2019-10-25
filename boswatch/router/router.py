@@ -70,7 +70,7 @@ class Router:
                 break
 
             bwPacket = bwPacket_tmp
-            logging.debug("[%s] bwPacket changed", self.name)
+            logging.debug("[%s] bwPacket returned", self.name)
         logging.debug("[%s] finished", self.name)
 
         self._routerTime = time.time() - tmpTime
