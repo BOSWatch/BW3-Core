@@ -10,6 +10,7 @@
 \venv/
 
 # generated files
+stats_*
 log/
 docu/docs/api/html
 docu/site/

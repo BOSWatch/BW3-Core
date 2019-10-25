@@ -18,6 +18,7 @@
 # todo think about implement threading for routers and the plugin calls (THREAD SAFETY!!!)
 import logging
 import importlib
+import time
 from boswatch.configYaml import ConfigYAML
 from boswatch.router.router import Router
 from boswatch.router.route import Route
@@ -30,6 +31,7 @@ class RouterManager:
     def __init__(self):
         """!Create new router"""
         self._routerDict = {}
+        self._startTime = int(time.time())
 
     def __del__(self):
         """!Destroy the internal routerDict
@@ -115,6 +117,8 @@ class RouterManager:
             else:
                 logging.warning("unknown router: %s", routerName)
 
+        self._saveStats()  # write stats to stats file
+
     def _showRouterRoute(self):
         """!Show the routes of all routers"""
         for name, routerObject in self._routerDict.items():
@@ -123,3 +127,20 @@ class RouterManager:
             for routePoint in routerObject.routeList:
                 counter += 1
                 logging.debug(" %d. %s", counter, routePoint.name)
+
+    def _saveStats(self):
+        lines = []
+
+        for name, routerObject in self._routerDict.items():
+            lines.append("[" + name + "]")
+            lines.append("loaded route points: " + str(len(routerObject.routeList)))
+            for routePoint in routerObject.routeList:
+                lines.append("[+] " + routePoint.name)
+                if routePoint.statistics:
+                    if routePoint.statistics()['type'] == "plugin":
+                        lines.append("    Runs: " + str(routePoint.statistics()['runCount']))
+            lines.append("")
+
+        with open("stats_" + str(self._startTime) + ".txt", "w") as stats:
+            for line in lines:
+                stats.write(line + "\n")
