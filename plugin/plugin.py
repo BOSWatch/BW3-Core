@@ -123,7 +123,8 @@ class Plugin:
         """!Returns statistical information's from last plugin run
 
         @return Statistics as pyton dict"""
-        stats = {"runCount": self._runCount,
+        stats = {"type": "plugin",
+                 "runCount": self._runCount,
                  "sumTime": self._sumTime,
                  "cumTime": self._cumTime,
                  "setupTime": self._setupTime,

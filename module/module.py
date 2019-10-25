@@ -75,7 +75,8 @@ class Module:
         """!Returns statistical information's from last module run
 
         @return Statistics as pyton dict"""
-        stats = {"runCount": self._runCount,
+        stats = {"type": "plugin",
+                 "runCount": self._runCount,
                  "cumTime": self._cumTime,
                  "moduleTime": self._moduleTime,
                  "moduleErrorCount": self._moduleErrorCount}
