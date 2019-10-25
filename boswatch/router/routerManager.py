@@ -129,16 +129,22 @@ class RouterManager:
                 logging.debug(" %d. %s", counter, routePoint.name)
 
     def _saveStats(self):
+        """!Save current statistics to file"""
         lines = []
-
         for name, routerObject in self._routerDict.items():
             lines.append("[" + name + "]")
             lines.append("loaded route points: " + str(len(routerObject.routeList)))
             for routePoint in routerObject.routeList:
                 lines.append("[+] " + routePoint.name)
                 if routePoint.statistics:
-                    if routePoint.statistics()['type'] == "plugin":
-                        lines.append("    Runs: " + str(routePoint.statistics()['runCount']))
+                    if routePoint.statistics()['type'] == "module":
+                        lines.append(" - Runs:            " + str(routePoint.statistics()['runCount']))
+                        lines.append(" - Run errors:      " + str(routePoint.statistics()['moduleErrorCount']))
+                    elif routePoint.statistics()['type'] == "plugin":
+                        lines.append(" - Runs:            " + str(routePoint.statistics()['runCount']))
+                        lines.append(" - Setup errors:    " + str(routePoint.statistics()['setupErrorCount']))
+                        lines.append(" - Alarm errors:    " + str(routePoint.statistics()['alarmErrorCount']))
+                        lines.append(" - Teardown errors: " + str(routePoint.statistics()['teardownErrorCount']))
             lines.append("")
 
         with open("stats_" + str(self._startTime) + ".txt", "w") as stats:
