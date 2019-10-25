@@ -17,6 +17,8 @@
 import logging
 import time
 
+from boswatch import wildcard
+
 logging.debug("- %s loaded", __name__)
 
 
@@ -98,3 +100,17 @@ class Module:
         """!Called on shutdown of boswatch
         can be inherited"""
         pass
+
+    @staticmethod
+    def registerWildcard(newWildcard, bwPacketField):
+        """!Register a new wildcard
+
+        @param newWildcard: wildcard where parser searching for
+        @param bwPacketField: field from bwPacket where holds replacement data"""
+        if not newWildcard.startswith("{") or not newWildcard.endswith("}"):
+            logging.error("wildcard not registered - false format: %s", newWildcard)
+            return
+        if bwPacketField == "":
+            logging.error("wildcard not registered - bwPacket field is empty")
+            return
+        wildcard.registerWildcard(newWildcard, bwPacketField)

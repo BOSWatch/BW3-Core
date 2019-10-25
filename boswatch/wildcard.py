@@ -12,19 +12,24 @@
 @file:        wildcard.py
 @date:        15.01.2018
 @author:      Bastian Schroll
-@description: Little Helper to replace wildcards in stings
+@description: Functions to replace wildcards in stings
 """
 import logging
 import time
 
-# from boswatch.module import file
-
 logging.debug("- %s loaded", __name__)
 
 # todo check function and document + write an test
-# todo maybe can be a module instead of a native boswatch piece
-# idea: maybe this can be a class with a register_wildcard() method
-# so the list with wildcards can be modified by other modules
+
+_additionalWildcards = {}
+
+
+def registerWildcard(wildcard, bwPacketField):
+    if wildcard in _additionalWildcards:
+        logging.error("wildcard always registered: %s", wildcard)
+        return
+    logging.debug("register new wildcard %s for field: %s", wildcard, bwPacketField)
+    _additionalWildcards[wildcard] = bwPacketField
 
 
 def replaceWildcards(message, bwPacket):
@@ -78,7 +83,10 @@ def replaceWildcards(message, bwPacket):
 
         # message for MSG packet is done in poc
     }
-    for wildcard in _wildcards:
-        message = message.replace(wildcard, _wildcards.get(wildcard))
+    for wildcard, field in _wildcards.items():
+        message = message.replace(wildcard, field)
+
+    for wildcard, field in _additionalWildcards.items():
+        message = message.replace(wildcard, bwPacket.getField(field))
 
     return message
