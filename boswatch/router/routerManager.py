@@ -77,12 +77,12 @@ class RouterManager:
                     if routeType == "plugin":
                         importedFile = importlib.import_module(routeType + "." + routeRes)
                         loadedClass = importedFile.BoswatchPlugin(routeConfig)
-                        routerDict_tmp[routerName].addRoute(Route(routeName, loadedClass))
+                        routerDict_tmp[routerName].addRoute(Route(routeName, loadedClass._run, loadedClass._getStatistics))
 
                     elif routeType == "module":
                         importedFile = importlib.import_module(routeType + "." + routeRes)
                         loadedClass = importedFile.BoswatchModule(routeConfig)
-                        routerDict_tmp[routerName].addRoute(Route(routeName, loadedClass))
+                        routerDict_tmp[routerName].addRoute(Route(routeName, loadedClass._run, loadedClass._getStatistics))
 
                     elif routeType == "router":
                         routerDict_tmp[routerName].addRoute(Route(routeName, routerDict_tmp[routeName].runRouter))
