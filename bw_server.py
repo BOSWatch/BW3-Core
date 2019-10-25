@@ -49,7 +49,6 @@ from boswatch.utils import misc
 header.logoToLog()
 header.infoToLog()
 
-logging.debug("parse args")
 # With -h or --help you get the Args help
 parser = argparse.ArgumentParser(prog="bw_server.py",
                                  description="""BOSWatch is a Python Script to receive and
@@ -99,7 +98,9 @@ try:
                 bwPacket.set("clientIP", data[0])
                 misc.addServerDataToPacket(bwPacket, bwConfig)
 
+                logging.debug("[ ---   ALARM   --- ]")
                 bwRoutMan.runRouters(bwConfig.get("alarmRouter"), bwPacket)
+                logging.debug("[ --- END ALARM --- ]")
 
                 incomingQueue.task_done()
 

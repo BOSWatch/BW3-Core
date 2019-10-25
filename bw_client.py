@@ -51,7 +51,6 @@ from boswatch.utils import misc
 header.logoToLog()
 header.infoToLog()
 
-logging.debug("parse args")
 # With -h or --help you get the Args help
 parser = argparse.ArgumentParser(prog="bw_client.py",
                                  description="""BOSWatch is a Python Script to receive and
