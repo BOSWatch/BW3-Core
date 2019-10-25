@@ -55,11 +55,13 @@ class BoswatchPlugin(Plugin):
         """!Called on ZVEI alarm
 
         @param bwPacket: bwPacket instance"""
+        pass
 
     def msg(self, bwPacket):
         """!Called on MSG packet
 
         @param bwPacket: bwPacket instance"""
+        pass
 
     def teardown(self):
         """!Called after alarm"""
