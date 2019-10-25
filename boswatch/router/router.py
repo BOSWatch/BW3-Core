@@ -26,17 +26,17 @@ class Router:
         """!Create a new router
 
         @param name: name of the router"""
-        self._name = name
-        self._routeList = []
-        logging.debug("[%s] add new router", self._name)
+        self.name = name
+        self.routeList = []
+        logging.debug("[%s] add new router", self.name)
 
     def addRoute(self, route):
         """!Adds a route point to the router
 
         @param route: instance of the Route class
         """
-        logging.debug("[%s] add route: %s", self._name, route.name)
-        self._routeList.append(route)
+        logging.debug("[%s] add route: %s", self.name, route.name)
+        self.routeList.append(route)
 
     def runRouter(self, bwPacket):
         """!Run the router
@@ -44,29 +44,19 @@ class Router:
         @param bwPacket: instance of Packet class
         @return a instance of Packet class
         """
-        logging.debug("[%s] started", self._name)
-        for routeObject in self._routeList:
-            logging.debug("[%s] -> run route: %s", self._name, routeObject.name)
+        logging.debug("[%s] started", self.name)
+        for routeObject in self.routeList:
+            logging.debug("[%s] -> run route: %s", self.name, routeObject.name)
             bwPacket_tmp = routeObject.callback(copy.deepcopy(bwPacket))  # copy bwPacket to prevent edit the original
 
             if bwPacket_tmp is None:  # returning None doesnt change the bwPacket
                 continue
 
             if bwPacket_tmp is False:  # returning False stops the router immediately
-                logging.debug("[%s] stopped", self._name)
+                logging.debug("[%s] stopped", self.name)
                 break
 
             bwPacket = bwPacket_tmp
-            logging.debug("[%s] <- bwPacket returned: %s", self._name, bwPacket)
-        logging.debug("[%s] finished", self._name)
+            logging.debug("[%s] <- bwPacket returned: %s", self.name, bwPacket)
+        logging.debug("[%s] finished", self.name)
         return bwPacket
-
-    @property
-    def name(self):
-        """!Property to get the name of the router"""
-        return self._name
-
-    @property
-    def routeList(self):
-        """!Property to get a list of all route points of this router"""
-        return self._routeList

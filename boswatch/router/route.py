@@ -25,21 +25,6 @@ class Route:
         @param callback: instance of the callback function
         @param statsCallback: instance of the callback to get statistics (None)
         """
-        self._name = name
-        self._callback = callback
-        self._statsCallback = statsCallback
-
-    @property
-    def name(self):
-        """!Property to get the route point name"""
-        return self._name
-
-    @property
-    def callback(self):
-        """!Porperty to get the callback function instance"""
-        return self._callback
-
-    @property
-    def statistics(self):
-        """!Porperty to get the statistics from instance"""
-        return self._statsCallback
+        self.name = name
+        self.callback = callback
+        self.statistics = statsCallback
