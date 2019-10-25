@@ -32,3 +32,8 @@ Mit diesem Modul ist es Möglich, die Pakete auf bestimmte Modes (FMS, POCSAG, Z
 ## Paket Modifikationen
 
 - keine
+
+---
+## Zusätzliche Wildcards
+
+- keine

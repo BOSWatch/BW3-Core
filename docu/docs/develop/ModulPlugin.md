@@ -33,7 +33,8 @@ Die Plugin Basisklasse bietet einige Methoden, welche vom Plugin überschrieben 
 Jedes Modul oder Plugin wird in einem Router folgendermaßen deklariert:
 ```yaml
 - type: module              # oder 'plugin'
-  name: template_module     # Name der Python Datei (ohne .py)
+  res: template_module      # Name der Python Datei (ohne .py)
+  name: Mein Modul          # optionaler Name
   config:                   # config-Sektion
     option1: value 1
     option2:
@@ -43,7 +44,7 @@ Jedes Modul oder Plugin wird in einem Router folgendermaßen deklariert:
       - list 1
       - list 2
 ```
-Eine entsprechende Dokumentation der Parameter ist in der Dokumentation der [Konfiguration](../config.md) zu hinterlegen.
+Eine entsprechende Dokumentation der Parameter **muss** in der Dokumentation des jeweiligen Moduls oder Plugins hinterleget werden.
 
 ### Konfiguration verwenden
 Wird der Instanz eine Konfiguration übergeben wird diese in `self.config` abgelegt und kann wie folgt abgerufen werden:  
@@ -57,7 +58,7 @@ Wird der Instanz eine Konfiguration übergeben wird diese in `self.config` abgel
 `self.config.get("option2", "underOption1")`
 > liefert `value 21`
 
-- Es kann ein Default Wert angegeben werden  
+- Es kann ein Default Wert angegeben werden (falls entsprechender Eintrag fehlt)  
 `self.config.get("notSet", default="defValue")` 
 > liefert `defValue`
 
@@ -75,7 +76,7 @@ Aus dieser kann mittels `bwPacket.get(FIELDNAME)` das entsprechende Feld ausgele
 Mittels `bwPacket.set(FIELDNAME, VALUE)` kann ein Wert hinzugefügt oder modifiziert werden.  
 Eine Auflistung der bereitgestellten Informationen findet sich im entsprechenden [BOSWatch Paket](packet.md) Dokumentation.
 
-Bitte beachten:
+**Bitte beachten:**
 
 - Selbst vom Modul hinzugefügte Felder **müssen** in der Modul Dokumentation unter `Paket Modifikation` aufgeführt werden.
 - Sollte ein Modul oder Plugin Felder benutzen, welche in einem anderen Modul erstellt werden, **muss** dies im Punkt `Abhänigkeiten` des jeweiligen Moduls oder Plugins dokumentiert werden.
@@ -85,20 +86,37 @@ Module können Pakete beliebig verändern. Diese Änderungen werden im Router en
 
 Mögliche Rückgabewerte eines Moduls:
 
-- `return bwPacket` gibt das modifizierte bwPacket an den Router zurück
-- `return None` Router fährt mit dem unveränderten bwPacket fort (Input = Output)
-- `return False` Router stopt sofort die Ausführung (zB. in Filtern verwendet)
+- `return bwPacket` Gibt das modifizierte bwPacket an den Router zurück (Paket Modifikation)
+- `return None` Der Router fährt mit dem unveränderten bwPacket fort (Input = Output)
+- `return False` Der Router stopt sofort die Ausführung (zB. in Filtern verwendet)
 
 ### Zu beachten bei Plugins
 Plugins geben keine Pakete mehr zurück. Sie fungieren ausschließlich als Endpunkt.  
 Die Plugin Basisklasse liefert intern immer ein `None` an den Router zurück,
 was zur weiteren Ausführung des Routers mit dem original Paket führt. Daher macht es in Plugins keinen Sinn ein Paket zu modifizieren.
+  
+---
+## Nutzung der Wildcards
+
+### Wildcards registrieren [Module]
+Module können zusätzliche Wildcards registrieren welche anschließend in den Plugins ebenfalls geparst werden können.
+Dies kann über die interne Methode `self.registerWildcard(newWildcard, bwPacketField)` gemacht werden.
+
+Der erste Parameter `newWildcard` muss im folgenden Format angegeben werden: `{WILDCARD}`
+
+Der zweite Parameter `bwPacketField` entspricht dem Namen des Feldes welches dem bwPacket per `bwPacket.set(FIELDNAME, VALUE)` hinzugefügt wurde.
+
+**Bitte beachten:**
+
+- Selbst vom Modul registrierte Wildcards **müssen** in der Modul Dokumentation unter `Zusätzliche Wildcards` aufgeführt werden.
  
+### Wildcards parsen [Plugins]
+Das parsen der Wildcars funktioniert komfortabel über die interne Methode `TEXT = self.parseWildcards(TEXT)`.  
+Die Platzhalter der Wildcards findet man in der [BOSWatch Paket](packet.md) Dokumentation.
+
+Sollten Module zusätzliche Wildcards registrieren, findet man Informationen dazu in der jeweiligen Plugin Dokumentation
+
 ---
 ## Richtiges Logging
  tbd ... 
  
----
-## Wildcards parsen (Plugin only)
-Das parsen der Wildcars funktioniert komfortabel über die interne Methode `self.parseWildcards(MSG)`.  
-Die Platzhalter der Wildcards findet man in der [BOSWatch Paket](packet.md) Dokumentation.
