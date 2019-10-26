@@ -46,7 +46,7 @@ class ZveiDecoder:
 
             return bwPacket
 
-        logging.warning("no valid data")
+        logging.warning("no valid ZVEI")
         return None
 
     @staticmethod

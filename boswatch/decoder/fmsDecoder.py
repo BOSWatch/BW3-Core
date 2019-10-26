@@ -64,7 +64,7 @@ class FmsDecoder:
 
                 return bwPacket
 
-            logging.warning("no valid data")
+            logging.warning("no valid FMS")
             return None
         logging.warning("CRC Error")
         return None
