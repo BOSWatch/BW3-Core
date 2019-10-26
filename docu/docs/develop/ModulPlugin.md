@@ -98,20 +98,31 @@ was zur weiteren Ausführung des Routers mit dem original Paket führt. Daher ma
 ---
 ## Nutzung der Wildcards
 
+Es gibt einige vordefinierte Wildcards welche in der [BOSWatch Paket](packet.md) Dokumentation zu finden sind.
+
+Außerdem sind die folgenden allgemeinen Wildcards definiert:
+
+- `{BR}` - Zeilenumbruch `\r\n`
+- `{LPAR}` - öffnende Klammer `(`
+- `{RPAR}` - schließende Klammer `)`
+- `{TIME}` - Aktueller Zeitstempel im Format `%d.%m.%Y %H:%M:%S`
+
 ### Wildcards registrieren [Module]
 Module können zusätzliche Wildcards registrieren welche anschließend in den Plugins ebenfalls geparst werden können.
 Dies kann über die interne Methode `self.registerWildcard(newWildcard, bwPacketField)` gemacht werden.
 
-Der erste Parameter `newWildcard` muss im folgenden Format angegeben werden: `{WILDCARD}`
-
-Der zweite Parameter `bwPacketField` entspricht dem Namen des Feldes welches dem bwPacket per `bwPacket.set(FIELDNAME, VALUE)` hinzugefügt wurde.
+- `newWildcard` muss im folgenden Format angegeben werden: `{WILDCARD}`
+- `bwPacketField` ist der Name des Feldes im bwPacket - gestezt per `bwPacket.set(FIELDNAME, VALUE)`
 
 **Bitte beachten:**
 
 - Selbst vom Modul registrierte Wildcards **müssen** in der Modul Dokumentation unter `Zusätzliche Wildcards` aufgeführt werden.
  
 ### Wildcards parsen [Plugins]
-Das parsen der Wildcars funktioniert komfortabel über die interne Methode `TEXT = self.parseWildcards(TEXT)`.  
+Das parsen der Wildcars funktioniert komfortabel über die interne Methode `msg = self.parseWildcards(msg)`.
+
+- `msg` enstrpicht dabei dem String in welchem die Wildcards ersetzt werden sollen
+
 Die Platzhalter der Wildcards findet man in der [BOSWatch Paket](packet.md) Dokumentation.
 
 Sollten Module zusätzliche Wildcards registrieren, findet man Informationen dazu in der jeweiligen Plugin Dokumentation

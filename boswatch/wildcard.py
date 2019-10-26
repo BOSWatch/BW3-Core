@@ -38,7 +38,7 @@ def replaceWildcards(message, bwPacket):
         "{BR}": "\r\n",
         "{LPAR}": "(",
         "{RPAR}": ")",
-        "{TIME}": time.time(),
+        "{TIME}": time.strftime("%d.%m.%Y %H:%M:%S"),
 
         # info wildcards
         # server
