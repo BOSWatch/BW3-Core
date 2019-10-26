@@ -13,6 +13,8 @@ Folgendes gilt:
 - Sobald ein Filter mit all seinen Checks besteht, wird mit der Ausführung des Routers fortgefahren
 - Sollten alle Filter fehlschlagen wird die Ausführung des Routers beendet
 
+Vereinfacht kann man sagen, dass einzelnen Router ODER-verknüpft und die jeweiligen Checks UND-verknüpft sind.
+
 ## Resource
 `filter.regexFilter`
 

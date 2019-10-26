@@ -19,12 +19,16 @@ import time
 
 logging.debug("- %s loaded", __name__)
 
-# todo check function and document + write an test
+# todo check function - write an test
 
 _additionalWildcards = {}
 
 
 def registerWildcard(wildcard, bwPacketField):
+    """!Register a new additional wildcard
+
+    @param wildcard: New wildcard string with format: '{WILDCARD}'
+    @param bwPacketField: Field of the bwPacket which is used for wildcard replacement"""
     if wildcard in _additionalWildcards:
         logging.error("wildcard always registered: %s", wildcard)
         return
@@ -33,6 +37,11 @@ def registerWildcard(wildcard, bwPacketField):
 
 
 def replaceWildcards(message, bwPacket):
+    """!Replace the wildcards in a given message
+
+    @param message: Message in which wildcards should be replaced
+    @param bwPacket: bwPacket instance with the replacement information
+    @return Input message with the replaced wildcards"""
     _wildcards = {
         # formatting wildcards
         # todo check if br and par are needed - if not also change config
