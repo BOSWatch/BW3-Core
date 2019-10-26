@@ -125,7 +125,7 @@ Das parsen der Wildcars funktioniert komfortabel über die interne Methode `msg 
 
 Die Platzhalter der Wildcards findet man in der [BOSWatch Paket](packet.md) Dokumentation.
 
-Sollten Module zusätzliche Wildcards registrieren, findet man Informationen dazu in der jeweiligen Plugin Dokumentation
+Sollten Module zusätzliche Wildcards registrieren, findet man Informationen dazu in der jeweiligen Modul Dokumentation
 
 ---
 ## Richtiges Logging

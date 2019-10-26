@@ -36,8 +36,8 @@ class RepeatedTimer:
         self._args = args
         self._kwargs = kwargs
         self._start = 0
-        self._overdueCount = 0
-        self._lostEvents = 0
+        self.overdueCount = 0
+        self.lostEvents = 0
         self._isRunning = False
         self._event = Event()
         self._thread = None
@@ -88,8 +88,8 @@ class RepeatedTimer:
                 lostEvents = int(runTime / self._interval)
                 logging.warning("timer overdue! interval: %0.3f sec. - runtime: %0.3f sec. - "
                                 "%d events lost - next call in: %0.3f sec.", self._interval, runTime, lostEvents, self.restTime)
-                self._lostEvents += lostEvents
-                self._overdueCount += 1
+                self.lostEvents += lostEvents
+                self.overdueCount += 1
         logging.debug("repeatedTimer thread stopped: %s", self._thread.name)
         self._thread = None  # set to none after leave teh thread (running recognize)
 
@@ -104,13 +104,3 @@ class RepeatedTimer:
     def restTime(self):
         """!Property to get remaining time till next call"""
         return self._interval - ((time.time() - self._start) % self._interval)
-
-    @property
-    def overdueCount(self):
-        """!Property to get a count over all overdues"""
-        return self._overdueCount
-
-    @property
-    def lostEvents(self):
-        """!Property to get a count over all lost events"""
-        return self._lostEvents
