@@ -48,6 +48,4 @@ Ein BOSWatch Datenpaket wird in einem Python Dict abgebildet. In der nachfolgend
 |status|X||||`{STAT}`||
 |direction|X||||`{DIR}`||
 |dirextionText|X||||`{DIRT}`|(Fhz->Lst, Lst->Fhz)|
-|vehicle|X||||`{VEC}`||
-|vehicle|X||||`{VEC}`||
 |tacticalInfo|X||||`{TACI}`|(I, II, III, IV)|
