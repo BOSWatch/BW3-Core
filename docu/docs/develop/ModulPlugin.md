@@ -81,7 +81,7 @@ Eine Auflistung der bereitgestellten Informationen findet sich im entsprechenden
 - Selbst vom Modul hinzugefügte Felder **müssen** in der Modul Dokumentation unter `Paket Modifikation` aufgeführt werden.
 - Sollte ein Modul oder Plugin Felder benutzen, welche in einem anderen Modul erstellt werden, **muss** dies im Punkt `Abhänigkeiten` des jeweiligen Moduls oder Plugins dokumentiert werden.
 
-### Zu beachten bei Module
+### Rückgabewert bei Modulen
 Module können Pakete beliebig verändern. Diese Änderungen werden im Router entsprechend weitergeleitet.
 
 Mögliche Rückgabewerte eines Moduls:
@@ -90,7 +90,7 @@ Mögliche Rückgabewerte eines Moduls:
 - `return None` Der Router fährt mit dem unveränderten bwPacket fort (Input = Output)
 - `return False` Der Router stopt sofort die Ausführung (zB. in Filtern verwendet)
 
-### Zu beachten bei Plugins
+### Rückgabewert bei Plugins
 Plugins geben keine Pakete mehr zurück. Sie fungieren ausschließlich als Endpunkt.  
 Die Plugin Basisklasse liefert intern immer ein `None` an den Router zurück,
 was zur weiteren Ausführung des Routers mit dem original Paket führt. Daher macht es in Plugins keinen Sinn ein Paket zu modifizieren.
