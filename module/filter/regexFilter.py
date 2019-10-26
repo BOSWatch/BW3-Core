@@ -9,17 +9,17 @@
                 German BOS Information Script
                      by Bastian Schroll
 
-@file:        template_module.py
-@date:        01.03.2019
+@file:        regexFilter.py
+@date:        26.10.2019
 @author:      Bastian Schroll
-@description: Template Module File
+@description: Regex filter module
 """
 import logging
 from module.module import Module
 
 # ###################### #
 # Custom plugin includes #
-
+import re
 # ###################### #
 
 logging.debug("- %s loaded", __name__)
@@ -39,16 +39,26 @@ class BoswatchModule(Module):
         """!start an run of the module.
 
         @param bwPacket: A BOSWatch packet instance"""
-        if bwPacket.get("mode") == "fms":
-            pass
-        elif bwPacket.get("mode") == "zvei":
-            pass
-        elif bwPacket.get("mode") == "pocsag":
-            pass
-        elif bwPacket.get("mode") == "msg":
-            pass
+        for filter in self.config.get("filter"):
+            checkFailed = False
+            logging.debug("try filter '%s' with %d check(s)", filter.get("name"), len(filter.get("checks")))
 
-        return bwPacket
+            for check in filter.get("checks"):
+                fieldData = bwPacket.get(check.get("field"))
+
+                if not fieldData or not re.search(check.get("regex"), fieldData):
+                    logging.debug("[-] field '%s' with regex '%s'", check.get("field"), check.get("regex"))
+                    checkFailed = True
+                    break  # if one check failed we break this filter
+                else:
+                    logging.debug("[+] field '%s' with regex '%s'", check.get("field"), check.get("regex"))
+
+            if not checkFailed:
+                logging.debug("[PASSED] filter '%s'", filter.get("name"))
+                return None  # None -> Router will go on with this packet
+            logging.debug("[FAILED] filter '%s'", filter.get("name"))
+
+        return False  # False -> Router will stop further processing
 
     def onUnload(self):
         """!Called by destruction of the plugin"""

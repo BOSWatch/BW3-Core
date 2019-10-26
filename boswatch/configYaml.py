@@ -33,6 +33,10 @@ class ConfigYAML:
             else:
                 yield item
 
+    def __len__(self):
+        """!returns the length of an config element"""
+        return len(self._config)
+
     def __str__(self):
         """!Returns the string representation of the internal config dict"""
         return str(self._config)

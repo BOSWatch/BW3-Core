@@ -38,8 +38,7 @@ class BoswatchModule(Module):
     def doWork(self, bwPacket):
         """!start an run of the module.
 
-        @param bwPacket: A BOSWatch packet instance
-        @return bwPacket or False"""
+        @param bwPacket: A BOSWatch packet instance"""
 
         for mode in self.config.get("allowed", default=[]):
             if bwPacket.get("mode") == mode:

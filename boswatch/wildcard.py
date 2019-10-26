@@ -35,6 +35,7 @@ def registerWildcard(wildcard, bwPacketField):
 def replaceWildcards(message, bwPacket):
     _wildcards = {
         # formatting wildcards
+        # todo check if br and par are needed - if not also change config
         "{BR}": "\r\n",
         "{LPAR}": "(",
         "{RPAR}": ")",

@@ -19,6 +19,7 @@ nav:
        - Changelog: changelog.md
   - Module:
       - Mode Filter: modul/mode_filter.md
+      - Regex Filter: modul/regex_filter.md
   - Plugins: tbd.md
   - Entwickler:
     - Eigenes Modul/Plugin schreiben: develop/ModulPlugin.md
