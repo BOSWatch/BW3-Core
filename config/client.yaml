@@ -1,0 +1,37 @@
+# -*- coding: utf-8 -*-
+#    ____  ____  ______       __      __       __       _____
+#   / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
+#  / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
+# / /_/ / /_/ /___/ /| |/ |/ / /_/ / /_/ /__/ / / /   ___/ /
+#/_____/\____//____/ |__/|__/\__,_/\__/\___/_/ /_/   /____/
+#                German BOS Information Script
+#                     by Bastian Schroll
+
+client:
+  name: BW3 Client        # name of the BW3 Client instance
+  inputSource: sdr        # atm only 'sdr' is possible
+  useBroadcast: no        # use broadcast to find server automatically
+  reconnectDelay: 3       # time in seconds to delay reconnect try
+  sendTries: 3            # how often should tried to send a packet
+  sendDelay: 3            # time in seconds to delay the resend try
+
+server:                   # only used if useBroadcast = no
+  ip:   127.0.0.1
+  port: 8080
+
+inputSource:
+  sdr:
+    device: 0
+    frequency: 85M
+    error: 0
+    squelch: 1
+    gain: 100
+    rtlPath: /usr/bin/rtl_fm
+    mmPath: /opt/multimon/multimon-ng
+
+decoder:
+  fms: yes
+  zvei: yes
+  poc512: yes
+  poc1200: yes
+  poc2400: yes

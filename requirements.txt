@@ -1,0 +1,14 @@
+# for pip to install all needed
+# called with 'pip -r requirements.txt'
+
+pyyaml
+
+# for documentation generating
+mkdocs
+
+# for develope only
+pytest
+pytest-cov
+pytest-pep8
+pytest-flakes
+pytest-randomly

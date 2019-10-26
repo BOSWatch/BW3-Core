@@ -6,12 +6,14 @@
 #                German BOS Information Script
 #                     by Bastian Schroll
 
+# virtual environment
+\venv/
+
+# generated files
+stats_*
 log/
-_docu/
-_bin/win/zadig/
-_bin/win/rtl_sdr/
-_bin/win/multimon_1_1_1/
-_bin/win/kalibrate/
+docu/docs/api/html
+docu/site/
 
 # Logo Photoshop file
 *.psd
@@ -21,6 +23,10 @@ _bin/win/kalibrate/
 
 # Python precompiled
 *.pyc
+
+# Visual Studio Code
+\.vscode/
+\.pytest_cache/
 
 # PyCharm IDE
 \.cache/
