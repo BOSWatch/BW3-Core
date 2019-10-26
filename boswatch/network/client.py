@@ -86,7 +86,7 @@ class TCPClient:
     def receive(self, timeout=1):
         """!Receive data from the server
 
-        @param: timeout to wait for incoming data in seconds
+        @param timeout: to wait for incoming data in seconds
         @return received data"""
         try:
             read, _, _ = select.select([self._sock], [], [], timeout)

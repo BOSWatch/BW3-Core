@@ -27,7 +27,7 @@ class NetCheck:
         """!Create a new NetCheck instance
 
         @param hostname: host against connection check is running ("https://www.google.com/")
-        @param timout: timout for connection check in sec. (1)"""
+        @param timeout: timeout for connection check in sec. (1)"""
         self._hostname = hostname
         self._timeout = timeout
         self.connectionState = False
