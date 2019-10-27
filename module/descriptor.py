@@ -9,10 +9,10 @@
                 German BOS Information Script
                      by Bastian Schroll
 
-@file:        template_module.py
-@date:        01.03.2019
+@file:        descriptor.py
+@date:        27.10.2019
 @author:      Bastian Schroll
-@description: Template Module File
+@description: Module to add descriptions to bwPackets
 """
 import logging
 from module.module import Module
@@ -26,28 +26,31 @@ logging.debug("- %s loaded", __name__)
 
 
 class BoswatchModule(Module):
-    """!Description of the Module"""
+    """!Adds descriptions to bwPackets"""
     def __init__(self, config):
         """!Do not change anything here!"""
         super().__init__(__name__, config)  # you can access the config class on 'self.config'
 
     def onLoad(self):
         """!Called by import of the plugin"""
-        pass
+        for descriptor in self.config:
+            if descriptor.get("wildcard"):
+                self.registerWildcard(descriptor.get("wildcard"), descriptor.get("descrField"))
 
     def doWork(self, bwPacket):
         """!start an run of the module.
 
         @param bwPacket: A BOSWatch packet instance"""
-        if bwPacket.get("mode") == "fms":
-            pass
-        elif bwPacket.get("mode") == "zvei":
-            pass
-        elif bwPacket.get("mode") == "pocsag":
-            pass
-        elif bwPacket.get("mode") == "msg":
-            pass
-
+        for descriptor in self.config:
+            for description in descriptor.get("descriptions"):
+                if not bwPacket.get(descriptor.get("scanField")):
+                    break  # scanField is not available in this packet
+                bwPacket.set(descriptor.get("descrField"), description.get("for"))
+                if str(description.get("for")) == str(bwPacket.get(descriptor.get("scanField"))):
+                    logging.debug("Description '%s' added in packet field '%s'", description.get("add"),
+                                  descriptor.get("descrField"))
+                    bwPacket.set(descriptor.get("descrField"), description.get("add"))
+                    break  # this descriptor has found a description - run next descriptor
         return bwPacket
 
     def onUnload(self):

@@ -20,6 +20,7 @@ nav:
   - Module:
       - Mode Filter: modul/mode_filter.md
       - Regex Filter: modul/regex_filter.md
+      - Descriptor: modul/descriptor.md
   - Plugins: tbd.md
   - Entwickler:
     - Eigenes Modul/Plugin schreiben: develop/ModulPlugin.md
