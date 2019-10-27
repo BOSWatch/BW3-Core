@@ -34,7 +34,7 @@ class BoswatchModule(Module):
     def onLoad(self):
         """!Called by import of the plugin"""
         for descriptor in self.config:
-            if descriptor.get("wildcard"):
+            if descriptor.get("wildcard", default=None):
                 self.registerWildcard(descriptor.get("wildcard"), descriptor.get("descrField"))
 
     def doWork(self, bwPacket):

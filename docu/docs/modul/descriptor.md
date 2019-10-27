@@ -2,7 +2,7 @@
 ---
 
 ## Beschreibung
-Mit diesem Modul können einem Alarmpaket beliebige Beschreibung in Abhänigkeit der enthaltenen Informationen im Paket hinzugefügt werden.
+Mit diesem Modul können einem Alarmpaket beliebige Beschreibungen in Abhänigkeit der enthaltenen Informationen hinzugefügt werden.
 
 ## Resource
 `descriptor`
@@ -58,6 +58,7 @@ Informationen zum Aufbau eines [BOSWatch Pakets](../develop/packet.md)
 ## Paket Modifikationen
 
 - Wenn im Paket das Feld `scanField` vorhanden ist, wird das Feld `descrField` dem Paket hinzugefügt
+- Wenn keine Beschreibung vorhanden ist, wird im Feld `descrField` der Inhalt des Feldes `scanField` hinterlegt
 
 ---
 ## Zusätzliche Wildcards
