@@ -26,7 +26,7 @@ logging.debug("- %s loaded", __name__)
 
 
 class BoswatchModule(Module):
-    """!Description of the Module"""
+    """!Regex based filter mechanism"""
     def __init__(self, config):
         """!Do not change anything here!"""
         super().__init__(__name__, config)  # you can access the config class on 'self.config'
@@ -39,11 +39,11 @@ class BoswatchModule(Module):
         """!start an run of the module.
 
         @param bwPacket: A BOSWatch packet instance"""
-        for filter in self.config.get("filter"):
+        for regexFilter in self.config:
             checkFailed = False
-            logging.debug("try filter '%s' with %d check(s)", filter.get("name"), len(filter.get("checks")))
+            logging.debug("try filter '%s' with %d check(s)", regexFilter.get("name"), len(regexFilter.get("checks")))
 
-            for check in filter.get("checks"):
+            for check in regexFilter.get("checks"):
                 fieldData = bwPacket.get(check.get("field"))
 
                 if not fieldData or not re.search(check.get("regex"), fieldData):
@@ -54,9 +54,9 @@ class BoswatchModule(Module):
                     logging.debug("[+] field '%s' with regex '%s'", check.get("field"), check.get("regex"))
 
             if not checkFailed:
-                logging.debug("[PASSED] filter '%s'", filter.get("name"))
+                logging.debug("[PASSED] filter '%s'", regexFilter.get("name"))
                 return None  # None -> Router will go on with this packet
-            logging.debug("[FAILED] filter '%s'", filter.get("name"))
+            logging.debug("[FAILED] filter '%s'", regexFilter.get("name"))
 
         return False  # False -> Router will stop further processing
 

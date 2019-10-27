@@ -22,12 +22,6 @@ Vereinfacht kann man sagen, dass einzelnen Router ODER-verknüpft und die jeweil
 
 |Feld|Beschreibung|Default|
 |----|------------|-------|
-|filter|Enthält eine Liste der einzelnen Filter||
-
-#### `filter:`
-
-|Feld|Beschreibung|Default|
-|----|------------|-------|
 |name|Beliebiger Name des Filters||
 |checks|Liste der einzelnen Checks innerhalb des Filters||
 
@@ -43,17 +37,16 @@ Vereinfacht kann man sagen, dass einzelnen Router ODER-verknüpft und die jeweil
 - type: module
   res: filter.regexFilter
   config:
-      filter:
-        - name: "Zvei filter"
-          checks:
-            - field: zvei
-              regex: "65[0-9]{3}"  # all zvei with starting 65
-        - name: "FMS Stat 3"
-          checks:
-            - field: mode
-              regex: "fms"  # check if mode is fms
-            - field: status
-              regex: "3"  # check if status is 3
+    - name: "Zvei filter"
+      checks:
+        - field: zvei
+          regex: "65[0-9]{3}"  # all zvei with starting 65
+    - name: "FMS Stat 3"
+      checks:
+        - field: mode
+          regex: "fms"  # check if mode is fms
+        - field: status
+          regex: "3"  # check if status is 3
 ```
 
 ---
