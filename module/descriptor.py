@@ -46,9 +46,9 @@ class BoswatchModule(Module):
                 if not bwPacket.get(descriptor.get("scanField")):
                     break  # scanField is not available in this packet
                 bwPacket.set(descriptor.get("descrField"), description.get("for"))
-                if str(description.get("for")) == str(bwPacket.get(descriptor.get("scanField"))):
-                    logging.debug("Description '%s' added in packet field '%s'", description.get("add"),
-                                  descriptor.get("descrField"))
+                if str(description.get("for")) == bwPacket.get(descriptor.get("scanField")):
+                    logging.debug("Description '%s' added in packet field '%s'",
+                                  description.get("add"), descriptor.get("descrField"))
                     bwPacket.set(descriptor.get("descrField"), description.get("add"))
                     break  # this descriptor has found a description - run next descriptor
         return bwPacket

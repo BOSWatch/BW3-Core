@@ -43,7 +43,7 @@ class Packet:
 
         @param fieldName: Name of the data to set
         @param value: Value to set"""
-        self._packet[fieldName] = value
+        self._packet[fieldName] = str(value)
 
     def get(self, fieldName):
         """!Returns the value from a single field.
@@ -52,7 +52,7 @@ class Packet:
         @param fieldName: Name of the field
         @return Value or None"""
         try:
-            return self._packet[fieldName]
+            return str(self._packet[fieldName])
         except:
             logging.warning("field not found: %s", fieldName)
             return None
