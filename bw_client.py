@@ -32,8 +32,6 @@ logging.debug("BOSWatch client has started ...")
 logging.debug("Import python modules")
 import argparse
 logging.debug("- argparse")
-import threading
-logging.debug("- threading")
 import queue
 logging.debug("- queue")
 import time
@@ -43,10 +41,10 @@ logging.debug("Import BOSWatch modules")
 from boswatch.configYaml import ConfigYAML
 from boswatch.network.client import TCPClient
 from boswatch.network.broadcast import BroadcastClient
-from boswatch.processManager import ProcessManager
 from boswatch.decoder.decoder import Decoder
 from boswatch.utils import header
 from boswatch.utils import misc
+from boswatch.inputSource.sdrInput import SdrInput
 
 header.logoToLog()
 header.infoToLog()
@@ -67,8 +65,9 @@ if not bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config):
     exit(1)
 
 # ========== CLIENT CODE ==========
-mmThread = None
 bwClient = None
+inputSource = None
+inputQueue = queue.Queue()
 
 try:
     ip = bwConfig.get("server", "ip", default="127.0.0.1")
@@ -80,68 +79,15 @@ try:
             ip = broadcastClient.serverIP
             port = broadcastClient.serverPort
 
-    # ========== INPUT CODE ==========
-    def handleSDRInput(dataQueue, sdrConfig, decoderConfig):  # todo exception handling inside
-        sdrProc = ProcessManager(str(sdrConfig.get("rtlPath", default="rtl_fm")))
-        sdrProc.addArgument("-d " + str(sdrConfig.get("device", default="0")))     # device id
-        sdrProc.addArgument("-f " + sdrConfig.get("frequency"))                    # frequencies
-        sdrProc.addArgument("-p " + str(sdrConfig.get("error", default="0")))      # frequency error in ppm
-        sdrProc.addArgument("-l " + str(sdrConfig.get("squelch", default="1")))    # squelch
-        sdrProc.addArgument("-g " + str(sdrConfig.get("gain", default="100")))     # gain
-        sdrProc.addArgument("-M fm")                                               # set mode to fm
-        sdrProc.addArgument("-E DC")                                               # set DC filter
-        sdrProc.addArgument("-s 22050")                                            # bit rate of audio stream
-        sdrProc.setStderr(open(paths.LOG_PATH + "rtl_fm.log", "a"))
-        sdrProc.start()
-        # sdrProc.skipLinesUntil("Output at")
-
-        mmProc = ProcessManager(str(sdrConfig.get("mmPath", default="multimon-ng")), textMode=True)
-        if decoderConfig.get("fms", default=0):
-            mmProc.addArgument("-a FMSFSK")
-        if decoderConfig.get("zvei", default=0):
-            mmProc.addArgument("-a ZVEI1")
-        if decoderConfig.get("poc512", default=0):
-            mmProc.addArgument("-a POCSAG512")
-        if decoderConfig.get("poc1200", default=0):
-            mmProc.addArgument("-a POCSAG1200")
-        if decoderConfig.get("poc2400", default=0):
-            mmProc.addArgument("-a POCSAG2400")
-        mmProc.addArgument("-f alpha")
-        mmProc.addArgument("-t raw -")
-        mmProc.setStdin(sdrProc.stdout)
-        mmProc.setStderr(open(paths.LOG_PATH + "multimon-ng.log", "a"))
-        mmProc.start()
-        # mmProc.skipLinesUntil("Available demodulators:")
-
-        logging.info("start decoding")
-        while inputThreadRunning:
-            if not sdrProc.isRunning:
-                logging.warning("rtl_fm was down - try to restart")
-                sdrProc.start()
-                # sdrProc.skipLinesUntil("Output at")  # last line form rtl_fm before data
-            elif not mmProc.isRunning:
-                logging.warning("multimon was down - try to restart")
-                mmProc.start()
-                # mmProc.skipLinesUntil("Available demodulators:")  # last line from mm before data
-            elif sdrProc.isRunning and mmProc.isRunning:
-                line = mmProc.readline()
-                if line:
-                    dataQueue.put_nowait((line, time.time()))
-                    logging.debug("Add data to queue")
-                    print(line)
-        logging.debug("stopping thread")
-        mmProc.stop()
-        sdrProc.stop()
-    # ========== INPUT CODE ==========
-
-    inputQueue = queue.Queue()
-
     if not args.test:
-        inputThreadRunning = True
-        mmThread = threading.Thread(target=handleSDRInput, name="mmReader",
-                                    args=(inputQueue, bwConfig.get("inputSource", "sdr"), bwConfig.get("decoder")))
-        mmThread.daemon = True
-        mmThread.start()
+        logging.debug("loading input source: %s", bwConfig.get("client", "inputSource"))
+        if bwConfig.get("client", "inputSource") == "sdr":
+            inputSource = SdrInput(inputQueue, bwConfig.get("inputSource", "sdr"), bwConfig.get("decoder"))
+        else:
+            logging.fatal("Invalid input source: %s", bwConfig.get("client", "inputSource"))
+            exit(1)
+
+        inputSource.start()
     else:
         logging.warning("STARTING TESTMODE!")
         logging.debug("reading testdata from file")
@@ -200,9 +146,8 @@ except:  # pragma: no cover
     logging.exception("BOSWatch interrupted by an error")
 finally:
     logging.debug("Starting shutdown routine")
+    if inputSource:
+        inputSource.shutdown()
     if bwClient:
         bwClient.disconnect()
-    inputThreadRunning = False
-    if mmThread:
-        mmThread.join()
     logging.debug("BOSWatch client has stopped ...")
