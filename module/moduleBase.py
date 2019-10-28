@@ -9,7 +9,7 @@
                 German BOS Information Script
                      by Bastian Schroll
 
-@file:        module.py
+@file:        moduleBase.py
 @date:        01.03.2019
 @author:      Bastian Schroll
 @description: Module main class to inherit
@@ -22,7 +22,7 @@ from boswatch import wildcard
 logging.debug("- %s loaded", __name__)
 
 
-class Module:
+class ModuleBase:
     """!Main module class"""
 
     _modulesActive = []

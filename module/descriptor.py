@@ -15,7 +15,7 @@
 @description: Module to add descriptions to bwPackets
 """
 import logging
-from module.module import Module
+from module.moduleBase import ModuleBase
 
 # ###################### #
 # Custom plugin includes #
@@ -25,7 +25,7 @@ from module.module import Module
 logging.debug("- %s loaded", __name__)
 
 
-class BoswatchModule(Module):
+class BoswatchModuleBase(ModuleBase):
     """!Adds descriptions to bwPackets"""
     def __init__(self, config):
         """!Do not change anything here!"""

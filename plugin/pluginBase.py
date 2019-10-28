@@ -9,7 +9,7 @@
                 German BOS Information Script
                      by Bastian Schroll
 
-@file:        plugin.py
+@file:        pluginBase.py
 @date:        08.01.2018
 @author:      Bastian Schroll
 @description: Plugin main class to inherit
@@ -22,7 +22,7 @@ from boswatch import wildcard
 logging.debug("- %s loaded", __name__)
 
 
-class Plugin:
+class PluginBase:
     """!Main plugin class"""
 
     _pluginsActive = []

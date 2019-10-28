@@ -15,7 +15,7 @@
 @description: Regex filter module
 """
 import logging
-from module.module import Module
+from module.moduleBase import ModuleBase
 
 # ###################### #
 # Custom plugin includes #
@@ -25,7 +25,7 @@ import re
 logging.debug("- %s loaded", __name__)
 
 
-class BoswatchModule(Module):
+class BoswatchModuleBase(ModuleBase):
     """!Regex based filter mechanism"""
     def __init__(self, config):
         """!Do not change anything here!"""

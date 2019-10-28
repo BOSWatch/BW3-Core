@@ -15,7 +15,7 @@
 @description: Template Module File
 """
 import logging
-from module.module import Module
+from module.moduleBase import ModuleBase
 
 # ###################### #
 # Custom plugin includes #
@@ -25,7 +25,7 @@ from module.module import Module
 logging.debug("- %s loaded", __name__)
 
 
-class BoswatchModule(Module):
+class BoswatchModuleBase(ModuleBase):
     """!Description of the Module"""
     def __init__(self, config):
         """!Do not change anything here!"""
