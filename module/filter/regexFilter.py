@@ -25,7 +25,7 @@ import re
 logging.debug("- %s loaded", __name__)
 
 
-class BoswatchModuleBase(ModuleBase):
+class BoswatchModule(ModuleBase):
     """!Regex based filter mechanism"""
     def __init__(self, config):
         """!Do not change anything here!"""

@@ -25,7 +25,7 @@ from module.moduleBase import ModuleBase
 logging.debug("- %s loaded", __name__)
 
 
-class BoswatchModuleBase(ModuleBase):
+class BoswatchModule(ModuleBase):
     """!Filter of specific bwPacket mode"""
     def __init__(self, config):
         """!Do not change anything here!"""

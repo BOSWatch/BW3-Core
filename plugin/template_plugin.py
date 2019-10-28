@@ -25,7 +25,7 @@ from plugin.pluginBase import PluginBase
 logging.debug("- %s loaded", __name__)
 
 
-class BoswatchPluginBase(PluginBase):
+class BoswatchPlugin(PluginBase):
     """!Description of the Plugin"""
     def __init__(self, config):
         """!Do not change anything here!"""
