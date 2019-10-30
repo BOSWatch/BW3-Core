@@ -16,13 +16,14 @@
 """
 import logging
 import time
+from abc import ABC, abstractmethod
 
 from boswatch import wildcard
 
 logging.debug("- %s loaded", __name__)
 
 
-class ModuleBase:
+class ModuleBase(ABC):
     """!Main module class"""
 
     _modulesActive = []

@@ -17,11 +17,12 @@
 import time
 import logging
 import threading
+from abc import ABC, abstractmethod
 
 logging.debug("- %s loaded", __name__)
 
 
-class InputBase:
+class InputBase(ABC):
     """!Base class for handling inout sources"""
 
     def __init__(self, inputQueue, inputConfig, decoderConfig):
@@ -45,10 +46,9 @@ class InputBase:
         self._inputThread.daemon = True
         self._inputThread.start()
 
+    @abstractmethod
     def _runThread(self, dataQueue, sdrConfig, decoderConfig):
         """!Thread routine of the input source has to be inherit"""
-        logging.fatal("input thread routine not implemented")
-        exit(1)
 
     def shutdown(self):
         """!Stop the input source thread"""
