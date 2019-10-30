@@ -16,7 +16,7 @@
 """
 import logging
 import time
-from abc import ABC, abstractmethod
+from abc import ABC
 
 from boswatch import wildcard
 
