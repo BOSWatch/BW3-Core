@@ -21,7 +21,8 @@ nav:
       - Mode Filter: modul/mode_filter.md
       - Regex Filter: modul/regex_filter.md
       - Descriptor: modul/descriptor.md
-  - Plugins: tbd.md
+  - Plugins:
+      - Telegram: plugin/telegram.md
   - Entwickler:
     - Eigenes Modul/Plugin schreiben: develop/ModulPlugin.md
     - BOSWatch Alarmpaket Format: develop/packet.md
