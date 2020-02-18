@@ -50,7 +50,7 @@ class BoswatchPlugin(PluginBase):
         """!Called on FMS alarm
 
         @param bwPacket: bwPacket instance"""
-        logging.warning('Telegram Plugin does not work for FMS')
+        logging.warning("Telegram Plugin does not work for FMS")
         pass
 
     def pocsag(self, bwPacket):
@@ -78,14 +78,16 @@ class BoswatchPlugin(PluginBase):
 
                     (lat, lng) = g.latlng
                     self.bot.sendLocation(chat_id=self.config.get("chatId", default=""), latitude=lat, longitude=lng)
+                except IndexError:
+                    logging.warning("Address was not found in current Message, skipping Location")
                 except Exception:
-                    logging.error('Error while sending location, please Check your geocoding provider and api-key')
+                    logging.error("Error while sending location, please Check your geocoding provider and api-key")
         except Unauthorized:
-            logging.error('Error while Telegram Message, please Check your api-key')
+            logging.error("Error while Telegram Message, please Check your api-key")
         except TimedOut or NetworkError:
-            logging.error('Error while Telegram Message, please Check your connectivity')
+            logging.error("Error while Telegram Message, please Check your connectivity")
         except BadRequest or TelegramError:
-            logging.error('Error while Telegram Message')
+            logging.error("Error while Telegram Message")
 
         pass
 
@@ -93,14 +95,14 @@ class BoswatchPlugin(PluginBase):
         """!Called on ZVEI alarm
 
         @param bwPacket: bwPacket instance"""
-        logging.warning('Telegram Plugin does not work for ZVEI')
+        logging.warning("Telegram Plugin does not work for ZVEI")
         pass
 
     def msg(self, bwPacket):
         """!Called on MSG packet
 
         @param bwPacket: bwPacket instance"""
-        logging.warning('Telegram Plugin does not work for MSG')
+        logging.warning("Telegram Plugin does not work for MSG")
         pass
 
     def teardown(self):
