@@ -65,29 +65,28 @@ class BoswatchPlugin(PluginBase):
 
             # Send Location via Telegram if Geocoding is enabled and Provider and Key are set
             if self.config.get("geocoding", default=False):
-                try:
-                    address = re.search(self.config.get("geoRegex"), bwPacket.get("message"))[1]
-                    provider = self.config.get("geoApiProvider")
+                address = re.search(self.config.get("geoRegex"), bwPacket.get("message"))[1]
+                provider = self.config.get("geoApiProvider")
 
-                    if "mapbox" == provider:
-                        g = geocoder.mapbox(address, key=self.config.get("geoApiToken"))
-                    elif "google" == provider:
-                        g = geocoder.google(address, key=self.config.get("geoApiToken"))
-                    else:
-                        return
+                if "mapbox" == provider:
+                    g = geocoder.mapbox(address, key=self.config.get("geoApiToken"))
+                elif "google" == provider:
+                    g = geocoder.google(address, key=self.config.get("geoApiToken"))
+                else:
+                    return
 
-                    (lat, lng) = g.latlng
-                    self.bot.sendLocation(chat_id=self.config.get("chatId", default=""), latitude=lat, longitude=lng)
-                except IndexError:
-                    logging.warning("Address was not found in current Message, skipping Location")
-                except Exception:
-                    logging.error("Error while sending location, please Check your geocoding provider and api-key")
+                (lat, lng) = g.latlng
+                self.bot.sendLocation(chat_id=self.config.get("chatId", default=""), latitude=lat, longitude=lng)
+        except (IndexError, TypeError, ValueError):
+            logging.warning("Address was not found in current Message, skipping Location")
         except Unauthorized:
-            logging.error("Error while Telegram Message, please Check your api-key")
-        except TimedOut or NetworkError:
-            logging.error("Error while Telegram Message, please Check your connectivity")
-        except BadRequest or TelegramError:
-            logging.error("Error while Telegram Message")
+            logging.error("Error while sending Telegram Message, please Check your api-key")
+        except (TimedOut, NetworkError):
+            logging.error("Error while sending Telegram Message, please Check your connectivity")
+        except (BadRequest, TelegramError):
+            logging.error("Error while sending Telegram Message")
+        except Exception as e:
+            logging.error("Unknown Error while sending Telegram Message: " + str(type(e).__name__) + ": " + str(e))
 
         pass
 
