@@ -9,29 +9,30 @@
                 German BOS Information Script
                      by Bastian Schroll
 
-@file:        plugin.py
+@file:        pluginBase.py
 @date:        08.01.2018
 @author:      Bastian Schroll
 @description: Plugin main class to inherit
 """
 import logging
 import time
+from abc import ABC
 
 from boswatch import wildcard
 
 logging.debug("- %s loaded", __name__)
 
 
-class Plugin:
+class PluginBase(ABC):
     """!Main plugin class"""
 
-    _pluginsActive = 0
+    _pluginsActive = []
 
     def __init__(self, pluginName, config):
         """!init preload some needed locals and then call onLoad() directly"""
         self._pluginName = pluginName
         self.config = config
-        self._pluginsActive += 1
+        self._pluginsActive.append(self)
 
         # to save the packet while alarm is running for other functions
         self._bwPacket = None
@@ -42,7 +43,6 @@ class Plugin:
         self._setupTime = 0
         self._alarmTime = 0
         self._teardownTime = 0
-        self._tmpTime = 0
 
         # for statistics
         self._runCount = 0
@@ -53,10 +53,10 @@ class Plugin:
         logging.debug("[%s] onLoad()", pluginName)
         self.onLoad()
 
-    def __del__(self):
-        """!Destructor calls onUnload() directly"""
+    def _cleanup(self):
+        """!Cleanup routine calls onUnload() directly"""
         logging.debug("[%s] onUnload()", self._pluginName)
-        self._pluginsActive -= 1
+        self._pluginsActive.remove(self)
         self.onUnload()
 
     def _run(self, bwPacket):
@@ -70,7 +70,7 @@ class Plugin:
 
         self._bwPacket = bwPacket
 
-        self._tmpTime = time.time()
+        tmpTime = time.time()
         try:
             logging.debug("[%s] setup()", self._pluginName)
             self.setup()
@@ -78,8 +78,8 @@ class Plugin:
             self._setupErrorCount += 1
             logging.exception("[%s] error in setup()", self._pluginName)
 
-        self._setupTime = time.time() - self._tmpTime
-        self._tmpTime = time.time()
+        self._setupTime = time.time() - tmpTime
+        tmpTime = time.time()
         try:
 
             if bwPacket.get("mode") == "fms":
@@ -98,8 +98,8 @@ class Plugin:
             self._alarmErrorCount += 1
             logging.exception("[%s] alarm error", self._pluginName)
 
-        self._alarmTime = time.time() - self._tmpTime
-        self._tmpTime = time.time()
+        self._alarmTime = time.time() - tmpTime
+        tmpTime = time.time()
         try:
             logging.debug("[%s] teardown()", self._pluginName)
             self.teardown()
@@ -107,7 +107,7 @@ class Plugin:
             self._teardownErrorCount += 1
             logging.exception("[%s] error in teardown()", self._pluginName)
 
-        self._teardownTime = time.time() - self._tmpTime
+        self._teardownTime = time.time() - tmpTime
         self._sumTime = self._setupTime + self._alarmTime + self._teardownTime
         self._cumTime += self._sumTime
 
@@ -124,7 +124,8 @@ class Plugin:
         """!Returns statistical information's from last plugin run
 
         @return Statistics as pyton dict"""
-        stats = {"runCount": self._runCount,
+        stats = {"type": "plugin",
+                 "runCount": self._runCount,
                  "sumTime": self._sumTime,
                  "cumTime": self._cumTime,
                  "setupTime": self._setupTime,
@@ -137,50 +138,50 @@ class Plugin:
 
     def onLoad(self):
         """!Called by import of the plugin
-        Must be inherit"""
+        can be inherited"""
         pass
 
     def setup(self):
         """!Called before alarm
-        Must be inherit"""
+        can be inherited"""
         pass
 
     def fms(self, bwPacket):
         """!Called on FMS alarm
-        Must be inherit
+        can be inherited
 
         @param bwPacket: bwPacket instance"""
         logging.warning("ZVEI not implemented in %s", self._pluginName)
 
     def pocsag(self, bwPacket):
         """!Called on POCSAG alarm
-        Must be inherit
+        can be inherited
 
         @param bwPacket: bwPacket instance"""
         logging.warning("POCSAG not implemented in %s", self._pluginName)
 
     def zvei(self, bwPacket):
         """!Called on ZVEI alarm
-        Must be inherit
+        can be inherited
 
         @param bwPacket: bwPacket instance"""
         logging.warning("ZVEI not implemented in %s", self._pluginName)
 
     def msg(self, bwPacket):
         """!Called on MSG packet
-        Must be inherit
+        can be inherited
 
         @param bwPacket: bwPacket instance"""
         logging.warning("MSG not implemented in %s", self._pluginName)
 
     def teardown(self):
         """!Called after alarm
-        Must be inherit"""
+        can be inherited"""
         pass
 
     def onUnload(self):
-        """!Called by destruction of the plugin
-        Must be inherit"""
+        """!Called on shutdown of boswatch
+        can be inherited"""
         pass
 
     def parseWildcards(self, msg):

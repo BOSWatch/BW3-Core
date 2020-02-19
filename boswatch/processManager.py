@@ -32,9 +32,6 @@ class ProcessManager:
         self._processHandle = None
         self._textMode = textMode
 
-    def __del__(self):
-        self.stop()
-
     def addArgument(self, arg):
         """!add a new argument
 

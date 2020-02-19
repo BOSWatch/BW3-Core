@@ -18,6 +18,7 @@
 # todo think about implement threading for routers and the plugin calls (THREAD SAFETY!!!)
 import logging
 import importlib
+import time
 from boswatch.configYaml import ConfigYAML
 from boswatch.router.router import Router
 from boswatch.router.route import Route
@@ -30,16 +31,10 @@ class RouterManager:
     def __init__(self):
         """!Create new router"""
         self._routerDict = {}
-
-    def __del__(self):
-        """!Destroy the internal routerDict
-        All routers and route point instances will be destroyed too
-        Also destroys all instances from modules or plugins"""
-        # destroy all routers (also destroys all instances of modules/plugins)
-        del self._routerDict
+        self._startTime = int(time.time())
 
     # if there is an error, router list would be empty (see tmp variable)
-    def buildRouter(self, config):
+    def buildRouters(self, config):
         """!Initialize Routers from given config file
 
         @param config: instance of ConfigYaml class
@@ -64,33 +59,42 @@ class RouterManager:
 
             for route in router.get("route"):
                 routeType = route.get("type")
-                routeName = route.get("name")
+                routeRes = route.get("res")
+                routeName = route.get("name", default=routeRes)
+
                 routeConfig = route.get("config", default=ConfigYAML())  # if no config - build a empty
 
-                if routeType is None or routeName is None:
+                if routeType is None or routeRes is None:
                     logging.error("type or name not found in route: %s", route)
                     return False
 
                 try:
                     if routeType == "plugin":
-                        importedFile = importlib.import_module(routeType + "." + routeName)
+                        importedFile = importlib.import_module(routeType + "." + routeRes)
                         loadedClass = importedFile.BoswatchPlugin(routeConfig)
-                        routerDict_tmp[routerName].addRoute(Route(routeName, loadedClass._run))
+                        routerDict_tmp[routerName].addRoute(Route(routeName,
+                                                                  loadedClass._run,
+                                                                  loadedClass._getStatistics,
+                                                                  loadedClass._cleanup))
 
                     elif routeType == "module":
-                        importedFile = importlib.import_module(routeType + "." + routeName)
+                        importedFile = importlib.import_module(routeType + "." + routeRes)
                         loadedClass = importedFile.BoswatchModule(routeConfig)
-                        routerDict_tmp[routerName].addRoute(Route(routeName, loadedClass._run))
+                        routerDict_tmp[routerName].addRoute(Route(routeName,
+                                                                  loadedClass._run,
+                                                                  loadedClass._getStatistics,
+                                                                  loadedClass._cleanup))
 
                     elif routeType == "router":
-                        routerDict_tmp[routerName].addRoute(Route(routeName, routerDict_tmp[routeName].runRouter))
+                        routerDict_tmp[routerName].addRoute(Route(routeName, routerDict_tmp[routeRes].runRouter))
 
                     else:
                         logging.error("unknown type '%s' in %s", routeType, route)
                         return False
 
-                except ModuleNotFoundError:
-                    logging.error("%s not found: %s", route.get("type"), route.get("name"))
+                # except ModuleNotFoundError:  # only since Py3.6
+                except ImportError:
+                    logging.error("%s not found: %s", route.get("type"), route.get("res"))
                     return False
 
         logging.debug("finished building routers")
@@ -98,7 +102,7 @@ class RouterManager:
         self._showRouterRoute()
         return True
 
-    def runRouter(self, routerRunList, bwPacket):
+    def runRouters(self, routerRunList, bwPacket):
         """!Run given Routers
 
         @param routerRunList: string or list of router names in string form
@@ -112,6 +116,16 @@ class RouterManager:
             else:
                 logging.warning("unknown router: %s", routerName)
 
+        self._saveStats()  # write stats to stats file
+
+    def cleanup(self):
+        """!Run cleanup routines for all loaded route points"""
+        for name, routerObject in self._routerDict.items():
+            logging.debug("Start cleanup for %s", name)
+            for routePoint in routerObject.routeList:
+                if routePoint.cleanup:
+                    routePoint.cleanup()
+
     def _showRouterRoute(self):
         """!Show the routes of all routers"""
         for name, routerObject in self._routerDict.items():
@@ -120,3 +134,27 @@ class RouterManager:
             for routePoint in routerObject.routeList:
                 counter += 1
                 logging.debug(" %d. %s", counter, routePoint.name)
+
+    def _saveStats(self):
+        """!Save current statistics to file"""
+        lines = []
+        for name, routerObject in self._routerDict.items():
+            lines.append("[" + name + "]")
+            lines.append(" - Route points:    " + str(len(routerObject.routeList)))
+            lines.append(" - Runs:            " + str(routerObject._getStatistics()['runCount']))
+            for routePoint in routerObject.routeList:
+                lines.append("[+] " + routePoint.name)
+                if routePoint.statistics:
+                    if routePoint.statistics()['type'] == "module":
+                        lines.append(" - Runs:            " + str(routePoint.statistics()['runCount']))
+                        lines.append(" - Run errors:      " + str(routePoint.statistics()['moduleErrorCount']))
+                    elif routePoint.statistics()['type'] == "plugin":
+                        lines.append(" - Runs:            " + str(routePoint.statistics()['runCount']))
+                        lines.append(" - Setup errors:    " + str(routePoint.statistics()['setupErrorCount']))
+                        lines.append(" - Alarm errors:    " + str(routePoint.statistics()['alarmErrorCount']))
+                        lines.append(" - Teardown errors: " + str(routePoint.statistics()['teardownErrorCount']))
+            lines.append("")
+
+        with open("stats_" + str(self._startTime) + ".txt", "w") as stats:
+            for line in lines:
+                stats.write(line + "\n")

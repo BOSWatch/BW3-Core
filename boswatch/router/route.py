@@ -15,24 +15,22 @@
 @description: Class for a single BOSWatch packet router route point
 """
 
+import logging
+
+logging.debug("- %s loaded", __name__)
+
 
 class Route:
     """!Class for single routing points"""
-    def __init__(self, name, callback):
+    def __init__(self, name, callback, statsCallback=None, cleanupCallback=None):
         """!Create a instance of an route point
 
         @param name: name of the route point
         @param callback: instance of the callback function
+        @param statsCallback: instance of the callback to get statistics (None)
+        @param cleanupCallback: instance of the callback to run a cleanup method (None)
         """
-        self._name = name
-        self._callback = callback
-
-    @property
-    def name(self):
-        """!Property to get the route point name"""
-        return self._name
-
-    @property
-    def callback(self):
-        """!Porperty to get the callback function instance"""
-        return self._callback
+        self.name = name
+        self.callback = callback
+        self.statistics = statsCallback
+        self.cleanup = cleanupCallback

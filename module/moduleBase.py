@@ -9,32 +9,34 @@
                 German BOS Information Script
                      by Bastian Schroll
 
-@file:        module.py
+@file:        moduleBase.py
 @date:        01.03.2019
 @author:      Bastian Schroll
 @description: Module main class to inherit
 """
 import logging
 import time
+from abc import ABC
+
+from boswatch import wildcard
 
 logging.debug("- %s loaded", __name__)
 
 
-class Module:
+class ModuleBase(ABC):
     """!Main module class"""
 
-    _modulesActive = 0
+    _modulesActive = []
 
     def __init__(self, moduleName, config):
         """!init preload some needed locals and then call onLoad() directly"""
         self._moduleName = moduleName
         self.config = config
-        self._modulesActive += 1
+        self._modulesActive.append(self)
 
         # for time counting
         self._cumTime = 0
         self._moduleTime = 0
-        self._tmpTime = 0
 
         # for statistics
         self._runCount = 0
@@ -43,28 +45,28 @@ class Module:
         logging.debug("[%s] onLoad()", moduleName)
         self.onLoad()
 
-    def __del__(self):
-        """!Destructor calls onUnload() directly"""
+    def _cleanup(self):
+        """!Cleanup routine calls onUnload() directly"""
         logging.debug("[%s] onUnload()", self._moduleName)
-        self._modulesActive -= 1
+        self._modulesActive.remove(self)
         self.onUnload()
 
     def _run(self, bwPacket):
-        """!start an rund of the module.
+        """!start an run of the module.
 
         @param bwPacket: A BOSWatch packet instance
         @return bwPacket or False"""
         self._runCount += 1
         logging.debug("[%s] run #%d", self._moduleName, self._runCount)
 
-        self._tmpTime = time.time()
+        tmpTime = time.time()
         try:
             logging.debug("[%s] doWork()", self._moduleName)
             bwPacket = self.doWork(bwPacket)
         except:
             self._moduleErrorCount += 1
             logging.exception("[%s] alarm error", self._moduleName)
-        self._moduleTime = time.time() - self._tmpTime
+        self._moduleTime = time.time() - tmpTime
 
         self._cumTime += self._moduleTime
 
@@ -76,7 +78,8 @@ class Module:
         """!Returns statistical information's from last module run
 
         @return Statistics as pyton dict"""
-        stats = {"runCount": self._runCount,
+        stats = {"type": "module",
+                 "runCount": self._runCount,
                  "cumTime": self._cumTime,
                  "moduleTime": self._moduleTime,
                  "moduleErrorCount": self._moduleErrorCount}
@@ -84,17 +87,31 @@ class Module:
 
     def onLoad(self):
         """!Called by import of the module
-        Must be inherit"""
+        can be inherited"""
         pass
 
     def doWork(self, bwPacket):
         """!Called module run
-        Must be inherit
+        can be inherited
 
         @param bwPacket: bwPacket instance"""
         logging.warning("no functionality in module %s", self._moduleName)
 
     def onUnload(self):
-        """!Called by destruction of the module
-        Must be inherit"""
+        """!Called on shutdown of boswatch
+        can be inherited"""
         pass
+
+    @staticmethod
+    def registerWildcard(newWildcard, bwPacketField):
+        """!Register a new wildcard
+
+        @param newWildcard: wildcard where parser searching for
+        @param bwPacketField: field from bwPacket where holds replacement data"""
+        if not newWildcard.startswith("{") or not newWildcard.endswith("}"):
+            logging.error("wildcard not registered - false format: %s", newWildcard)
+            return
+        if bwPacketField == "":
+            logging.error("wildcard not registered - bwPacket field is empty")
+            return
+        wildcard.registerWildcard(newWildcard, bwPacketField)

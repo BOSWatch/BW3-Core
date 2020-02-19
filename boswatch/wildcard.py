@@ -12,28 +12,43 @@
 @file:        wildcard.py
 @date:        15.01.2018
 @author:      Bastian Schroll
-@description: Little Helper to replace wildcards in stings
+@description: Functions to replace wildcards in stings
 """
 import logging
 import time
 
-# from boswatch.module import file
-
 logging.debug("- %s loaded", __name__)
 
-# todo check function and document + write an test
-# todo maybe can be a module instead of a native boswatch piece
-# idea: maybe this can be a class with a register_wildcard() method
-# so the list with wildcards can be modified by other modules
+# todo check function - write an test
+
+_additionalWildcards = {}
+
+
+def registerWildcard(wildcard, bwPacketField):
+    """!Register a new additional wildcard
+
+    @param wildcard: New wildcard string with format: '{WILDCARD}'
+    @param bwPacketField: Field of the bwPacket which is used for wildcard replacement"""
+    if wildcard in _additionalWildcards:
+        logging.error("wildcard always registered: %s", wildcard)
+        return
+    logging.debug("register new wildcard %s for field: %s", wildcard, bwPacketField)
+    _additionalWildcards[wildcard] = bwPacketField
 
 
 def replaceWildcards(message, bwPacket):
+    """!Replace the wildcards in a given message
+
+    @param message: Message in which wildcards should be replaced
+    @param bwPacket: bwPacket instance with the replacement information
+    @return Input message with the replaced wildcards"""
     _wildcards = {
         # formatting wildcards
+        # todo check if br and par are needed - if not also change config
         "{BR}": "\r\n",
         "{LPAR}": "(",
         "{RPAR}": ")",
-        "{TIME}": time.time(),
+        "{TIME}": time.strftime("%d.%m.%Y %H:%M:%S"),
 
         # info wildcards
         # server
@@ -78,7 +93,10 @@ def replaceWildcards(message, bwPacket):
 
         # message for MSG packet is done in poc
     }
-    for wildcard in _wildcards:
-        message = message.replace(wildcard, _wildcards.get(wildcard))
+    for wildcard, field in _wildcards.items():
+        message = message.replace(wildcard, field)
+
+    for wildcard, field in _additionalWildcards.items():
+        message = message.replace(wildcard, bwPacket.getField(field))
 
     return message

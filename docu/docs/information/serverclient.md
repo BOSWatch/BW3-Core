@@ -17,6 +17,8 @@ nachträglich an den Server übermittelt werden.
 
 Dabei überwacht der Client selbstständig die benötigten Programme zum Empfang der Daten und startet diese bei einem Fehler ggf. neu.
 
+<center>![](../img/client.png)</center>
+
 ---
 ## BOSWatch Server
 
@@ -27,3 +29,5 @@ Auch hier werden die empfangenen Daten in From von bwPacket's in einer Queue abe
 dauernden Plugin Ausführung alle Pakete korrekt empfangen werden können und es zu keinen Verlusten kommt.
 Die Verarbeitung der Pakete geschieht anschließend in sogenannten Routern, welche aufgrund ihres Umfangs jedoch in einem eigenen Kapitel
 erklärt werden. Diese steuern die Verteilung der Daten an die einzelnen Plugins.
+
+<center>![](../img/server.png)</center>

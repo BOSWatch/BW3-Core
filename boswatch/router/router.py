@@ -16,6 +16,7 @@
 """
 import logging
 import copy
+import time
 
 logging.debug("- %s loaded", __name__)
 
@@ -26,17 +27,25 @@ class Router:
         """!Create a new router
 
         @param name: name of the router"""
-        self._name = name
-        self._routeList = []
-        logging.debug("[%s] new router", self._name)
+        self.name = name
+        self.routeList = []
+
+        # for time counting
+        self._cumTime = 0
+        self._routerTime = 0
+
+        # for statistics
+        self._runCount = 0
+
+        logging.debug("[%s] add new router", self.name)
 
     def addRoute(self, route):
         """!Adds a route point to the router
 
         @param route: instance of the Route class
         """
-        logging.debug("[%s] add route: %s", self._name, route.name)
-        self._routeList.append(route)
+        logging.debug("[%s] add route: %s", self.name, route.name)
+        self.routeList.append(route)
 
     def runRouter(self, bwPacket):
         """!Run the router
@@ -44,29 +53,37 @@ class Router:
         @param bwPacket: instance of Packet class
         @return a instance of Packet class
         """
-        logging.debug("[%s] started", self._name)
-        for routeObject in self._routeList:
-            logging.debug("[%s] -> run route: %s", self._name, routeObject)
+        self._runCount += 1
+        tmpTime = time.time()
+
+        logging.debug("[%s] started", self.name)
+
+        for routeObject in self.routeList:
+            logging.debug("[%s] -> run route: %s", self.name, routeObject.name)
             bwPacket_tmp = routeObject.callback(copy.deepcopy(bwPacket))  # copy bwPacket to prevent edit the original
 
             if bwPacket_tmp is None:  # returning None doesnt change the bwPacket
                 continue
 
             if bwPacket_tmp is False:  # returning False stops the router immediately
-                logging.debug("[%s] stopped", self._name)
+                logging.debug("[%s] stopped", self.name)
                 break
 
             bwPacket = bwPacket_tmp
-            logging.debug("[%s] <- bwPacket returned: %s", self._name, bwPacket)
-        logging.debug("[%s] finished", self._name)
+            logging.debug("[%s] bwPacket returned", self.name)
+        logging.debug("[%s] finished", self.name)
+
+        self._routerTime = time.time() - tmpTime
+        self._cumTime += self._routerTime
+
         return bwPacket
 
-    @property
-    def name(self):
-        """!Property to get the name of the router"""
-        return self._name
+    def _getStatistics(self):
+        """!Returns statistical information's from last router run
 
-    @property
-    def routeList(self):
-        """!Property to get a list of all route points of this router"""
-        return self._routeList
+        @return Statistics as pyton dict"""
+        stats = {"type": "router",
+                 "runCount": self._runCount,
+                 "cumTime": self._cumTime,
+                 "moduleTime": self._routerTime}
+        return stats

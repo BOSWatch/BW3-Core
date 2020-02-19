@@ -1,4 +1,4 @@
-# <center>BOSWatch Packet Format</center>
+# <center>BOSWatch Paket Format</center>
 
 Ein BOSWatch Datenpaket wird in einem Python Dict abgebildet. In der nachfolgenden Tabelle sind die genutzten Felder abgebildet.
 
@@ -48,13 +48,4 @@ Ein BOSWatch Datenpaket wird in einem Python Dict abgebildet. In der nachfolgend
 |status|X||||`{STAT}`||
 |direction|X||||`{DIR}`||
 |dirextionText|X||||`{DIRT}`|(Fhz->Lst, Lst->Fhz)|
-|vehicle|X||||`{VEC}`||
-|vehicle|X||||`{VEC}`||
 |tacticalInfo|X||||`{TACI}`|(I, II, III, IV)|
-
----
-## Weitere Wildcards
-- `{BR}` - Zeilenumbruch `\r\n`
-- `{LPAR}` - öffnende Klammer `(`
-- `{RPAR}` - schließende Klammer `)`
-- `{TIME}` - Aktueller zeitstempel

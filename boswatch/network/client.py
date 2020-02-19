@@ -57,6 +57,7 @@ class TCPClient:
         @return True or False"""
         try:
             if self.isConnected:
+                self._sock.shutdown(socket.SHUT_RDWR)
                 self._sock.close()
                 logging.debug("disconnected")
                 return True
@@ -72,29 +73,35 @@ class TCPClient:
         @param data: data to send to the server
         @return True or False"""
         try:
-            logging.debug("transmitting: %s", data)
-            header = str(len(data)).ljust(HEADERSIZE)
-            self._sock.sendall(bytes(header + data, "utf-8"))
+            logging.debug("transmitting:\n%s", data)
+            data = data.encode("utf-8")
+            header = str(len(data)).ljust(HEADERSIZE).encode("utf-8")
+            self._sock.sendall(header + data)
             logging.debug("transmitted...")
             return True
         except socket.error as e:
             logging.error(e)
         return False
 
-    def receive(self):
+    def receive(self, timeout=1):
         """!Receive data from the server
 
+        @param timeout: to wait for incoming data in seconds
         @return received data"""
         try:
-            read, _, _ = select.select([self._sock], [], [], 1)
+            read, _, _ = select.select([self._sock], [], [], timeout)
             if not read:  # check if there is something to read
                 return False
-            header = self._sock.recv(HEADERSIZE)
+
+            header = self._sock.recv(HEADERSIZE).decode("utf-8")
             if not len(header):  # check if there data
                 return False
-            length = int(header.decode("utf-8").strip())
+
+            length = int(header.strip())
             received = self._sock.recv(length).decode("utf-8")
-            logging.debug("received %d bytes: %s", length, received)
+
+            logging.debug("recv header: '%s'", header)
+            logging.debug("received %d bytes: %s", len(received), received)
             return received
         except socket.error as e:
             logging.error(e)
@@ -104,12 +111,17 @@ class TCPClient:
     def isConnected(self):
         """!Property of client connected state"""
         try:
-            aliveMsg = "<alive>"
-            header = str(len(aliveMsg)).ljust(HEADERSIZE)
-            self._sock.sendall(bytes(header + aliveMsg, "utf-8"))
-            return True
+            if self._sock:
+                _, write, _ = select.select([], [self._sock], [], 0.1)
+                if write:
+                    data = "<keep-alive>".encode("utf-8")
+                    header = str(len(data)).ljust(HEADERSIZE).encode("utf-8")
+                    self._sock.sendall(header + data)
+                    return True
+            return False
         except socket.error as e:
-            if e.errno is 32:  # broken pipe - no one will read from this pipe anymore
-                return False
-            logging.error(e)
-        return False
+            if e.errno != 32:
+                logging.exception(e)
+            return False
+        except ValueError:
+            return False

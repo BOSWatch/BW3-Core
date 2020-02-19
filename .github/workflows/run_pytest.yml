@@ -25,3 +25,8 @@ jobs:
     - name: Test with pytest
       run: |
         pytest -c 'test/pytest.ini'
+    - name: Save artifacts
+      uses: actions/upload-artifact@master
+      with:
+        name: test.log
+        path: log/test.log

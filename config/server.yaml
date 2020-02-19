@@ -19,8 +19,12 @@ router:
 - name: Router 1
   route:
   - type: module
-    name: filter.modeFilter
+    res: filter.modeFilter
+    name: Filter Fms/Zvei
     config:
       allowed:
         - fms
         - zvei
+  - type: plugin
+    name: test plugin
+    res: template_plugin

@@ -15,7 +15,7 @@
 @description: Template Module File
 """
 import logging
-from module.module import Module
+from module.moduleBase import ModuleBase
 
 # ###################### #
 # Custom plugin includes #
@@ -25,21 +25,21 @@ from module.module import Module
 logging.debug("- %s loaded", __name__)
 
 
-class BoswatchModule(Module):
+class BoswatchModul(ModuleBase):
     """!Description of the Module"""
     def __init__(self, config):
         """!Do not change anything here!"""
         super().__init__(__name__, config)  # you can access the config class on 'self.config'
 
     def onLoad(self):
-        """!Called by import of the plugin"""
+        """!Called by import of the plugin
+        Remove if not implemented"""
         pass
 
     def doWork(self, bwPacket):
         """!start an run of the module.
 
-        @param bwPacket: A BOSWatch packet instance
-        @return bwPacket or False"""
+        @param bwPacket: A BOSWatch packet instance"""
         if bwPacket.get("mode") == "fms":
             pass
         elif bwPacket.get("mode") == "zvei":
@@ -52,5 +52,6 @@ class BoswatchModule(Module):
         return bwPacket
 
     def onUnload(self):
-        """!Called by destruction of the plugin"""
+        """!Called by destruction of the plugin
+        Remove if not implemented"""
         pass
