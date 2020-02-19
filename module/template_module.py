@@ -32,7 +32,8 @@ class BoswatchModul(ModuleBase):
         super().__init__(__name__, config)  # you can access the config class on 'self.config'
 
     def onLoad(self):
-        """!Called by import of the plugin"""
+        """!Called by import of the plugin
+        Remove if not implemented"""
         pass
 
     def doWork(self, bwPacket):
@@ -51,5 +52,6 @@ class BoswatchModul(ModuleBase):
         return bwPacket
 
     def onUnload(self):
-        """!Called by destruction of the plugin"""
+        """!Called by destruction of the plugin
+        Remove if not implemented"""
         pass
