@@ -15,12 +15,11 @@
 @description: Telegram Plugin
 """
 import logging
-
 from plugin.pluginBase import PluginBase
 
 # ###################### #
 # Custom plugin includes #
-from telegram.error import (TelegramError, Unauthorized, BadRequest, TimedOut, ChatMigrated, NetworkError)
+from telegram.error import (TelegramError, Unauthorized, BadRequest, TimedOut, NetworkError)
 import telegram
 # ###################### #
 
@@ -44,15 +43,15 @@ class BoswatchPlugin(PluginBase):
 
         @param bwPacket: bwPacket instance"""
         msg = bwPacket.get("ric") + " (" + bwPacket.get("subric") + ")\n" + bwPacket.get("message")
-
         if bwPacket.get("lat") is not None and bwPacket.get("lng") is not None:
             (lat, lng) = (bwPacket.get("lat"), bwPacket.get("lng"))
+        
         for chatId in self.config.get("chatIds", default=[]):
             try:
                 # Send Message via Telegram
-                self.bot.send_message(chat_id=chatId, default=""), text=msg)
-
-                # Send Location via Telegram if lat and lng exist in Package
+                self.bot.send_message(chat_id=chatId, text=msg)
+                
+                # Send Location via Telegram if lat and lng are defined
                 if lat is not None and lng is not None:
                     self.bot.sendLocation(chat_id=chatId, latitude=lat, longitude=lng)
             except Unauthorized:
