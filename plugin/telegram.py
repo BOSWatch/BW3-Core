@@ -9,22 +9,19 @@
                 German BOS Information Script
                      by Bastian Schroll
 
-@file:        template_module.py
-@date:        14.01.2018
-@author:      Bastian Schroll
-@description: Template Plugin File
+@file:        telegram.py
+@date:        20.02.2020
+@author:      Jan Speller
+@description: Telegram Plugin
 """
 import logging
 
-from telegram.error import (TelegramError, Unauthorized, BadRequest, TimedOut, ChatMigrated, NetworkError)
 from plugin.pluginBase import PluginBase
-import telegram
-import re
-import geocoder
 
 # ###################### #
 # Custom plugin includes #
-
+from telegram.error import (TelegramError, Unauthorized, BadRequest, TimedOut, ChatMigrated, NetworkError)
+import telegram
 # ###################### #
 
 logging.debug("- %s loaded", __name__)
@@ -39,75 +36,31 @@ class BoswatchPlugin(PluginBase):
 
     def onLoad(self):
         """!Called by import of the plugin"""
-        pass
-
-    def setup(self):
-        """!Called before alarm"""
         self.bot = telegram.Bot(token=self.config.get("botToken", default=""))
-        pass
-
-    def fms(self, bwPacket):
-        """!Called on FMS alarm
-
-        @param bwPacket: bwPacket instance"""
-        logging.warning("Telegram Plugin does not work for FMS")
         pass
 
     def pocsag(self, bwPacket):
         """!Called on POCSAG alarm
 
         @param bwPacket: bwPacket instance"""
+        msg = bwPacket.get("ric") + " (" + bwPacket.get("subric") + ")\n" + bwPacket.get("message")
 
-        try:
-            # Send Message via Telegram
-            msg = bwPacket.get("ric") + " (" + bwPacket.get("subric") + ")\n" + bwPacket.get("message")
-            self.bot.send_message(chat_id=self.config.get("chatId", default=""), text=msg)
+        if bwPacket.get("lat") is not None and bwPacket.get("lng") is not None:
+            (lat, lng) = (bwPacket.get("lat"), bwPacket.get("lng"))
+        for chatId in self.config.get("chatIds", default=[]):
+            try:
+                # Send Message via Telegram
+                self.bot.send_message(chat_id=chatId, default=""), text=msg)
 
-            # Send Location via Telegram if Geocoding is enabled and Provider and Key are set
-            if self.config.get("geocoding", default=False):
-                address = re.search(self.config.get("geoRegex"), bwPacket.get("message"))[1]
-                provider = self.config.get("geoApiProvider")
-
-                if "mapbox" == provider:
-                    g = geocoder.mapbox(address, key=self.config.get("geoApiToken"))
-                elif "google" == provider:
-                    g = geocoder.google(address, key=self.config.get("geoApiToken"))
-                else:
-                    return
-
-                (lat, lng) = g.latlng
-                self.bot.sendLocation(chat_id=self.config.get("chatId", default=""), latitude=lat, longitude=lng)
-        except (IndexError, TypeError, ValueError):
-            logging.warning("Address was not found in current Message, skipping Location")
-        except Unauthorized:
-            logging.error("Error while sending Telegram Message, please Check your api-key")
-        except (TimedOut, NetworkError):
-            logging.error("Error while sending Telegram Message, please Check your connectivity")
-        except (BadRequest, TelegramError):
-            logging.error("Error while sending Telegram Message")
-        except Exception as e:
-            logging.error("Unknown Error while sending Telegram Message: " + str(type(e).__name__) + ": " + str(e))
-
-        pass
-
-    def zvei(self, bwPacket):
-        """!Called on ZVEI alarm
-
-        @param bwPacket: bwPacket instance"""
-        logging.warning("Telegram Plugin does not work for ZVEI")
-        pass
-
-    def msg(self, bwPacket):
-        """!Called on MSG packet
-
-        @param bwPacket: bwPacket instance"""
-        logging.warning("Telegram Plugin does not work for MSG")
-        pass
-
-    def teardown(self):
-        """!Called after alarm"""
-        pass
-
-    def onUnload(self):
-        """!Called by destruction of the plugin"""
+                # Send Location via Telegram if lat and lng exist in Package
+                if lat is not None and lng is not None:
+                    self.bot.sendLocation(chat_id=chatId, latitude=lat, longitude=lng)
+            except Unauthorized:
+                logging.error("Error while sending Telegram Message, please Check your api-key")
+            except (TimedOut, NetworkError):
+                logging.error("Error while sending Telegram Message, please Check your connectivity")
+            except (BadRequest, TelegramError):
+                logging.error("Error while sending Telegram Message")
+            except Exception as e:
+                logging.error("Unknown Error while sending Telegram Message: " + str(type(e).__name__) + ": " + str(e))
         pass

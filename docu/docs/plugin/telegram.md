@@ -2,11 +2,10 @@
 ---
 
 ## Beschreibung
-Mit diesem Plugin ist es moeglich, Telegram-Nachrichten für POCSAG-Alarmierungen zu senden.
-Außerdem unterstützt das Plugin das Versenden von Location über folgende geocoding-Api's:
+Mit diesem Plugin ist es moeglich, Telegram-Nachrichten für POCSAG-Alarmierungen zu senden. Außerdem werden Locations versenden, wenn die Felder `lat` und `lng` im Paket definiert sind.
 
-- Mapbox
-- Google Maps
+## Unterstütze Alarmtypen
+- Pocsag
 
 ## Resource
 `telegram`
@@ -15,25 +14,8 @@ Außerdem unterstützt das Plugin das Versenden von Location über folgende geoc
 
 |Feld|Beschreibung|Default|
 |----|------------|-------|
-|name|Beliebiger Name des Plugins||
-
-#### `config:`
-
-|Feld|Beschreibung|Default|
-|----|------------|-------|
 |botToken|Der Api-Key des Telegram-Bots||
-|chatId|Die Chat-Id des Empfängers / der Emfänger-Gruppe||
-|geocoding|Aktivieren des Geocodings|false|
-|geoRegex|Regex Capture-Group zum Herausfiltern der Adresse||
-|geoApiProvider|Der Provider für das Geocoding||
-|geoApiToken|Der Api-Token fuer die Geocoding-Api||
-
-#### Verfügbare Geocoding Provider
-
-|Name|Einstellungswert|
-|----|------------|
-|Mapbox|mapbox|
-|Google Maps|google|
+|chatIds|Liste mit Chat-Ids der Empfängers / der Emfänger-Gruppen||
 
 **Beispiel:**
 ```yaml
@@ -41,19 +23,15 @@ Außerdem unterstützt das Plugin das Versenden von Location über folgende geoc
     name: Telegram Plugin
     res: telegram
     config:
-      botToken: {{ Telegram Bot Token }}
-      chatId: {{ Telegram Chat Id }}
-      geocoding: true
-      geoRegex: ((?:[^ ]*,)*?)
-      geoApiProvider: mapbox
-      geoApiToken: {{ Mapbox Api Key }}
+      botToken: "{{ Telegram Bot Token }}"
+      chatIds: 
+        - "{{ Telegram Chat Id }}"
 ```
 
 ---
 ## Abhängigkeiten
 
 - python-telegram-bot
-- geocoder
 
 ---
 ## Paket Modifikationen

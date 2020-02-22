@@ -21,6 +21,7 @@ nav:
       - Mode Filter: modul/mode_filter.md
       - Regex Filter: modul/regex_filter.md
       - Descriptor: modul/descriptor.md
+      - Geocoding: modul/geocoding.md
   - Plugins:
       - Telegram: plugin/telegram.md
   - Entwickler:
