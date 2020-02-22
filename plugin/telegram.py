@@ -36,24 +36,26 @@ class BoswatchPlugin(PluginBase):
     def onLoad(self):
         """!Called by import of the plugin"""
         self.bot = telegram.Bot(token=self.config.get("botToken", default=""))
-        pass
 
     def pocsag(self, bwPacket):
         """!Called on POCSAG alarm
 
         @param bwPacket: bwPacket instance"""
         msg = bwPacket.get("ric") + " (" + bwPacket.get("subric") + ")\n" + bwPacket.get("message")
-        if bwPacket.get("lat") is not None and bwPacket.get("lng") is not None:
-            (lat, lng) = (bwPacket.get("lat"), bwPacket.get("lng"))
+        if bwPacket.get("lat") is not None and bwPacket.get("lon") is not None:
+            logging.info("Found coordinates in packet")
+            (lat, lon) = (bwPacket.get("lat"), bwPacket.get("lon"))
         
         for chatId in self.config.get("chatIds", default=[]):
             try:
                 # Send Message via Telegram
+                logging.info("Sending message to " + chatId)
                 self.bot.send_message(chat_id=chatId, text=msg)
                 
-                # Send Location via Telegram if lat and lng are defined
-                if lat is not None and lng is not None:
-                    self.bot.sendLocation(chat_id=chatId, latitude=lat, longitude=lng)
+                # Send Location via Telegram if lat and lon are defined
+                if lat is not None and lon is not None:
+                    logging.info("Sending location to " + chatId)
+                    self.bot.sendLocation(chat_id=chatId, latitude=lat, longitude=lon)
             except Unauthorized:
                 logging.error("Error while sending Telegram Message, please Check your api-key")
             except (TimedOut, NetworkError):
@@ -62,4 +64,3 @@ class BoswatchPlugin(PluginBase):
                 logging.error("Error while sending Telegram Message")
             except Exception as e:
                 logging.error("Unknown Error while sending Telegram Message: " + str(type(e).__name__) + ": " + str(e))
-        pass

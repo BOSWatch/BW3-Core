@@ -10,7 +10,7 @@
                      by Bastian Schroll
 
 @file:        geocoding.py
-@date:        01.03.2019
+@date:        22.02.2020
 @author:      Jan Speller
 @description: Geocoding Module
 """
@@ -38,7 +38,6 @@ class BoswatchModule(ModuleBase):
         @param bwPacket: A BOSWatch packet instance"""
         if bwPacket.get("mode") == "pocsag":
             self.geocode(bwPacket)
-            pass
 
         return bwPacket
 
@@ -49,24 +48,24 @@ class BoswatchModule(ModuleBase):
         try:
             address = re.search(self.config.get("regex"), bwPacket.get("message"))[1]
             provider = self.config.get("apiProvider")
+
+            logging.info("Found address: '" + address + "' in packet")
             if "mapbox" == provider:
+                logging.info("Using Mapbox as provider")
                 g = geocoder.mapbox(address, key=self.config.get("apiToken"))
-                print(address)
             elif "google" == provider:
+                logging.info("Using Google as provider")
                 g = geocoder.google(address, key=self.config.get("apiToken"))
             else:
                 return bwPacket
 
-            (lat, lng) = g.latlng
+            (lat, lon) = g.latlng
+            logging.info("Found following coordinates for address: [lat=" + str(lat) + ", lon=" + str(lon) + "]")
             bwPacket.set("lat", lat)
-            bwPacket.set("lng", lng)
+            bwPacket.set("lon", lon)
             return bwPacket
         except (IndexError, TypeError, ValueError):
             logging.warning("Address was not found in current Message, skipping geocoding")
         except Exception as e:
             logging.error("Unknown Error while executing geocoding module: " + str(type(e).__name__) + ": " + str(e))
         return bwPacket
-
-    def onUnload(self):
-        """!Called by destruction of the plugin"""
-        pass

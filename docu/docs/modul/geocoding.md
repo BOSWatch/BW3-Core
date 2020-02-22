@@ -45,7 +45,7 @@ geoRegex|Regex Capture-Group zum Herausfiltern der Adresse|
 ---
 ## Paket Modifikationen
 
-- Im Paket werden die Felder `lat` und `lng` hinterlegt
+- Im Paket werden die Felder `lat` und `lon` hinterlegt
 
 ---
 ## Zusätzliche Wildcards
