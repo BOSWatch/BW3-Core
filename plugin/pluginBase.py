@@ -189,4 +189,4 @@ class PluginBase(ABC):
         if self._bwPacket is None:
             logging.warning("wildcard replacing not allowed - no bwPacket set")
             return msg
-        return wildcard.replaceWildcards(self._bwPacket, msg)
+        return wildcard.replaceWildcards(msg, self._bwPacket)
