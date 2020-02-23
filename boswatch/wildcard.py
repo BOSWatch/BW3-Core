@@ -52,51 +52,53 @@ def replaceWildcards(message, bwPacket):
 
         # info wildcards
         # server
-        "{SNAME}": bwPacket.getField("serverName"),
-        "{SVERS}": bwPacket.getField("serverVersion"),
-        "{SDATE}": bwPacket.getField("serverBuildDate"),
-        "{SBRCH}": bwPacket.getField("serverBranch"),
+        "{SNAME}": bwPacket.get("serverName"),
+        "{SVERS}": bwPacket.get("serverVersion"),
+        "{SDATE}": bwPacket.get("serverBuildDate"),
+        "{SBRCH}": bwPacket.get("serverBranch"),
 
         # client
-        "{CNAME}": bwPacket.getField("clientName"),
-        "{CIP}": bwPacket.getField("clientIP"),
-        "{CVERS}": bwPacket.getField("clientVersion"),
-        "{CDATE}": bwPacket.getField("clientBuildDate"),
-        "{CBRCH}": bwPacket.getField("clientBranch"),
+        "{CNAME}": bwPacket.get("clientName"),
+        "{CIP}": bwPacket.get("clientIP"),
+        "{CVERS}": bwPacket.get("clientVersion"),
+        "{CDATE}": bwPacket.get("clientBuildDate"),
+        "{CBRCH}": bwPacket.get("clientBranch"),
 
         # boswatch wildcards
-        "{INSRC}": bwPacket.getField("mode"),
-        "{TIMES}": bwPacket.getField("mode"),
-        "{FREQ}": bwPacket.getField("frequency"),
-        "{MODE}": bwPacket.getField("mode"),
+        "{INSRC}": bwPacket.get("mode"),
+        "{TIMES}": bwPacket.get("mode"),
+        "{FREQ}": bwPacket.get("frequency"),
+        "{MODE}": bwPacket.get("mode"),
 
         # fms wildcards
-        "{FMS}": bwPacket.getField("fms"),
-        "{SERV}": bwPacket.getField("service"),
-        "{COUNT}": bwPacket.getField("country"),
-        "{LOC}": bwPacket.getField("location"),
-        "{VEHC}": bwPacket.getField("vehicle"),
-        "{STAT}": bwPacket.getField("status"),
-        "{DIR}": bwPacket.getField("direction"),
-        "{DIRT}": bwPacket.getField("dirextionText"),
-        "{TACI}": bwPacket.getField("tacticalInfo"),
+        "{FMS}": bwPacket.get("fms"),
+        "{SERV}": bwPacket.get("service"),
+        "{COUNT}": bwPacket.get("country"),
+        "{LOC}": bwPacket.get("location"),
+        "{VEHC}": bwPacket.get("vehicle"),
+        "{STAT}": bwPacket.get("status"),
+        "{DIR}": bwPacket.get("direction"),
+        "{DIRT}": bwPacket.get("dirextionText"),
+        "{TACI}": bwPacket.get("tacticalInfo"),
 
         # pocsag wildcards
-        "{BIT}": bwPacket.getField("bitrate"),
-        "{RIC}": bwPacket.getField("ric"),
-        "{SRIC}": bwPacket.getField("subric"),
-        "{SRICT}": bwPacket.getField("subricText"),
-        "{MSG}": bwPacket.getField("message"),
+        "{BIT}": bwPacket.get("bitrate"),
+        "{RIC}": bwPacket.get("ric"),
+        "{SRIC}": bwPacket.get("subric"),
+        "{SRICT}": bwPacket.get("subricText"),
+        "{MSG}": bwPacket.get("message"),
 
         # zvei wildcards
-        "{TONE}": bwPacket.getField("tone"),
+        "{TONE}": bwPacket.get("tone"),
 
         # message for MSG packet is done in poc
     }
     for wildcard, field in _wildcards.items():
-        message = message.replace(wildcard, field)
+        if field is not None:
+            message = message.replace(wildcard, field)
 
     for wildcard, field in _additionalWildcards.items():
-        message = message.replace(wildcard, bwPacket.getField(field))
+        if field is not None:
+            message = message.replace(wildcard, bwPacket.getField(field))
 
     return message
