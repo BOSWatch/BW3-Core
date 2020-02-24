@@ -50,7 +50,7 @@ class BoswatchModule(ModuleBase):
             provider = self.config.get("apiProvider")
 
             if addressArray[1] is None:
-                logging.warning("Address was not found in current Message, skipping geocoding")
+                logging.info("No address found, skipping geocoding")
                 return bwPacket
 
             address = addressArray[1]
