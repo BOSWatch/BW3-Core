@@ -41,9 +41,9 @@ class BoswatchPlugin(PluginBase):
         """!Called on POCSAG alarm
 
         @param bwPacket: bwPacket instance"""
-        msg = bwPacket.get("ric") + " (" + bwPacket.get("subric") + ")\n" + bwPacket.get("message")
+        msg = self.parseWildcards(self.config.get("message"))
         if bwPacket.get("lat") is not None and bwPacket.get("lon") is not None:
-            logging.info("Found coordinates in packet")
+            logging.debug("Found coordinates in packet")
             (lat, lon) = (bwPacket.get("lat"), bwPacket.get("lon"))
         
         for chatId in self.config.get("chatIds", default=[]):

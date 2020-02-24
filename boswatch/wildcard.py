@@ -65,8 +65,8 @@ def replaceWildcards(message, bwPacket):
         "{CBRCH}": bwPacket.get("clientBranch"),
 
         # boswatch wildcards
-        "{INSRC}": bwPacket.get("mode"),
-        "{TIMES}": bwPacket.get("mode"),
+        "{INSRC}": bwPacket.get("inputSource"),
+        "{TIMES}": bwPacket.get("timestamp"),
         "{FREQ}": bwPacket.get("frequency"),
         "{MODE}": bwPacket.get("mode"),
 
@@ -78,7 +78,7 @@ def replaceWildcards(message, bwPacket):
         "{VEHC}": bwPacket.get("vehicle"),
         "{STAT}": bwPacket.get("status"),
         "{DIR}": bwPacket.get("direction"),
-        "{DIRT}": bwPacket.get("dirextionText"),
+        "{DIRT}": bwPacket.get("directionText"),
         "{TACI}": bwPacket.get("tacticalInfo"),
 
         # pocsag wildcards
@@ -99,6 +99,6 @@ def replaceWildcards(message, bwPacket):
 
     for wildcard, field in _additionalWildcards.items():
         if field is not None:
-            message = message.replace(wildcard, bwPacket.getField(field))
+            message = message.replace(wildcard, bwPacket.get(field))
 
     return message

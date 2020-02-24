@@ -40,7 +40,6 @@ geoRegex|Regex Capture-Group zum Herausfiltern der Adresse|
 ## Abhängigkeiten
 
 - geocoder
-- re
 
 ---
 ## Paket Modifikationen
@@ -50,4 +49,6 @@ geoRegex|Regex Capture-Group zum Herausfiltern der Adresse|
 ---
 ## Zusätzliche Wildcards
 
-- keine
+- `{ADDRESS}`: gefundene Adresse
+- `{LAT}`: Latitude der Adresse
+- `{LON}`: Longitude der Adresse

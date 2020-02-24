@@ -46,10 +46,18 @@ class BoswatchModule(ModuleBase):
 
         @param bwPacket: A BOSWatch packet instance"""
         try:
-            address = re.search(self.config.get("regex"), bwPacket.get("message"))[1]
+            addressArray = re.search(self.config.get("regex"), bwPacket.get("message"))
             provider = self.config.get("apiProvider")
 
+            if addressArray[1] is None:
+                logging.warning("Address was not found in current Message, skipping geocoding")
+                return bwPacket
+
+            address = addressArray[1]
+            bwPacket.set("address", address)
+            self.registerWildcard("{ADDRESS}", "address")
             logging.info("Found address: '" + address + "' in packet")
+
             if "mapbox" == provider:
                 logging.info("Using Mapbox as provider")
                 g = geocoder.mapbox(address, key=self.config.get("apiToken"))
@@ -63,9 +71,10 @@ class BoswatchModule(ModuleBase):
             logging.info("Found following coordinates for address: [lat=" + str(lat) + ", lon=" + str(lon) + "]")
             bwPacket.set("lat", lat)
             bwPacket.set("lon", lon)
+            self.registerWildcard("{LAT}", "lat")
+            self.registerWildcard("{LON}", "lon")
+
             return bwPacket
-        except (IndexError, TypeError, ValueError):
-            logging.warning("Address was not found in current Message, skipping geocoding")
         except Exception as e:
             logging.error("Unknown Error while executing geocoding module: " + str(type(e).__name__) + ": " + str(e))
         return bwPacket

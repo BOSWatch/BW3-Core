@@ -16,6 +16,7 @@ Außerdem werden Locations versenden, wenn die Felder `lat` und `lon` im Paket d
 
 |Feld|Beschreibung|Default|
 |----|------------|-------|
+|message|Format der Nachricht||
 |botToken|Der Api-Key des Telegram-Bots||
 |chatIds|Liste mit Chat-Ids der Empfängers / der Emfänger-Gruppen||
 
@@ -25,6 +26,7 @@ Außerdem werden Locations versenden, wenn die Felder `lat` und `lon` im Paket d
     name: Telegram Plugin
     res: telegram
     config:
+      message: "{RIC}({SRIC})\n{MSG}"
       botToken: "{{ Telegram Bot Token }}"
       chatIds: 
         - "{{ Telegram Chat Id }}"
@@ -34,13 +36,3 @@ Außerdem werden Locations versenden, wenn die Felder `lat` und `lon` im Paket d
 ## Abhängigkeiten
 
 - python-telegram-bot
-
----
-## Paket Modifikationen
-
-- keine
-
----
-## Zusätzliche Wildcards
-
-- keine
