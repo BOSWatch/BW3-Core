@@ -4,9 +4,6 @@
 ## Beschreibung
 Mit diesem Modul können einem Paket die Koordinaten eines Ortes oder einer Adresse angefügt werden.
 
-## Externe Abhängigkeiten
-- geocoder
-
 ## Unterstützte Alarmtypen
 - Pocsag
 
@@ -14,7 +11,6 @@ Mit diesem Modul können einem Paket die Koordinaten eines Ortes oder einer Adre
 `geocoding`
 
 ## Konfiguration
-
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 apiProvider|Der Provider für das Geocoding|
@@ -22,7 +18,6 @@ apiToken|Der Api-Token fuer die Geocoding-Api|
 geoRegex|Regex Capture-Group zum Herausfiltern der Adresse|
 
 #### Verfügbare Geocoding Provider
-
 |Name|Einstellungswert|
 |----|------------|
 |Mapbox|mapbox|
@@ -40,20 +35,21 @@ geoRegex|Regex Capture-Group zum Herausfiltern der Adresse|
 ```
 
 ---
-## Abhängigkeiten
-
+## Modul Abhängigkeiten
 - keine
 
 ---
-## Paket Modifikationen
+## Externe Abhängigkeiten
+- geocoder
 
+---
+## Paket Modifikationen
 - `address`: gefundene Adresse
 - `lat`: Latitude der Adresse
 - `lon`: Longitude der Adresse
 
 ---
 ## Zusätzliche Wildcards
-
 - `{ADDRESS}`: gefundene Adresse
 - `{LAT}`: Latitude der Adresse
 - `{LON}`: Longitude der Adresse

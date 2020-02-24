@@ -15,18 +15,22 @@ Folgendes gilt:
 
 Vereinfacht kann man sagen, dass einzelnen Router ODER-verknüpft und die jeweiligen Checks UND-verknüpft sind.
 
+## Unterstütze Alarmtypen
+- Fms
+- Pocsag
+- Zvei
+- Msg
+
 ## Resource
 `filter.regexFilter`
 
 ## Konfiguration
-
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |name|Beliebiger Name des Filters||
 |checks|Liste der einzelnen Checks innerhalb des Filters||
 
 #### `checks:`
-
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |field|Name des Feldes innerhalb des BOSWatch Pakets welches untersucht werden soll||
@@ -50,16 +54,17 @@ Vereinfacht kann man sagen, dass einzelnen Router ODER-verknüpft und die jeweil
 ```
 
 ---
-## Abhängigkeiten
+## Modul Abhängigkeiten
+- keine
 
+---
+## Externe Abhängigkeiten
 - keine
 
 ---
 ## Paket Modifikationen
-
 - keine
 
 ---
 ## Zusätzliche Wildcards
-
 - keine

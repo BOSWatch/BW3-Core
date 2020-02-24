@@ -5,10 +5,6 @@
 Mit diesem Plugin ist es moeglich, Http-Anfragen für Alarmierungen zu senden.
 Wildcards in den Urls werden automatisch ersetzt.
 
-## Externe Abhängigkeiten
-- asyncio
-- aiohttp
-
 ## Unterstütze Alarmtypen
 - Fms
 - Pocsag
@@ -19,7 +15,6 @@ Wildcards in den Urls werden automatisch ersetzt.
 `http`
 
 ## Konfiguration
-
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |fms|Liste mit Urls für Fms-Alarmierung||
@@ -41,6 +36,10 @@ Wildcards in den Urls werden automatisch ersetzt.
 ```
 
 ---
-## Abhängigkeiten
-
+## Modul Abhängigkeiten
 - keine
+
+---
+## Externe Abhängigkeiten
+- asyncio
+- aiohttp
