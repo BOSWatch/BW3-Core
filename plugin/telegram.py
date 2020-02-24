@@ -57,10 +57,10 @@ class BoswatchPlugin(PluginBase):
                     logging.info("Sending location to " + chatId)
                     self.bot.sendLocation(chat_id=chatId, latitude=lat, longitude=lon)
             except Unauthorized:
-                logging.error("Error while sending Telegram Message, please Check your api-key")
+                logging.exception("Error while sending Telegram Message, please Check your api-key")
             except (TimedOut, NetworkError):
-                logging.error("Error while sending Telegram Message, please Check your connectivity")
+                logging.exception("Error while sending Telegram Message, please Check your connectivity")
             except (BadRequest, TelegramError):
-                logging.error("Error while sending Telegram Message")
+                logging.exception("Error while sending Telegram Message")
             except Exception as e:
-                logging.error("Unknown Error while sending Telegram Message: " + str(type(e).__name__) + ": " + str(e))
+                logging.exception("Unknown Error while sending Telegram Message: " + str(type(e).__name__) + ": " + str(e))

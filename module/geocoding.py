@@ -76,5 +76,5 @@ class BoswatchModule(ModuleBase):
 
             return bwPacket
         except Exception as e:
-            logging.error("Unknown Error while executing geocoding module: " + str(type(e).__name__) + ": " + str(e))
+            logging.exception("Unknown Error while executing geocoding module: " + str(type(e).__name__) + ": " + str(e))
         return bwPacket

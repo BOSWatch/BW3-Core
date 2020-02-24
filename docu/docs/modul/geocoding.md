@@ -4,8 +4,11 @@
 ## Beschreibung
 Mit diesem Modul können einem Paket die Koordinaten eines Ortes oder einer Adresse angefügt werden.
 
+## Externe Abhängigkeiten
+- geocoder
+
 ## Unterstützte Alarmtypen
- - Pocsag
+- Pocsag
 
 ## Resource
 `geocoding`
@@ -39,7 +42,7 @@ geoRegex|Regex Capture-Group zum Herausfiltern der Adresse|
 ---
 ## Abhängigkeiten
 
-- geocoder
+- keine
 
 ---
 ## Paket Modifikationen
