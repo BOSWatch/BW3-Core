@@ -32,41 +32,6 @@ class BoswatchPlugin(PluginBase):
         """!Do not change anything here!"""
         super().__init__(__name__, config)  # you can access the config class on 'self.config'
 
-    async def fetch(self, url, session):
-        """Fetches requests
-
-        @param url: url
-
-        @param session: Clientsession instance"""
-        async with session.get(url) as response:
-            logging.info("{} returned [{}]".format(response.url, response.status))
-            return await response.read()
-
-    async def asyncRequests(self, urls):
-        """Handles asynchronus requests
-
-        @param urls: array of urls to send requests to"""
-        tasks = []
-
-        async with ClientSession() as session:
-            for url in urls:
-                task = asyncio.ensure_future(self.fetch(url, session))
-                tasks.append(task)
-
-            responses = asyncio.gather(*tasks)
-            await responses
-
-    def makeRequests(self, urls):
-        """Parses wildcard urls and handles asynchronus requests
-
-        @param urls: array of urls"""
-        urls = [self.parseWildcards(url) for url in urls]
-
-        loop = asyncio.get_event_loop()
-
-        future = asyncio.ensure_future(self.asyncRequests(urls))
-        loop.run_until_complete(future)
-
     def fms(self, bwPacket):
         """!Called on FMS alarm
 
@@ -98,3 +63,38 @@ class BoswatchPlugin(PluginBase):
         Remove if not implemented"""
         urls = self.config.get("msg")
         self.makeRequests(urls)
+
+    def makeRequests(self, urls):
+        """Parses wildcard urls and handles asynchronus requests
+
+        @param urls: array of urls"""
+        urls = [self.parseWildcards(url) for url in urls]
+
+        loop = asyncio.get_event_loop()
+
+        future = asyncio.ensure_future(self.asyncRequests(urls))
+        loop.run_until_complete(future)
+
+    async def asyncRequests(self, urls):
+        """Handles asynchronus requests
+
+        @param urls: array of urls to send requests to"""
+        tasks = []
+
+        async with ClientSession() as session:
+            for url in urls:
+                task = asyncio.ensure_future(self.fetch(url, session))
+                tasks.append(task)
+
+            responses = asyncio.gather(*tasks)
+            await responses
+
+    async def fetch(self, url, session):
+        """Fetches requests
+
+        @param url: url
+
+        @param session: Clientsession instance"""
+        async with session.get(url) as response:
+            logging.info("{} returned [{}]".format(response.url, response.status))
+            return await response.read()
