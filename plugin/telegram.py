@@ -45,13 +45,13 @@ class BoswatchPlugin(PluginBase):
         if bwPacket.get("lat") is not None and bwPacket.get("lon") is not None:
             logging.debug("Found coordinates in packet")
             (lat, lon) = (bwPacket.get("lat"), bwPacket.get("lon"))
-        
+
         for chatId in self.config.get("chatIds", default=[]):
             try:
                 # Send Message via Telegram
                 logging.info("Sending message to " + chatId)
                 self.bot.send_message(chat_id=chatId, text=msg)
-                
+
                 # Send Location via Telegram if lat and lon are defined
                 if lat is not None and lon is not None:
                     logging.info("Sending location to " + chatId)
