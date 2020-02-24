@@ -37,4 +37,6 @@ Außerdem werden Locations versenden, wenn die Felder `lat` und `lon` im Paket d
 ---
 ## Abhängigkeiten
 
-- keine
+- Modul geocoding (Falls in Paket vorhanden):
+  - `lat`
+  - `lon`
