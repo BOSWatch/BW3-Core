@@ -42,7 +42,7 @@ class ZveiDecoder:
 
             bwPacket = Packet()
             bwPacket.set("mode", "zvei")
-            bwPacket.set("zvei", ZveiDecoder._solveDoubleTone(data[7:12]))
+            bwPacket.set("tone", ZveiDecoder._solveDoubleTone(data[7:12]))
 
             return bwPacket
 
