@@ -16,6 +16,11 @@
 """
 # pylint: disable=wrong-import-position
 # pylint: disable=wrong-import-order
+
+import sys
+major_version = sys.version_info.major
+assert major_version >= 3, "please use python3 to run BosWatch 3"
+
 from boswatch.utils import paths
 
 if not paths.makeDirIfNotExist(paths.LOG_PATH):
