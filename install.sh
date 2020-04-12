@@ -79,16 +79,6 @@ boswatchpath=/opt/boswatch3
 reboot=false
 didBackup=false
 
-# check for old version (for the old ones...:-)
-if [ -f $boswatchpath/BOSWatch/bw_client.py ]; then
-	echo "Old installation found!"
-	echo "A backup will be copied to $boswatchpath/old"
-
-	mkdir /tmp/boswatch
-	mv $boswatchpath/BOSWatch/* /tmp/boswatch/
-	didBackup=true
-fi
-
 #and the future...
 if [ -f $boswatchpath/bw_client.py ]; then
 	echo "Old installation found!"
@@ -125,36 +115,36 @@ mkdir -p $boswatchpath/install
 echo ""
 
 tput cup 13 15
-echo "[ 1/10] [#---------]"
+echo "[ 1/9] [#--------]"
 tput cup 15 5
 echo "-> make an apt-get update................"
 apt-get update -y > $boswatchpath/install/setup_log.txt 2>&1
 
 tput cup 13 15
-echo "[ 2/10] [##--------]"
+echo "[ 2/9] [##-------]"
 tput cup 15 5
 echo "-> download GIT and other stuff.........."
 apt-get -y install git cmake build-essential libusb-1.0 qt4-qmake qt4-default libpulse-dev libx11-dev sox >> $boswatchpath/install/setup_log.txt 2>&1
 exitcodefunction $? download stuff
 
 tput cup 13 15
-echo "[ 3/10] [###-------]"
+echo "[ 3/9] [###------]"
 tput cup 15 5
-echo "-> download Python, Yamil and other stuff.."
+echo "-> download Python, Yaml and other stuff.."
 sudo apt-get -y install python3 python3-yaml >> $boswatchpath/install/setup_log.txt 2>&1
 exitcodefunction $? download python
 
 tput cup 13 15
-echo "[ 4/10] [####------]"
+echo "[ 4/9] [####-----]"
 tput cup 15 5
 echo "-> download rtl_fm........................."
 cd $boswatchpath/install
-git clone https://github.com/Schrolli91/rtl-sdr.git >> $boswatchpath/install/setup_log.txt 2>&1
+git clone https://github.com/osmocom/rtl-sdr.git rtl-sdr >> $boswatchpath/install/setup_log.txt 2>&1
 exitcodefunction $? git-clone rtl-sdr
-cd rtl-sdr/
+cd $boswatchpath/install/rtl-sdr/
 
 tput cup 13 15
-echo "[ 5/10] [#####-----]"
+echo "[ 5/9] [#####----]"
 tput cup 15 5
 echo "-> compile rtl_fm......................"
 mkdir -p build && cd build
@@ -171,17 +161,17 @@ ldconfig >> $boswatchpath/install/setup_log.txt 2>&1
 exitcodefunction $? ldconfig rtl-sdr
 
 tput cup 13 15
-echo "[ 6/10] [######----]"
+echo "[ 6/9] [######---]"
 tput cup 15 5
 echo "-> download multimon-ng................"
 cd $boswatchpath/install
-git clone https://github.com/Schrolli91/multimon-ng.git multimonNG >> $boswatchpath/install/setup_log.txt 2>&1
+git clone https://github.com/EliasOenal/multimon-ng.git multimonNG >> $boswatchpath/install/setup_log.txt 2>&1
 exitcodefunction $? git-clone multimonNG
 
 cd $boswatchpath/install/multimonNG/
 
 tput cup 13 15
-echo "[ 7/10] [#######---]"
+echo "[ 7/9] [#######--]"
 tput cup 15 5
 echo "-> compile multimon-ng................."
 mkdir -p build
@@ -196,17 +186,7 @@ make install >> $boswatchpath/install/setup_log.txt 2>&1
 exitcodefunction $? qmakeinstall multimonNG
 
 tput cup 13 15
-echo "[ 8/10] [########--]"
-tput cup 15 5
-echo "-> Platzhalter ?"
-#echo "-> install MySQL connector for Python.."
-# chmod +x ./setup.py
-# ./setup.py install >> $boswatchpath/install/setup_log.txt 2>&1
-exitcodefunction $? setup mysql-connector
-
-
-tput cup 13 15
-echo "[ 9/10] [#########-]"
+echo "[ 8/9] [########-]"
 tput cup 15 5
 echo "-> download BOSWatch3.................."
 cd $boswatchpath/
@@ -219,7 +199,7 @@ case $branch in
 esac
 
 tput cup 13 15
-echo "[10/10] [##########]"
+echo "[9/9] [#########]"
 tput cup 15 5
 echo "-> configure..........................."
 cd $boswatchpath/
@@ -236,8 +216,9 @@ echo "Watch out: to run BOSWatch3 you have to modify the server.yaml and client.
 echo "Do the following step to do so:"
 echo "sudo nano $boswatchpath/config/client.yaml   eg. server.yaml"
 echo "and modify the config as you need. This step is optional if you are upgrading an old version of BOSWatch3."
+echo "You can read the instructions on https://docs.boswatch.de/"
 tput setaf 1 # Rote Schrift
-echo "Please REBOOT bevor starting"
+echo "Please REBOOT bevor the first start"
 tput setaf 9 # Schrift zurücksetzen
 echo "start Boswatch3 with"
 echo "sudo python3 bw_client.py -c client.yaml   and    sudo python3 bw_server.py -c server.yaml"
