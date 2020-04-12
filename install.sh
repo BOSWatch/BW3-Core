@@ -74,7 +74,6 @@ echo "This may take several minutes... Don't panic!"
 echo ""
 echo "Caution, script does not install a webserver with PHP and MySQL"
 echo "So you have to make up manually if you want to use MySQL support"
-echo " keine Ahnung ob MySQL gebraucht wird"
 
 boswatchpath=/opt/boswatch3
 reboot=false
