@@ -26,9 +26,9 @@ Außerdem werden Locations versendet, wenn die Felder `lat` und `lon` im Paket d
     res: telegram
     config:
       message: "{RIC}({SRIC})\n{MSG}"
-      botToken: "{{ Telegram Bot Token }}"
-      chatIds: 
-        - "{{ Telegram Chat Id }}"
+      botToken: "BOT_TOKEN"
+      chatIds:
+        - "CHAT_ID"
 ```
 
 ---
