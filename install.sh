@@ -128,7 +128,7 @@ echo "[ 4/9] [####-----]"
 tput cup 15 5
 echo "-> download rtl_fm........................."
 cd $boswatchpath/install
-git clone --branch v0.5.3 https://github.com/Schrolli91/rtl-sdr.git rtl-sdr >> $boswatchpath/install/setup_log.txt 2>&1
+git clone --branch v0.5.4 https://github.com/osmocom/rtl-sdr.git rtl-sdr >> $boswatchpath/install/setup_log.txt 2>&1
 exitcodefunction $? git-clone rtl-sdr
 cd $boswatchpath/install/rtl-sdr/
 
@@ -154,7 +154,7 @@ echo "[ 6/9] [######---]"
 tput cup 15 5
 echo "-> download multimon-ng................"
 cd $boswatchpath/install
-git clone --branch 1.1.0 https://github.com/Schrolli91/multimon-ng.git multimonNG >> $boswatchpath/install/setup_log.txt 2>&1
+git clone --branch 1.1.8 https://github.com/EliasOenal/multimon-ng.git multimonNG >> $boswatchpath/install/setup_log.txt 2>&1
 exitcodefunction $? git-clone multimonNG
 
 cd $boswatchpath/install/multimonNG/
