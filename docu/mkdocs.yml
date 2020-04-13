@@ -18,10 +18,13 @@ nav:
        - Routing Mechanismus: information/router.md
        - Changelog: changelog.md
   - Module:
+      - Descriptor: modul/descriptor.md
+      - Geocoding: modul/geocoding.md
       - Mode Filter: modul/mode_filter.md
       - Regex Filter: modul/regex_filter.md
-      - Descriptor: modul/descriptor.md
-  - Plugins: tbd.md
+  - Plugins:
+      - Http: plugin/http.md
+      - Telegram: plugin/telegram.md
   - Entwickler:
     - Eigenes Modul/Plugin schreiben: develop/ModulPlugin.md
     - BOSWatch Alarmpaket Format: develop/packet.md

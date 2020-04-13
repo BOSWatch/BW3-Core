@@ -4,11 +4,16 @@
 ## Beschreibung
 Mit diesem Modul ist es möglich, die Pakete auf bestimmte Modes (FMS, POCSAG, ZVEI) zu Filtern. Je nach Konfiguration werden Pakete eines bestimmten Modes im aktuellen Router weitergeleitet oder verworfen.
 
+## Unterstütze Alarmtypen
+- Fms
+- Pocsag
+- Zvei
+- Msg
+
 ## Resource
 `filter.modeFilter`
 
 ## Konfiguration
-
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |allowed|Liste der erlaubten Paket Typen `fms` `zvei` `pocsag` `msg`||
@@ -24,16 +29,18 @@ Mit diesem Modul ist es möglich, die Pakete auf bestimmte Modes (FMS, POCSAG, Z
 ```
 
 ---
-## Abhängigkeiten
+## Modul Abhängigkeiten
+- keine
 
+---
+## Externe Abhängigkeiten
 - keine
 
 ---
 ## Paket Modifikationen
-
 - keine
 
 ---
 ## Zusätzliche Wildcards
-
 - keine
+

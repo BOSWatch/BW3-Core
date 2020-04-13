@@ -4,11 +4,16 @@
 ## Beschreibung
 Mit diesem Modul können einem Alarmpaket beliebige Beschreibungen in Abhänigkeit der enthaltenen Informationen hinzugefügt werden.
 
+## Unterstütze Alarmtypen
+- Fms
+- Pocsag
+- Zvei
+- Msg
+
 ## Resource
 `descriptor`
 
 ## Konfiguration
-
 Informationen zum Aufbau eines [BOSWatch Pakets](../develop/packet.md)
 
 |Feld|Beschreibung|Default|
@@ -19,7 +24,6 @@ Informationen zum Aufbau eines [BOSWatch Pakets](../develop/packet.md)
 |descriptions|Liste der Beschreibungen||
 
 #### `descriptions:`
-
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |for|Inhalt im `scanField` auf welchem geprüft werden soll||
@@ -50,17 +54,18 @@ Informationen zum Aufbau eines [BOSWatch Pakets](../develop/packet.md)
 ```
 
 ---
-## Abhängigkeiten
+## Modul Abhängigkeiten
+- keine
 
+---
+## Externe Abhängigkeiten
 - keine
 
 ---
 ## Paket Modifikationen
-
 - Wenn im Paket das Feld `scanField` vorhanden ist, wird das Feld `descrField` dem Paket hinzugefügt
 - Wenn keine Beschreibung vorhanden ist, wird im Feld `descrField` der Inhalt des Feldes `scanField` hinterlegt
 
 ---
 ## Zusätzliche Wildcards
-
 - Von der Konfiguration abhängig
