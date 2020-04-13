@@ -208,7 +208,8 @@ echo $'# BOSWatch3 - blacklist the DVB drivers to avoid conflicts with the SDR d
 
 tput cup 17 1
 tput rev # Schrift zur besseren lesbarkeit Revers
-echo "BOSWatch is now installed in $boswatchpath/    Installation ready!"
+echo "BOSWatch is now installed in $boswatchpath/"
+echo "Installation ready!"
 tput sgr0 # Schrift wieder Normal
 tput cup 19 3
 echo "Watch out: to run BOSWatch3 you have to modify the server.yaml and client.yaml!"
