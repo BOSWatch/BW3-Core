@@ -77,17 +77,6 @@ echo "So you have to make up manually if you want to use MySQL support"
 
 boswatchpath=/opt/boswatch3
 reboot=false
-didBackup=false
-
-#and the future...
-if [ -f $boswatchpath/bw_client.py ]; then
-	echo "Old installation found!"
-	echo "A backup will be copied to $boswatchpath/old"
-
-	mkdir /tmp/boswatch
-	mv $boswatchpath/* /tmp/boswatch/
-	didBackup=true
-fi
 
 for (( i=1; i<=$#; i=$i+2 )); do
     t=$((i + 1))
@@ -232,13 +221,6 @@ rm $boswatchpath/install/ -R
 
 mv $boswatchpath/BW3-Core/* $boswatchpath/
 rm $boswatchpath/BW3-Core -R
-
-
-#replay the backup
-if [ $didBackup = "true" ]; then
-	mkdir $boswatchpath/old/
-	mv /tmp/boswatch/* $boswatchpath/old/
-fi
 
 if [ $reboot = "true" ]; then
   /sbin/reboot
