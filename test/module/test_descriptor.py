@@ -60,7 +60,13 @@ def test_descriptorFoundSecond(makeDescriptor, makePacket):
 
 
 def test_descriptorNotFound(makeDescriptor, makePacket):
-    """!Run descriptor on a non existent field"""
+    """!Run descriptor no matching data found"""
     makePacket.set("tone", "99999")
     makePacket = makeDescriptor.doWork(makePacket)
     assert makePacket.get("description") == "99999"
+
+
+def test_descriptorScanFieldNotAvailable(makeDescriptor, makePacket):
+    """!Run descriptor on a non existent scanField"""
+    makePacket = makeDescriptor.doWork(makePacket)
+    assert makePacket.get("description") == None
