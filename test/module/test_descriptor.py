@@ -69,4 +69,4 @@ def test_descriptorNotFound(makeDescriptor, makePacket):
 def test_descriptorScanFieldNotAvailable(makeDescriptor, makePacket):
     """!Run descriptor on a non existent scanField"""
     makePacket = makeDescriptor.doWork(makePacket)
-    assert makePacket.get("description") == None
+    assert makePacket.get("description") is None
