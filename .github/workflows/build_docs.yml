@@ -33,3 +33,4 @@ jobs:
         password: ${{ secrets.SCP_PASSWORD }}
         source: "docu/site/**"
         target: ${{ secrets.SCP_TARGET_PATH }}
+        strip_components: 2
