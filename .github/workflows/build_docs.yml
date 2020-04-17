@@ -25,3 +25,4 @@ jobs:
         mkdocs build -f docu/mkdocs.yml
 
     - name: Upload to docs-server
+      run: echo 'test'
