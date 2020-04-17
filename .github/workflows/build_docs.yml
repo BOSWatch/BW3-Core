@@ -25,4 +25,11 @@ jobs:
         python -m mkdocs build -f docu/mkdocs.yml
 
     - name: Upload to docs-server
-      run: echo 'test'
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SCP_HOST }}
+        port: ${{ secrets.SCP_PORT }}
+        username: ${{ secrets.SCP_USERNAME }}
+        password: ${{ secrets.SCP_PASSWORD }}
+        source: "docu/site/**"
+        target: ${{ secrets.SCP_TARGET_PATH }}
