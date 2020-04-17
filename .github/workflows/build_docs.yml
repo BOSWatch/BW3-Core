@@ -1,12 +1,6 @@
 name: build_docs
 
-#on: push
 on: [push, pull_request]
-  branches:
-  - master
-  - develop
-  paths:
-  - 'docu/**'
 
 jobs:
 
