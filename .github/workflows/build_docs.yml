@@ -1,0 +1,33 @@
+name: build_docs
+
+#on: push
+on: [push, pull_request]
+  branches:
+  - master
+  - develop
+  paths:
+  - 'docu/**'
+
+jobs:
+
+  build_docs:
+    name: Build documentation
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Build doxygen
+      uses: mattnotmitt/doxygen-action@v1
+      with:
+        working-directory: './'
+        doxyfile-path: 'docu/doxygen.ini'
+
+    - name: Build mkdocs
+      run: |
+        python -m pip install --upgrade pip
+        pip install mkdocs
+        mkdocs build -f docu/mkdocs.yml
+
+    - name: Upload to docs-server
