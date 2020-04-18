@@ -28,6 +28,9 @@ inputSource:
     gain: 100
     rtlPath: /usr/bin/rtl_fm
     mmPath: /opt/multimon/multimon-ng
+  lineIn:
+    device: 1
+    mmPath: /opt/multimon/multimon-ng
 
 decoder:
   fms: yes
