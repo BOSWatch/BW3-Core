@@ -42,6 +42,8 @@ class BoswatchModule(ModuleBase):
 
         @param bwPacket: A BOSWatch packet instance"""
         for descriptor in self.config:
+            if bwPacket.get(descriptor.get("scanField")) is None:
+                return bwPacket
             bwPacket.set(descriptor.get("descrField"), bwPacket.get(descriptor.get("scanField")))
             for description in descriptor.get("descriptions"):
                 if not bwPacket.get(descriptor.get("scanField")):
