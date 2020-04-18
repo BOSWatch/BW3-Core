@@ -1,6 +1,9 @@
 name: build_docs
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
 
