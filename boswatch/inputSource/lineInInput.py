@@ -29,7 +29,6 @@ class LineInInput(InputBase):
         lineInProc = None
         mmProc = None
         try:
-            # arecord -q -D plughw:0,0
             lineInProc = ProcessManager("arecord")
             lineInProc.addArgument("-q ")                                               # supress any other outputs
             lineInProc.addArgument("-f S16_LE")                                         # set output format (16bit)
@@ -70,7 +69,7 @@ class LineInInput(InputBase):
                     if line:
                         self.addToQueue(line)
         except:
-            logging.exception("error in sdr input routine")
+            logging.exception("error in lineIn input routine")
         finally:
             mmProc.stop()
             lineInProc.stop()
