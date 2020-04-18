@@ -33,7 +33,6 @@ class LineInInput(InputBase):
             lineInProc.addArgument("-q ")                                                               # supress any other outputs
             lineInProc.addArgument("-f S16_LE")                                                         # set output format (16bit)
             lineInProc.addArgument("-r 22050")                                                          # set output sampling rate (22050Hz)
-
             lineInProc.addArgument("-D plughw:" + str(lineInConfig.get("device", default="1")) + ",0")  # device id
 
             lineInProc.setStderr(open(paths.LOG_PATH + "asla.log", "a"))
