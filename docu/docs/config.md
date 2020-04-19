@@ -70,7 +70,7 @@ inputSource:
 
 **Device herausfinden**
 Durch eingabe des Befehls `aplay -l` werden alle Soundkarten ausgegeben. Das schaut ungefähr so aus:
-```
+```console
 **** List of PLAYBACK Hardware Devices ****
 card 0: ALSA [bcm2835 ALSA], device 0: bcm2835 ALSA [bcm2835 ALSA]
   Subdevices: 7/7
