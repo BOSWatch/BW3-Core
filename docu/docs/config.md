@@ -11,7 +11,7 @@ zwingend in die Konfiguration eingetragen werden.
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |name|Name zur Identifizierung der Client Instanz||
-|inputSource|Art der zu nutzenden Input Quelle (`sdr` oder `lineIn`)|sdr|
+|inputSource|Art der zu nutzenden Input Quelle (`sdr` oder `lineIn`)||
 |useBroadcast|Verbindungsdaten per [Broadcast](information/broadcast.md) beziehen|no|
 |reconnectDelay|Verzögerung für erneuten Verbindungsversuch zum Server|3|
 |sendTries|Anzahl der Sendeversuche eines Pakets|3|
@@ -92,15 +92,21 @@ card 1: Device [C-Media USB Audio Device], device 0: USB Audio [USB Audio]
   Subdevice #0: subdevice #0
 ```
 
-In dem Fall ist das letzte Gerät `card 1` unsere USB-Audio Schnittstelle die wir verwenden wollen.
-In der Konfiguration wird das Feld `device` nun auf den Wert 1 gesetzt. 
+Wir betrachten das letzte Gerät: `card 1: Device [C-Media USB Audio Device], device 0: USB Audio [USB Audio]`
+
+In dem Fall ist das letzte Gerät - `card 1` - unsere USB-Audio Schnittstelle die wir verwenden wollen.
+In der Konfiguration wird das Feld `card` nun auf den Wert 1 gesetzt.
+
+Nach dem Typ der Soundkarte steht das device, in diesem Fall `device 0`.
+In der Konfiguration wird das Feld `device` nun auf den Wert 0 gesetzt.
 
 **Beispiel:**
 ```yaml
 inputSource:
   ...
   lineIn:
-    device: 1
+    card: 1
+    device: 0
     mmPath: /opt/multimon/multimon-ng
 ```
 

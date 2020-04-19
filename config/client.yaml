@@ -29,7 +29,8 @@ inputSource:
     rtlPath: /usr/bin/rtl_fm
     mmPath: /opt/multimon/multimon-ng
   lineIn:
-    device: 1
+    card: 1
+    device: 0
     mmPath: /opt/multimon/multimon-ng
 
 decoder:
