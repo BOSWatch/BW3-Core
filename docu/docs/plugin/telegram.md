@@ -3,7 +3,7 @@
 
 ## Beschreibung
 Mit diesem Plugin ist es moeglich, Telegram-Nachrichten für POCSAG-Alarmierungen zu senden. 
-Außerdem werden Locations versenden, wenn die Felder `lat` und `lon` im Paket definiert sind. (beispielsweise durch das [Geocoding](../modul/geocoding.md) Modul)
+Außerdem werden Locations versendet, wenn die Felder `lat` und `lon` im Paket definiert sind. (beispielsweise durch das [Geocoding](../modul/geocoding.md) Modul)
 
 ## Unterstütze Alarmtypen
 - Pocsag
@@ -26,9 +26,9 @@ Außerdem werden Locations versenden, wenn die Felder `lat` und `lon` im Paket d
     res: telegram
     config:
       message: "{RIC}({SRIC})\n{MSG}"
-      botToken: "{{ Telegram Bot Token }}"
-      chatIds: 
-        - "{{ Telegram Chat Id }}"
+      botToken: "BOT_TOKEN"
+      chatIds:
+        - "CHAT_ID"
 ```
 
 ---

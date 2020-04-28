@@ -16,6 +16,11 @@
 """
 # pylint: disable=wrong-import-position
 # pylint: disable=wrong-import-order
+
+import sys
+major_version = sys.version_info.major
+assert major_version >= 3, "please use python3 to run BosWatch 3"
+
 from boswatch.utils import paths
 
 if not paths.makeDirIfNotExist(paths.LOG_PATH):
@@ -45,6 +50,7 @@ from boswatch.decoder.decoder import Decoder
 from boswatch.utils import header
 from boswatch.utils import misc
 from boswatch.inputSource.sdrInput import SdrInput
+from boswatch.inputSource.lineInInput import LineInInput
 
 header.logoToLog()
 header.infoToLog()
@@ -83,6 +89,8 @@ try:
         logging.debug("loading input source: %s", bwConfig.get("client", "inputSource"))
         if bwConfig.get("client", "inputSource") == "sdr":
             inputSource = SdrInput(inputQueue, bwConfig.get("inputSource", "sdr"), bwConfig.get("decoder"))
+        elif bwConfig.get("client", "inputSource") == "lineIn":
+            inputSource = LineInInput(inputQueue, bwConfig.get("inputSource", "lineIn"), bwConfig.get("decoder"))
         else:
             logging.fatal("Invalid input source: %s", bwConfig.get("client", "inputSource"))
             exit(1)
