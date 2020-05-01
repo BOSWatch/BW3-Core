@@ -43,7 +43,7 @@ class BoswatchPlugin(PluginBase):
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
         msg = self.parseWildcards(self.config.get("message_fms", default="{FMS}"))
-        _sendMessage(msg)
+        self._sendMessage(msg)
 
     def pocsag(self, bwPacket):
         """!Called on POCSAG alarm
@@ -64,7 +64,7 @@ class BoswatchPlugin(PluginBase):
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
         msg = self.parseWildcards(self.config.get("message_zvei", default="{TONE}"))
-        _sendMessage(msg)
+        self._sendMessage(msg)
 
     def msg(self, bwPacket):
         """!Called on MSG packet
@@ -72,7 +72,7 @@ class BoswatchPlugin(PluginBase):
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
         msg = self.parseWildcards(self.config.get("message_msg"))
-        _sendMessage(msg)
+        self._sendMessage(msg)
 
     def _sendMessage(self, message):
         for chatId in self.config.get("chatIds", default=[]):
