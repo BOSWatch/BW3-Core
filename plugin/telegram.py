@@ -1,4 +1,3 @@
-??? from here until ???END lines may have been inserted/deleted
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """!
