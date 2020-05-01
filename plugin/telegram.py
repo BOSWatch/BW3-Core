@@ -1,3 +1,4 @@
+??? from here until ???END lines may have been inserted/deleted
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """!
@@ -56,6 +57,24 @@ class BoswatchPlugin(PluginBase):
                 if lat is not None and lon is not None:
                     logging.info("Sending location to " + chatId)
                     self.bot.sendLocation(chat_id=chatId, latitude=lat, longitude=lon)
+            except Unauthorized:
+                logging.exception("Error while sending Telegram Message, please Check your api-key")
+            except (TimedOut, NetworkError):
+                logging.exception("Error while sending Telegram Message, please Check your connectivity")
+            except (BadRequest, TelegramError):
+                logging.exception("Error while sending Telegram Message")
+            except Exception as e:
+                logging.exception("Unknown Error while sending Telegram Message: " + str(type(e).__name__) + ": " + str(e))
+
+    def zvei(self, bwPacket):
+        """!Called on ZVEI alarm
+        @param bwPacket: bwPacket instance"""
+        msg = self.parseWildcards(self.config.get("message"))
+        for chatId in self.config.get("chatIds", default=[]):
+            try:
+                # Send Message via Telegram
+                logging.info("Sending message to " + chatId)
+                self.bot.send_message(chat_id=chatId, text=msg)
             except Unauthorized:
                 logging.exception("Error while sending Telegram Message, please Check your api-key")
             except (TimedOut, NetworkError):
