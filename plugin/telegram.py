@@ -67,8 +67,7 @@ class BoswatchPlugin(PluginBase):
     def msg(self, bwPacket):
         """!Called on MSG packet
 
-        @param bwPacket: bwPacket instance
-        Remove if not implemented"""
+        @param bwPacket: bwPacket instance"""
         msg = self.parseWildcards(self.config.get("message_msg"))
         self._sendMessage(msg)
 
