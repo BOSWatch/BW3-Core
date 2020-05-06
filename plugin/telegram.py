@@ -47,8 +47,7 @@ class BoswatchPlugin(PluginBase):
     def pocsag(self, bwPacket):
         """!Called on POCSAG alarm
 
-        @param bwPacket: bwPacket instance
-        Remove if not implemented"""
+        @param bwPacket: bwPacket instance"""
         msg = self.parseWildcards(self.config.get("message_pocsag", default="{RIC}({SRIC})\n{MSG}"))
         self._sendMessage(msg)
 
