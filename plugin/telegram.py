@@ -59,8 +59,7 @@ class BoswatchPlugin(PluginBase):
     def zvei(self, bwPacket):
         """!Called on ZVEI alarm
 
-        @param bwPacket: bwPacket instance
-        Remove if not implemented"""
+        @param bwPacket: bwPacket instance"""
         msg = self.parseWildcards(self.config.get("message_zvei", default="{TONE}"))
         self._sendMessage(msg)
 
