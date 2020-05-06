@@ -40,8 +40,7 @@ class BoswatchPlugin(PluginBase):
     def fms(self, bwPacket):
         """!Called on FMS alarm
 
-        @param bwPacket: bwPacket instance
-        Remove if not implemented"""
+        @param bwPacket: bwPacket instance"""
         msg = self.parseWildcards(self.config.get("message_fms", default="{FMS}"))
         self._sendMessage(msg)
 
