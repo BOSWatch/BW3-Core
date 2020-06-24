@@ -48,6 +48,7 @@ Es gibt die Auswahl zwischen `sdr` oder `lineIn` als Input Quelle
 |gain|Verstärkung des Eingangssignals|100|
 |rtlPath|Pfad zur rtl_fm Binary|rtl_fm|
 |mmPath|Pfad zur multimon-ng Binary|multimon-ng|
+|mmChar|multimon-ng Char-Set||
 
 **Beispiel:**
 ```yaml
@@ -60,6 +61,7 @@ inputSource:
     gain: 100
     rtlPath: /usr/bin/rtl-fm
     mmPath: /opt/multimon/multimon-ng
+    mmChar: DE
 ```
 
 #### `lineIn:`
@@ -67,6 +69,7 @@ inputSource:
 |----|------------|-------|
 |device|die device Id der Soundkarte|1|
 |mmPath|Pfad zur multimon-ng Binary|multimon-ng|
+|mmChar|multimon-ng Char-Set||
 
 **Device herausfinden**
 Durch eingabe des Befehls `aplay -l` werden alle Soundkarten ausgegeben. Das schaut ungefähr so aus:
@@ -108,6 +111,7 @@ inputSource:
     card: 1
     device: 0
     mmPath: /opt/multimon/multimon-ng
+    mmChar: DE
 ```
 
 ---
