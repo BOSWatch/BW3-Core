@@ -48,7 +48,7 @@ Es gibt die Auswahl zwischen `sdr` oder `lineIn` als Input Quelle
 |gain|Verstärkung des Eingangssignals|100|
 |rtlPath|Pfad zur rtl_fm Binary|rtl_fm|
 |mmPath|Pfad zur multimon-ng Binary|multimon-ng|
-|mmChar|multimon-ng Char-Set||
+|mmChar|multimon-ng Char-Set|deaktiviert|
 
 **Beispiel:**
 ```yaml
