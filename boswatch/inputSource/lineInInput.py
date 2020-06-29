@@ -51,6 +51,8 @@ class LineInInput(InputBase):
                 mmProc.addArgument("-a POCSAG1200")
             if decoderConfig.get("poc2400", default=0):
                 mmProc.addArgument("-a POCSAG2400")
+            if lineInConfig.get("mmChar"):
+                mmProc.addArgument("-C " + str(lineInConfig.get("mmChar")))
             mmProc.addArgument("-f alpha")
             mmProc.addArgument("-t raw -")
             mmProc.setStdin(lineInProc.stdout)
