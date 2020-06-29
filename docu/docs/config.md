@@ -11,7 +11,7 @@ zwingend in die Konfiguration eingetragen werden.
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |name|Name zur Identifizierung der Client Instanz||
-|inputSource|Art der zu nutzenden Input Quelle (`sdr` oder `lineIn`)||
+|inputSource|Art der zu nutzenden Input Quelle (`sdr`, `lineIn` oder `PulseAudio`)||
 |useBroadcast|Verbindungsdaten per [Broadcast](information/broadcast.md) beziehen|no|
 |reconnectDelay|Verzögerung für erneuten Verbindungsversuch zum Server|3|
 |sendTries|Anzahl der Sendeversuche eines Pakets|3|
@@ -36,7 +36,7 @@ server:
 
 ---
 ### `inputSource:`
-Es gibt die Auswahl zwischen `sdr` oder `lineIn` als Input Quelle
+Es gibt die Auswahl zwischen `sdr`, `lineIn` oder `PulseAudio` als Input Quelle
 
 #### `sdr:`
 |Feld|Beschreibung|Default|
@@ -114,6 +114,32 @@ inputSource:
     mmChar: DE
 ```
 
+#### `PulseAudio:`
+|Feld|Beschreibung|Default|
+|----|------------|-------|
+|device|Der Sinks-Name der Quelle|boswatch|
+|mmPath|Pfad zur multimon-ng Binary|multimon-ng|
+|mmChar|multimon-ng Char-Set|not set|
+
+
+**Device herausfinden**
+Durch eingabe des Befehls  `pacmd list-sinks | grep name:` werden alle Sinks ausgegeben. Beispiel:
+```console
+bash-5.0# pacmd list-sinks | grep name:
+	name: <boswatch>
+```
+
+In der Konfiguration wird das Feld `device` nun auf den den Namen des gewünschten Sinks gesetzt (ohne spitze Klammern, <>).
+
+**Beispiel:**
+```yaml
+inputSource:
+  ...
+  PulseAudio:
+    device: boswatch
+    mmPath: /opt/multimon/multimon-ng
+    mmChar: DE
+```
 ---
 ### `decoder:`
 |Feld|Beschreibung|Default|
