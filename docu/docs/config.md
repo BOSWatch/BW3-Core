@@ -69,7 +69,7 @@ inputSource:
 |----|------------|-------|
 |device|die device Id der Soundkarte|1|
 |mmPath|Pfad zur multimon-ng Binary|multimon-ng|
-|mmChar|multimon-ng Char-Set||
+|mmChar|multimon-ng Char-Set|not set|
 
 **Device herausfinden**
 Durch eingabe des Befehls `aplay -l` werden alle Soundkarten ausgegeben. Das schaut ungefähr so aus:
