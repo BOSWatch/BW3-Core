@@ -61,7 +61,7 @@ class PulseAudioInput(InputBase):
             logging.info("start decoding")
             while self._isRunning:
                 if not PulseAudioProc.isRunning:
-                    logging.warning("asla was down - try to restart")
+                    logging.warning("PulseAudio was down - try to restart")
                     PulseAudioProc.start()
                 elif not mmProc.isRunning:
                     logging.warning("multimon was down - try to restart")
