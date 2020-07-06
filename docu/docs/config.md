@@ -36,7 +36,10 @@ server:
 
 ---
 ### `inputSource:`
-Es gibt die Auswahl zwischen `sdr`, `lineIn` oder `PulseAudio` als Input Quelle
+Es gibt die Auswahl zwischen `sdr`, `lineIn` oder `PulseAudio` als Input Quelle.  
+Mit `sdr` wird direkt per **rtl_sdr** die zu empfangende Frequenz an Multimon-NG weitergereicht.  
+Mit `lineIn` wird eine Quelle die (per **ALSA**) direkt an die Soundkarte angeschlossen ist an Multimon-NG weitergereicht.  
+Mit `PulseAudio` wird ein PulseAudio-Sink an Multimon-NG weitergereicht, z.B. in Kombination mit [RTLSDR-Airband](https://github.com/szpajder/RTLSDR-Airband) und/oder Docker.
 
 #### `sdr:`
 |Feld|Beschreibung|Default|
