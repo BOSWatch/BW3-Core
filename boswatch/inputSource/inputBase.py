@@ -18,6 +18,7 @@ import time
 import logging
 import threading
 from abc import ABC, abstractmethod
+from boswatch.processManager import ProcessManager
 
 logging.debug("- %s loaded", __name__)
 
@@ -63,3 +64,21 @@ class InputBase(ABC):
         self._inputQueue.put_nowait((data, time.time()))
         logging.debug("Add received data to queue")
         print(data)
+
+    def startmm(self, decoderConfig):
+        mmProc = ProcessManager(str(decoderConfig.get("mmPath", default="multimon-ng")), textMode=True)
+        if decoderConfig.get("fms", default=0):
+            mmProc.addArgument("-a FMSFSK")
+        if decoderConfig.get("zvei", default=0):
+            mmProc.addArgument("-a ZVEI1")
+        if decoderConfig.get("poc512", default=0):
+            mmProc.addArgument("-a POCSAG512")
+        if decoderConfig.get("poc1200", default=0):
+            mmProc.addArgument("-a POCSAG1200")
+        if decoderConfig.get("poc2400", default=0):
+            mmProc.addArgument("-a POCSAG2400")
+        if decoderConfig.get("mmChar"):
+            mmProc.addArgument("-C " + str(decoderConfig.get("mmChar")))
+        mmProc.addArgument("-f alpha")
+        mmProc.addArgument("-t raw -")
+        return mmProc

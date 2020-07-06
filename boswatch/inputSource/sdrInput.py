@@ -41,21 +41,7 @@ class SdrInput(InputBase):
             sdrProc.setStderr(open(paths.LOG_PATH + "rtl_fm.log", "a"))
             sdrProc.start()
 
-            mmProc = ProcessManager(str(sdrConfig.get("mmPath", default="multimon-ng")), textMode=True)
-            if decoderConfig.get("fms", default=0):
-                mmProc.addArgument("-a FMSFSK")
-            if decoderConfig.get("zvei", default=0):
-                mmProc.addArgument("-a ZVEI1")
-            if decoderConfig.get("poc512", default=0):
-                mmProc.addArgument("-a POCSAG512")
-            if decoderConfig.get("poc1200", default=0):
-                mmProc.addArgument("-a POCSAG1200")
-            if decoderConfig.get("poc2400", default=0):
-                mmProc.addArgument("-a POCSAG2400")
-            if sdrConfig.get("mmChar"):
-                mmProc.addArgument("-C " + str(sdrConfig.get("mmChar")))
-            mmProc.addArgument("-f alpha")
-            mmProc.addArgument("-t raw -")
+            mmProc = self.startmm(decoderConfig)
             mmProc.setStdin(sdrProc.stdout)
             mmProc.setStderr(open(paths.LOG_PATH + "multimon-ng.log", "a"))
             mmProc.start()
