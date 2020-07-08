@@ -40,9 +40,7 @@ class LineInInput(InputBase):
             lineInProc.setStderr(open(paths.LOG_PATH + "asla.log", "a"))
             lineInProc.start()
 
-            mmProc = self.startmm(decoderConfig)
-            mmProc.setStdin(lineInProc.stdout)
-            mmProc.setStderr(open(paths.LOG_PATH + "multimon-ng.log", "a"))
+            mmProc = self.startmm(decoderConfig, lineInProc.stdout)
             mmProc.start()
 
             logging.info("start decoding")

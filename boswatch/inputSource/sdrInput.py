@@ -41,9 +41,7 @@ class SdrInput(InputBase):
             sdrProc.setStderr(open(paths.LOG_PATH + "rtl_fm.log", "a"))
             sdrProc.start()
 
-            mmProc = self.startmm(decoderConfig)
-            mmProc.setStdin(sdrProc.stdout)
-            mmProc.setStderr(open(paths.LOG_PATH + "multimon-ng.log", "a"))
+            mmProc = self.startmm(decoderConfig, sdrProc.stdout)
             mmProc.start()
 
             logging.info("start decoding")

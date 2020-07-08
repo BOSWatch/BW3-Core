@@ -39,9 +39,7 @@ class PulseAudioInput(InputBase):
             PulseAudioProc.setStderr(open(paths.LOG_PATH + "pulseaudio.log", "a"))
             PulseAudioProc.start()
 
-            mmProc = self.startmm(decoderConfig)
-            mmProc.setStdin(PulseAudioProc.stdout)
-            mmProc.setStderr(open(paths.LOG_PATH + "multimon-ng.log", "a"))
+            mmProc = self.startmm(decoderConfig, PulseAudioProc.stdout)
             mmProc.start()
 
             logging.info("start decoding")
