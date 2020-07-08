@@ -39,7 +39,7 @@ class PulseAudioInput(InputBase):
             PulseAudioProc.setStderr(open(paths.LOG_PATH + "pulseaudio.log", "a"))
             PulseAudioProc.start()
 
-            mmProc = self.startmm(decoderConfig, PulseAudioProc.stdout)
+            mmProc = self.getDecoderInstance(decoderConfig, PulseAudioProc.stdout)
             mmProc.start()
 
             logging.info("start decoding")

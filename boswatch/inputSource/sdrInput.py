@@ -41,7 +41,7 @@ class SdrInput(InputBase):
             sdrProc.setStderr(open(paths.LOG_PATH + "rtl_fm.log", "a"))
             sdrProc.start()
 
-            mmProc = self.startmm(decoderConfig, sdrProc.stdout)
+            mmProc = self.getDecoderInstance(decoderConfig, sdrProc.stdout)
             mmProc.start()
 
             logging.info("start decoding")

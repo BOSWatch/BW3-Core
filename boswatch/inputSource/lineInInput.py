@@ -40,7 +40,7 @@ class LineInInput(InputBase):
             lineInProc.setStderr(open(paths.LOG_PATH + "asla.log", "a"))
             lineInProc.start()
 
-            mmProc = self.startmm(decoderConfig, lineInProc.stdout)
+            mmProc = self.getDecoderInstance(decoderConfig, lineInProc.stdout)
             mmProc.start()
 
             logging.info("start decoding")

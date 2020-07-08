@@ -66,7 +66,7 @@ class InputBase(ABC):
         logging.debug("Add received data to queue")
         print(data)
 
-    def startmm(self, decoderConfig, StdIn):
+    def getDecoderInstance(self, decoderConfig, StdIn):
         mmProc = ProcessManager(str(decoderConfig.get("mmPath", default="multimon-ng")), textMode=True)
         if decoderConfig.get("fms", default=0):
             mmProc.addArgument("-a FMSFSK")
