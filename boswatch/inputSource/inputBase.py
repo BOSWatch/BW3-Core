@@ -67,7 +67,7 @@ class InputBase(ABC):
         print(data)
 
     def getDecoderInstance(self, decoderConfig, StdIn):
-        mmProc = ProcessManager(str(decoderConfig.get("mmPath", default="multimon-ng")), textMode=True)
+        mmProc = ProcessManager(str(decoderConfig.get("Path", default="multimon-ng")), textMode=True)
         if decoderConfig.get("fms", default=0):
             mmProc.addArgument("-a FMSFSK")
         if decoderConfig.get("zvei", default=0):
@@ -78,8 +78,8 @@ class InputBase(ABC):
             mmProc.addArgument("-a POCSAG1200")
         if decoderConfig.get("poc2400", default=0):
             mmProc.addArgument("-a POCSAG2400")
-        if decoderConfig.get("mmChar"):
-            mmProc.addArgument("-C " + str(decoderConfig.get("mmChar")))
+        if decoderConfig.get("Char"):
+            mmProc.addArgument("-C " + str(decoderConfig.get("Char")))
         mmProc.addArgument("-f alpha")
         mmProc.addArgument("-t raw -")
         mmProc.setStdin(StdIn)

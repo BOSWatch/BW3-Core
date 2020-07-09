@@ -140,8 +140,8 @@ inputSource:
 |poc512|POCSAG Decoder (Bitrate 512)|no|
 |poc1200|POCSAG Decoder (Bitrate 1200)|no|
 |poc2400|POCSAG Decoder (Bitrate 2400)|no|
-|mmPath|Pfad zur multimon-ng Binary|multimon-ng|
-|mmChar|multimon-ng Char-Set|not set|
+|Path|Pfad zur multimon-ng Binary|multimon-ng|
+|Char|multimon-ng Char-Set|not set|
 
 **Beispiel:**
 ```yaml
@@ -151,8 +151,8 @@ decoder:
   poc512: no
   poc1200: no
   poc2400: yes
-  mmPath: /opt/multimon/multimon-ng
-  mmChar: DE
+  Path: /opt/multimon/multimon-ng
+  Char: DE
 ```
 
 ---
