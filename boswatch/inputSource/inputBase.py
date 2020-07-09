@@ -78,7 +78,7 @@ class InputBase(ABC):
             mmProc.addArgument("-a POCSAG1200")
         if decoderConfig.get("poc2400", default=0):
             mmProc.addArgument("-a POCSAG2400")
-        if decoderConfig.get("Char"):
+        if decoderConfig.get("Char", default=0):
             mmProc.addArgument("-C " + str(decoderConfig.get("Char")))
         mmProc.addArgument("-f alpha")
         mmProc.addArgument("-t raw -")
