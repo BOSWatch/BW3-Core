@@ -50,8 +50,6 @@ Mit `PulseAudio` wird ein PulseAudio-Sink an Multimon-NG weitergereicht, z.B. in
 |squelch|Einstellung der Rauschsperre|1|
 |gain|Verstärkung des Eingangssignals|100|
 |rtlPath|Pfad zur rtl_fm Binary|rtl_fm|
-|mmPath|Pfad zur multimon-ng Binary|multimon-ng|
-|mmChar|multimon-ng Char-Set|not set|
 
 **Beispiel:**
 ```yaml
@@ -63,16 +61,12 @@ inputSource:
     squelch: 1
     gain: 100
     rtlPath: /usr/bin/rtl-fm
-    mmPath: /opt/multimon/multimon-ng
-    mmChar: DE
 ```
 
 #### `lineIn:`
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |device|die device Id der Soundkarte|1|
-|mmPath|Pfad zur multimon-ng Binary|multimon-ng|
-|mmChar|multimon-ng Char-Set|not set|
 
 **Device herausfinden**
 Durch eingabe des Befehls `aplay -l` werden alle Soundkarten ausgegeben. Das schaut ungefähr so aus:
@@ -113,16 +107,12 @@ inputSource:
   lineIn:
     card: 1
     device: 0
-    mmPath: /opt/multimon/multimon-ng
-    mmChar: DE
 ```
 
 #### `PulseAudio:`
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |device|Der Sinks-Name der Quelle|boswatch|
-|mmPath|Pfad zur multimon-ng Binary|multimon-ng|
-|mmChar|multimon-ng Char-Set|not set|
 
 
 **Device herausfinden**
@@ -140,8 +130,6 @@ inputSource:
   ...
   PulseAudio:
     device: boswatch
-    mmPath: /opt/multimon/multimon-ng
-    mmChar: DE
 ```
 ---
 ### `decoder:`
@@ -152,6 +140,20 @@ inputSource:
 |poc512|POCSAG Decoder (Bitrate 512)|no|
 |poc1200|POCSAG Decoder (Bitrate 1200)|no|
 |poc2400|POCSAG Decoder (Bitrate 2400)|no|
+|mmPath|Pfad zur multimon-ng Binary|multimon-ng|
+|mmChar|multimon-ng Char-Set|not set|
+
+**Beispiel:**
+```yaml
+decoder:
+  fms: yes
+  zvei: yes
+  poc512: no
+  poc1200: no
+  poc2400: yes
+  mmPath: /opt/multimon/multimon-ng
+  mmChar: DE
+```
 
 ---
 ## Server
