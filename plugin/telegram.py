@@ -70,7 +70,6 @@ class BoswatchPlugin(PluginBase):
         msg = self.parseWildcards(self.config.get("message_fms", default="{FMS}"))
         self._sendMessage(msg)
 
-
     def pocsag(self, bwPacket):
         """!Called on POCSAG alarm
 
