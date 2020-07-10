@@ -25,7 +25,7 @@ from module.moduleBase import ModuleBase
 logging.debug("- %s loaded", __name__)
 
 
-class BoswatchModul(ModuleBase):
+class BoswatchModule(ModuleBase):
     """!Description of the Module"""
     def __init__(self, config):
         """!Do not change anything here!"""
