@@ -89,4 +89,4 @@ class BoswatchModule(ModuleBase):
                 return False
 
         logging.debug("doubleFilter ok")
-        return bwPacket
+        return None
