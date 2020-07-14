@@ -59,9 +59,14 @@ class BoswatchPlugin(PluginBase):
 
     def onLoad(self):
         """!Called by import of the plugin"""
-        q = mq.MessageQueue()
-        request = Request(con_pool_size=8)
-        self.bot = MQBot(token=self.config.get("botToken", default=""), request=request, mqueue=q)
+        if self.config.get("queue", default=True):
+            q = mq.MessageQueue()
+            request = Request(con_pool_size=8)
+            self.bot = MQBot(token=self.config.get("botToken", default=""), request=request, mqueue=q)
+            print('queue')
+        else:
+            self.bot = telegram.Bot(token=self.config.get("botToken"))
+            print('normal')
 
     def fms(self, bwPacket):
         """!Called on FMS alarm
