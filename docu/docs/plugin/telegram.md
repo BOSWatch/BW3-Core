@@ -5,6 +5,8 @@
 Mit diesem Plugin ist es moeglich, Telegram-Nachrichten für POCSAG-Alarmierungen zu senden. 
 Außerdem werden Locations versendet, wenn die Felder `lat` und `lon` im Paket definiert sind. (beispielsweise durch das [Geocoding](../modul/geocoding.md) Modul)
 
+Die abarbeitung der Alarmierungen erfolgt per Queue nach den Limits der Telegram API, damit keine Nachrichten verloren gehen, diese Funktion kann mit dem ```queue``` Parameter deaktiviert werden.
+
 ## Unterstütze Alarmtypen
 - Fms
 - Pocsag
@@ -24,6 +26,7 @@ Außerdem werden Locations versendet, wenn die Felder `lat` und `lon` im Paket d
 |message_pocsag|Format der Nachricht für Pocsag|`{RIC}({SRIC})\n{MSG}`|
 |message_zvei|Format der Nachricht für ZVEI|`{TONE}`|
 |message_msg|Format der Nachricht für MSG||
+|queue|Aktivieren/Deaktivieren der MessageQueue|true|
 
 **Beispiel:**
 ```yaml
