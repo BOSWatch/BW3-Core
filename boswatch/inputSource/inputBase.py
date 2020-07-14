@@ -18,6 +18,8 @@ import time
 import logging
 import threading
 from abc import ABC, abstractmethod
+from boswatch.utils import paths
+from boswatch.processManager import ProcessManager
 
 logging.debug("- %s loaded", __name__)
 
@@ -63,3 +65,23 @@ class InputBase(ABC):
         self._inputQueue.put_nowait((data, time.time()))
         logging.debug("Add received data to queue")
         print(data)
+
+    def getDecoderInstance(self, decoderConfig, StdIn):
+        mmProc = ProcessManager(str(decoderConfig.get("path", default="multimon-ng")), textMode=True)
+        if decoderConfig.get("fms", default=0):
+            mmProc.addArgument("-a FMSFSK")
+        if decoderConfig.get("zvei", default=0):
+            mmProc.addArgument("-a ZVEI1")
+        if decoderConfig.get("poc512", default=0):
+            mmProc.addArgument("-a POCSAG512")
+        if decoderConfig.get("poc1200", default=0):
+            mmProc.addArgument("-a POCSAG1200")
+        if decoderConfig.get("poc2400", default=0):
+            mmProc.addArgument("-a POCSAG2400")
+        if decoderConfig.get("char", default=0):
+            mmProc.addArgument("-C " + str(decoderConfig.get("char")))
+        mmProc.addArgument("-f alpha")
+        mmProc.addArgument("-t raw -")
+        mmProc.setStdin(StdIn)
+        mmProc.setStderr(open(paths.LOG_PATH + "multimon-ng.log", "a"))
+        return mmProc
