@@ -46,9 +46,9 @@ class BoswatchModule(ModuleBase):
         if bwPacket.get("mode") == "fms":
             filterFields = ["fms"]
         elif bwPacket.get("mode") == "pocsag":
-            filterFields = self.config.get("pocsagFields", default=["ric"])
+            filterFields = self.config.get("pocsagFields", default=["ric", "subric"])
         elif bwPacket.get("mode") == "zvei":
-            filterFields = ["zvei"]
+            filterFields = ["tone"]
         else:
             logging.error("No Filter for '%s'", bwPacket)
             return False

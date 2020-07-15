@@ -17,7 +17,7 @@ Mit diesem Modul ist es möglich, die Pakete auf Duplikate zu Filtern. Je nach K
 |----|------------|-------|
 |ignoreTime|Zeitfenster für doppelte Pakte in Sekunden|10|
 |maxEntry|Maximale Anzahl an Paketen in der Vergleichsliste|20|
-|pocsagFields|Liste der Pocsag Felder zum Vergleichen: `ric`, `subric` und/oder `message`|`ric`|
+|pocsagFields|Liste der Pocsag Felder zum Vergleichen: `ric`, `subric` und/oder `message`|`ric,subric`|
 
 **Beispiel:**
 ```yaml
