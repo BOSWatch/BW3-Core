@@ -39,23 +39,7 @@ class PulseAudioInput(InputBase):
             PulseAudioProc.setStderr(open(paths.LOG_PATH + "pulseaudio.log", "a"))
             PulseAudioProc.start()
 
-            mmProc = ProcessManager(str(PulseAudioConfig.get("mmPath", default="multimon-ng")), textMode=True)
-            if decoderConfig.get("fms", default=0):
-                mmProc.addArgument("-a FMSFSK")
-            if decoderConfig.get("zvei", default=0):
-                mmProc.addArgument("-a ZVEI1")
-            if decoderConfig.get("poc512", default=0):
-                mmProc.addArgument("-a POCSAG512")
-            if decoderConfig.get("poc1200", default=0):
-                mmProc.addArgument("-a POCSAG1200")
-            if decoderConfig.get("poc2400", default=0):
-                mmProc.addArgument("-a POCSAG2400")
-            if PulseAudioConfig.get("mmChar"):
-                mmProc.addArgument("-C " + str(PulseAudioConfig.get("mmChar")))
-            mmProc.addArgument("-f alpha")
-            mmProc.addArgument("-t raw -")
-            mmProc.setStdin(PulseAudioProc.stdout)
-            mmProc.setStderr(open(paths.LOG_PATH + "multimon-ng.log", "a"))
+            mmProc = self.getDecoderInstance(decoderConfig, PulseAudioProc.stdout)
             mmProc.start()
 
             logging.info("start decoding")
