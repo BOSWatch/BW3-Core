@@ -20,10 +20,34 @@ from plugin.pluginBase import PluginBase
 # ###################### #
 # Custom plugin includes #
 from telegram.error import (TelegramError, Unauthorized, BadRequest, TimedOut, NetworkError)
-import telegram
+from telegram.ext import messagequeue as mq
+from telegram.utils.request import Request
+import telegram.bot
 # ###################### #
 
 logging.debug("- %s loaded", __name__)
+
+
+class MQBot(telegram.bot.Bot):
+    '''A subclass of Bot which delegates send method handling to MQ'''
+
+    def __init__(self, *args, is_queued_def=True, mqueue=None, **kwargs):
+        super(MQBot, self).__init__(*args, **kwargs)
+        # below 2 attributes should be provided for decorator usage
+        self._is_messages_queued_default = is_queued_def
+        self._msg_queue = mqueue or mq.MessageQueue()
+
+    def __del__(self):
+        try:
+            self._msg_queue.stop()
+        except:
+            pass
+
+    @mq.queuedmessage
+    def send_message(self, *args, **kwargs):
+        '''Wrapped method would accept new `queued` and `isgroup`
+        OPTIONAL arguments'''
+        return super(MQBot, self).send_message(*args, **kwargs)
 
 
 class BoswatchPlugin(PluginBase):
@@ -35,7 +59,14 @@ class BoswatchPlugin(PluginBase):
 
     def onLoad(self):
         """!Called by import of the plugin"""
-        self.bot = telegram.Bot(token=self.config.get("botToken"))
+        if self.config.get("queue", default=True):
+            q = mq.MessageQueue()
+            request = Request(con_pool_size=8)
+            self.bot = MQBot(token=self.config.get("botToken", default=""), request=request, mqueue=q)
+            print('queue')
+        else:
+            self.bot = telegram.Bot(token=self.config.get("botToken"))
+            print('normal')
 
     def fms(self, bwPacket):
         """!Called on FMS alarm
