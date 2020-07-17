@@ -22,6 +22,7 @@ nav:
       - Geocoding: modul/geocoding.md
       - Mode Filter: modul/mode_filter.md
       - Regex Filter: modul/regex_filter.md
+      - Double Filter: modul/double_filter.md
   - Plugins:
       - Http: plugin/http.md
       - Telegram: plugin/telegram.md

@@ -5,8 +5,13 @@
 Mit diesem Plugin ist es moeglich, Telegram-Nachrichten für POCSAG-Alarmierungen zu senden. 
 Außerdem werden Locations versendet, wenn die Felder `lat` und `lon` im Paket definiert sind. (beispielsweise durch das [Geocoding](../modul/geocoding.md) Modul)
 
+Die abarbeitung der Alarmierungen erfolgt per Queue nach den Limits der Telegram API, damit keine Nachrichten verloren gehen, diese Funktion kann mit dem ```queue``` Parameter deaktiviert werden.
+
 ## Unterstütze Alarmtypen
+- Fms
 - Pocsag
+- Zvei
+- Msg
 
 ## Resource
 `telegram`
@@ -15,9 +20,13 @@ Außerdem werden Locations versendet, wenn die Felder `lat` und `lon` im Paket d
 
 |Feld|Beschreibung|Default|
 |----|------------|-------|
-|message|Format der Nachricht||
 |botToken|Der Api-Key des Telegram-Bots||
 |chatIds|Liste mit Chat-Ids der Empfängers / der Emfänger-Gruppen||
+|message_fms|Format der Nachricht für FMS|`{FMS}`|
+|message_pocsag|Format der Nachricht für Pocsag|`{RIC}({SRIC})\n{MSG}`|
+|message_zvei|Format der Nachricht für ZVEI|`{TONE}`|
+|message_msg|Format der Nachricht für MSG||
+|queue|Aktivieren/Deaktivieren der MessageQueue|true|
 
 **Beispiel:**
 ```yaml
@@ -25,7 +34,7 @@ Außerdem werden Locations versendet, wenn die Felder `lat` und `lon` im Paket d
     name: Telegram Plugin
     res: telegram
     config:
-      message: "{RIC}({SRIC})\n{MSG}"
+      message_pocsag: "{RIC}({SRIC})\n{MSG}"
       botToken: "BOT_TOKEN"
       chatIds:
         - "CHAT_ID"
@@ -33,7 +42,7 @@ Außerdem werden Locations versendet, wenn die Felder `lat` und `lon` im Paket d
 
 ---
 ## Modul Abhängigkeiten
-Aus dem Modul [Geocoding](../modul/geocoding.md) (optional):
+Aus dem Modul [Geocoding](../modul/geocoding.md) (optional/nur POCSAG):
 
 - `lat`
 - `lon`

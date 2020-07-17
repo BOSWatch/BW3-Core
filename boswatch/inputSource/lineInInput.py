@@ -40,21 +40,7 @@ class LineInInput(InputBase):
             lineInProc.setStderr(open(paths.LOG_PATH + "asla.log", "a"))
             lineInProc.start()
 
-            mmProc = ProcessManager(str(lineInConfig.get("mmPath", default="multimon-ng")), textMode=True)
-            if decoderConfig.get("fms", default=0):
-                mmProc.addArgument("-a FMSFSK")
-            if decoderConfig.get("zvei", default=0):
-                mmProc.addArgument("-a ZVEI1")
-            if decoderConfig.get("poc512", default=0):
-                mmProc.addArgument("-a POCSAG512")
-            if decoderConfig.get("poc1200", default=0):
-                mmProc.addArgument("-a POCSAG1200")
-            if decoderConfig.get("poc2400", default=0):
-                mmProc.addArgument("-a POCSAG2400")
-            mmProc.addArgument("-f alpha")
-            mmProc.addArgument("-t raw -")
-            mmProc.setStdin(lineInProc.stdout)
-            mmProc.setStderr(open(paths.LOG_PATH + "multimon-ng.log", "a"))
+            mmProc = self.getDecoderInstance(decoderConfig, lineInProc.stdout)
             mmProc.start()
 
             logging.info("start decoding")
