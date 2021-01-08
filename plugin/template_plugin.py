@@ -9,7 +9,7 @@
                 German BOS Information Script
                      by Bastian Schroll
 
-@file:        template_module.py
+@file:        template_plugin.py
 @date:        14.01.2018
 @author:      Bastian Schroll
 @description: Template Plugin File
