@@ -46,7 +46,6 @@ logging.debug("Import BOSWatch modules")
 from boswatch.configYaml import ConfigYAML
 from boswatch.network.client import TCPClient
 from boswatch.network.broadcast import BroadcastClient
-from boswatch.decoder.decoder import Decoder
 from boswatch.utils import header
 from boswatch.utils import misc
 from boswatch.inputSource.sdrInput import SdrInput
@@ -123,12 +122,8 @@ try:
             data = inputQueue.get()
             logging.info("get data from queue (waited %0.3f sec.)", time.time() - data[1])
             logging.debug("%s packet(s) still waiting in queue", inputQueue.qsize())
-
-            bwPacket = Decoder.decode(data[0])
+            bwPacket = data[0]
             inputQueue.task_done()
-
-            if bwPacket is None:
-                continue
 
             bwPacket.printInfo()
             misc.addClientDataToPacket(bwPacket, bwConfig)
