@@ -51,6 +51,7 @@ from boswatch.utils import misc
 from boswatch.inputSource.sdrInput import SdrInput
 from boswatch.inputSource.lineInInput import LineInInput
 from boswatch.inputSource.pulseaudioInput import PulseAudioInput
+from boswatch.decoder.decoder import Decoder  # for test mode
 
 header.logoToLog()
 header.infoToLog()
@@ -105,7 +106,8 @@ try:
         for testData in testFile:
             if (len(testData.rstrip(' \t\n\r')) > 1) and ("#" not in testData[0]):
                 logging.info("Testdata: %s", testData.rstrip(' \t\n\r'))
-                inputQueue.put_nowait((testData.rstrip(' \t\n\r'), time.time()))
+                bwPacket = Decoder.decode(testData.rstrip(' \t\n\r'))
+                inputQueue.put_nowait((bwPacket, time.time()))
         logging.debug("finished reading testdata")
 
     bwClient = TCPClient()
