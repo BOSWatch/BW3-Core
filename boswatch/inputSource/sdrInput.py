@@ -15,6 +15,7 @@
 @description: Input source for sdr with rtl_fm
 """
 import logging
+import time
 from boswatch.utils import paths
 from boswatch.processManager import ProcessManager
 from boswatch.inputSource.inputBase import InputBase
@@ -47,8 +48,14 @@ class SdrInput(InputBase):
             logging.info("start decoding")
             while self._isRunning:
                 if not sdrProc.isRunning:
-                    logging.warning("rtl_fm was down - try to restart")
+                    logging.warning("rtl_fm was down - trying to restart in 10 seconds")
+                    time.sleep(10)
+
                     sdrProc.start()
+                    if sdrProc.isRunning:
+                        logging.info("rtl_fm is back up - restarting multimon...")
+                        mmProc.setStdin(sdrProc.stdout)
+                        mmProc.start()
                 elif not mmProc.isRunning:
                     logging.warning("multimon was down - try to restart")
                     mmProc.start()
