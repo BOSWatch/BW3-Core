@@ -64,7 +64,8 @@ class RepeatedTimer:
         if self._thread is not None:
             logging.debug("stop repeatedTimer: %s", self._thread.name)
             self._event.set()
-            self._thread.join()
+            if self._thread is not None:
+                self._thread.join()
             return True
         logging.warning("repeatedTimer always stopped")
         return True
