@@ -1,6 +1,5 @@
 # for pip to install all needed
-# called with 'pip -r requirements.txt'
-
+# called with 'pip install -r requirements.txt'
 pyyaml
 
 # for documentation generating
