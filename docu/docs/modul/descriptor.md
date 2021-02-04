@@ -16,6 +16,8 @@ Mit diesem Modul können einem Alarmpaket beliebige Beschreibungen in Abhänigke
 ## Konfiguration
 Informationen zum Aufbau eines [BOSWatch Pakets](../develop/packet.md)
 
+**Achtung:** Zahlen welche führende Nullen entahlten müssen in Anführungszeichen gesetzt werden Bsp. `'0012345'`
+
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |scanField|Feld des BW Pakets welches geprüft werden soll||
@@ -40,7 +42,7 @@ Informationen zum Aufbau eines [BOSWatch Pakets](../develop/packet.md)
       descriptions:
         - for: 12345
           add: FF DescriptorTest
-        - for: 45678
+        - for: '05678' # führende Nullen in '' !
           add: FF TestDescription
     - scanField: status
       descrField: fmsStatDescr

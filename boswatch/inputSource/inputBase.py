@@ -20,6 +20,7 @@ import threading
 from abc import ABC, abstractmethod
 from boswatch.utils import paths
 from boswatch.processManager import ProcessManager
+from boswatch.decoder.decoder import Decoder
 
 logging.debug("- %s loaded", __name__)
 
@@ -61,10 +62,11 @@ class InputBase(ABC):
             logging.debug("input thread stopped")
 
     def addToQueue(self, data):
-        """!Adds alarm data to the queue for further processing during boswatch client"""
-        self._inputQueue.put_nowait((data, time.time()))
-        logging.debug("Add received data to queue")
-        print(data)
+        """!Decode and add alarm data to the queue for further processing during boswatch client"""
+        bwPacket = Decoder.decode(data)
+        if bwPacket is not None:
+            self._inputQueue.put_nowait((bwPacket, time.time()))
+            logging.debug("Added received data to queue")
 
     def getDecoderInstance(self, decoderConfig, StdIn):
         mmProc = ProcessManager(str(decoderConfig.get("path", default="multimon-ng")), textMode=True)
