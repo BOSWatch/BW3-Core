@@ -11,10 +11,10 @@
 
 ### Documentation: [https://docs.boswatch.de](https://docs.boswatch.de)
 
-Wenn dir dieses Projekt gefällt, gib ihm doch einen **STAR**
+Wenn dir dieses Projekt gefällt, gib uns bitte einen **STAR**
 
 ***
 
 **The intercept of the German BOS radio is strictly prohibited and will be prosecuted. The use is only permitted for authorized personnel.**
 
-If you like this project, pleas give us a **STAR**
+If you like this project, please give us a **STAR**
