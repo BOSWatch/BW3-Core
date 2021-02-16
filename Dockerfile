@@ -27,5 +27,5 @@ RUN apk add libusb-dev libpulse && \
     pip3 install pyyaml
 
 COPY --from=boswatch /opt/boswatch/ /opt/boswatch/
-COPY --from=multimon /opt/multimon/build/multimon-ng /opt/multimon/multimon-ng
-COPY --from=rtl_fm /opt/rtl_sdr/build/src/ /opt/rtl_sdr/build/src/
+COPY --from=multimon /opt/multimon/build/multimon-ng /opt/multimon-ng
+COPY --from=rtl_fm /opt/rtl_sdr/build/src/ /opt/rtl_sdr
