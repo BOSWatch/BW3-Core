@@ -37,12 +37,6 @@ class BoswatchPlugin(PluginBase):
     def onLoad(self):
         """!Called by import of the plugin
         Remove if not implemented"""
-        self.connection = mysql.connector.connect(
-            host=self.config.get("host"),
-            user=self.config.get("user"),
-            password=self.config.get("password"),
-            database=self.config.get("database"),
-        )
         self.sqlInserts = {
             "pocsag": "INSERT INTO boswatch (packetTimestamp, packetMode, pocsag_ric, pocsag_subric, pocsag_subricText, pocsag_message, pocsag_bitrate, serverName, serverVersion, serverBuildDate, serverBranch, clientName, clientIP, clientVersion, clientBuildDate, clientBranch, inputSource, frequency) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
             "zvei": "INSERT INTO boswatch (packetTimestamp, packetMode, zvei_tone, serverName, serverVersion, serverBuildDate, serverBranch, clientName, clientIP, clientVersion, clientBuildDate, clientBranch, inputSource, frequency) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
@@ -50,12 +44,30 @@ class BoswatchPlugin(PluginBase):
             "msg": "INSERT INTO boswatch (packetTimestamp, packetMode, serverName, serverVersion, serverBuildDate, serverBranch, clientName, clientIP, clientVersion, clientBuildDate, clientBranch, inputSource, frequency) VALUE (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         }
 
+        self.connection = mysql.connector.connect(
+            host=self.config.get("host"),
+            user=self.config.get("user"),
+            password=self.config.get("password"),
+            database=self.config.get("database"),
+        )
+
+        self.cursor = self.connection.cursor()
+        self.cursor.execute("SHOW TABLES LIKE 'boswatch'")
+
+        if self.cursor.fetchone() is None:
+            with open('init_db.sql') as f:
+                for stmnt in f.read().split(';'):
+                    self.cursor.execute(stmnt)
+                    self.connection.commit()
+
+        self.cursor.close()
+
     def setup(self):
         """!Called before alarm
         Remove if not implemented"""
         try:
             self.connection.ping(reconnect=True, attempts=3, delay=2)
-        except mysql.connector.Error as err:
+        except mysql.connector.Error:
             logging.warning("Connection was down, trying to reconnect...")
             self.onLoad()
 
@@ -168,8 +180,9 @@ class BoswatchPlugin(PluginBase):
         """!Called after alarm
         Remove if not implemented"""
         self.connection.commit()
+        self.cursor.close()
 
     def onUnload(self):
         """!Called by destruction of the plugin
         Remove if not implemented"""
-        pass
+        self.connection.close()

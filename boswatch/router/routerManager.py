@@ -93,8 +93,8 @@ class RouterManager:
                         logging.error("unknown type '%s' in %s", routeType, route)
                         return False
 
-                except ModuleNotFoundError as e:
-                    logging.error("%s not found: %s (%s)", route.get("type"), route.get("res"), str(e))
+                except ModuleNotFoundError:
+                    logging.exception("%s not found: %s", route.get("type"), route.get("res"))
                     return False
 
         logging.debug("finished building routers")
