@@ -3,6 +3,7 @@
 
 ## Beschreibung
 Mit diesem Plugin ist es moeglich, die Alarmierungen in einer Mysql / Mariadb Datenbank zu speichern.
+Das Plugin legt die Tabelle "boswatch" selbststaendig an, wenn diese nicht vorhanden ist.
 
 ## Unterstütze Alarmtypen
 - Fms

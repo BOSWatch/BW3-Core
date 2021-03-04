@@ -8,16 +8,16 @@ create table boswatch
 	pocsag_subricText enum('a', 'b', 'c', 'd') default null,
 	pocsag_message text default null,
 	pocsag_bitrate enum('512', '1200', '2400') default null,
-    zvei_tone char(5) default null,
-    fms_fms char(8) default null,
-    fms_service varchar(255) default null,
-    fms_country varchar(255) default null,
-    fms_location varchar(255) default null,
-    fms_vehicle varchar(255) default null,
-    fms_status char(1) default null,
-    fms_direction char(1) default null,
-    fms_directionText tinytext default null,
-    fms_tacticalInfo char(3) default null,
+	zvei_tone char(5) default null,
+	fms_fms char(8) default null,
+	fms_service varchar(255) default null,
+	fms_country varchar(255) default null,
+	fms_location varchar(255) default null,
+	fms_vehicle varchar(255) default null,
+	fms_status char(1) default null,
+	fms_direction char(1) default null,
+	fms_directionText tinytext default null,
+	fms_tacticalInfo char(3) default null,
 	serverName varchar(255) not null,
 	serverVersion varchar(100) not null,
 	serverBuildDate varchar(255) not null,
@@ -32,3 +32,4 @@ create table boswatch
 );
 create unique index boswatch_id_uindex
 	on boswatch (id);
+
