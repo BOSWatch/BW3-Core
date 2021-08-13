@@ -112,40 +112,50 @@ try:
 
     bwClient = TCPClient()
     bwClient.connect(ip, port)
+    aliveCounter = 0
     while 1:
+        if not inputQueue.empty():
+            if not bwClient.isConnected:
+                reconnectDelay = bwConfig.get("client", "reconnectDelay", default="3")
+                logging.warning("connection to server lost - sleep %d seconds", reconnectDelay)
+                time.sleep(reconnectDelay)
+                bwClient.connect(ip, port)
+            else:
+                data = inputQueue.get()
+                logging.info("get data from queue (waited %0.3f sec.)", time.time() - data[1])
+                logging.debug("%s packet(s) still waiting in queue", inputQueue.qsize())
+                bwPacket = data[0]
+                inputQueue.task_done()
 
-        if not bwClient.isConnected:
-            reconnectDelay = bwConfig.get("client", "reconnectDelay", default="3")
-            logging.warning("connection to server lost - sleep %d seconds", reconnectDelay)
-            time.sleep(reconnectDelay)
-            bwClient.connect(ip, port)
+                bwPacket.printInfo()
+                misc.addClientDataToPacket(bwPacket, bwConfig)
 
-        elif not inputQueue.empty():
-            data = inputQueue.get()
-            logging.info("get data from queue (waited %0.3f sec.)", time.time() - data[1])
-            logging.debug("%s packet(s) still waiting in queue", inputQueue.qsize())
-            bwPacket = data[0]
-            inputQueue.task_done()
-
-            bwPacket.printInfo()
-            misc.addClientDataToPacket(bwPacket, bwConfig)
-
-            for sendCnt in range(bwConfig.get("client", "sendTries", default="3")):
-                bwClient.transmit(str(bwPacket))
-                if bwClient.receive() == "[ack]":
-                    logging.debug("ack ok")
-                    break
                 sendDelay = bwConfig.get("client", "sendDelay", default="3")
-                logging.warning("cannot send packet - sleep %d seconds", sendDelay)
-                time.sleep(sendDelay)
-
+                for sendCnt in range(sendDelay):
+                    bwClient.transmit(str(bwPacket))
+                    response = bwClient.receive()
+                    if response == "[ack]":
+                        logging.debug("ack ok")
+                        break
+                    elif response == "[nack]":
+                        logging.warning("packet data loss - retry in %d seconds", sendDelay)
+                    else:
+                        logging.warning("cannot send packet - sleep %d seconds", sendDelay)
+                    time.sleep(sendDelay)
         else:
-            if args.test:
-                break
-            time.sleep(0.1)  # reduce cpu load (wait 100ms)
-            # in worst case a packet have to wait 100ms until it will be processed
-
-
+            if aliveCounter >= 99:  # reduce cpu load (send alive every 1s)
+                aliveCounter = 0
+                if not bwClient.isConnected:
+                    reconnectDelay = bwConfig.get("client", "reconnectDelay", default="3")
+                    logging.warning("connection to server lost - sleep %d seconds", reconnectDelay)
+                    time.sleep(reconnectDelay)
+                    bwClient.connect(ip, port)
+            else:
+                aliveCounter += 1
+                if args.test:
+                    break
+                time.sleep(0.01)  # reduce cpu load (wait 10ms)
+                # in worst case a packet have to wait 10ms until it will be processed
 except KeyboardInterrupt:  # pragma: no cover
     logging.warning("Keyboard interrupt")
 except SystemExit:  # pragma: no cover
