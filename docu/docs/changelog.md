@@ -6,6 +6,7 @@
  * Divera24/7-Plugin
  * Python3-pip for requirements in install-script
  * Alsa-utils in install-script
+ * Add fir_size for RTL-FM as optionally value
 ### Changed
 ### Deprecated
 ### Removed
