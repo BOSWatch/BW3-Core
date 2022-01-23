@@ -2,7 +2,7 @@
 ---
 
 ## Beschreibung
-Mit diesem Plugin ist es moeglich, Http-Anfragen für Alarmierungen an Divera 24/7 zu senden.
+Mit diesem Plugin ist es möglich, HTTPS-Anfragen für Alarmierungen an Divera 24/7 zu senden.
 Wildcards in den Urls werden automatisch ersetzt.
 
 ## Unterstütze Alarmtypen
