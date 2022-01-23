@@ -38,7 +38,7 @@ class BoswatchPlugin(PluginBase):
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
         urls = self.config.get("fms")
-        self.makeRequests(urls)
+        self._makeRequests(urls)
 
     def pocsag(self, bwPacket):
         """!Called on POCSAG alarm
@@ -46,7 +46,7 @@ class BoswatchPlugin(PluginBase):
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
         urls = self.config.get("pocsag")
-        self.makeRequests(urls)
+        self._makeRequests(urls)
 
     def zvei(self, bwPacket):
         """!Called on ZVEI alarm
@@ -54,7 +54,7 @@ class BoswatchPlugin(PluginBase):
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
         urls = self.config.get("zvei")
-        self.makeRequests(urls)
+        self._makeRequests(urls)
 
     def msg(self, bwPacket):
         """!Called on MSG packet
@@ -62,7 +62,7 @@ class BoswatchPlugin(PluginBase):
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
         urls = self.config.get("msg")
-        self.makeRequests(urls)
+        self._makeRequests(urls)
 
     def makeRequests(self, urls):
         """Parses wildcard urls and handles asynchronus requests
@@ -75,7 +75,7 @@ class BoswatchPlugin(PluginBase):
         future = asyncio.ensure_future(self.asyncRequests(urls))
         loop.run_until_complete(future)
 
-    async def asyncRequests(self, urls):
+    async def _asyncRequests(self, urls):
         """Handles asynchronus requests
 
         @param urls: array of urls to send requests to"""
@@ -83,13 +83,13 @@ class BoswatchPlugin(PluginBase):
 
         async with ClientSession() as session:
             for url in urls:
-                task = asyncio.ensure_future(self.fetch(url, session))
+                task = asyncio.ensure_future(self._fetch(url, session))
                 tasks.append(task)
 
             responses = asyncio.gather(*tasks)
             await responses
 
-    async def fetch(self, url, session):
+    async def _fetch(self, url, session):
         """Fetches requests
 
         @param url: url
