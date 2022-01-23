@@ -1,6 +1,15 @@
 # <center>Changelog</center>
 ---
 
+## Version [3.0.1] - date
+### Added
+ * Divera24/7-Plugin
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
 ## Version [2.9.0] - date
 
 Functions implemented in initial version:
