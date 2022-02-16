@@ -86,7 +86,7 @@ class BoswatchModule(ModuleBase):
             pass
         else:
             logging.error("multicast module only works with pocsag")
-            raise NameError('multicast module only works with pocsag')
+            return False
         
         '''delimiter received'''
         if self.delimiterRic == thisRic and self.delimiterSubric == thisSubric:
