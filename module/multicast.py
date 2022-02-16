@@ -55,6 +55,12 @@ class BoswatchModule(ModuleBase):
     def __init__(self, config):
         """!Do not change anything here!"""
         super().__init__(__name__, config)  # you can access the config class on 'self.config'
+        
+
+    def onLoad(self):
+        """!Called by import of the plugin
+        Remove if not implemented"""
+        
         logging.debug("starting multicast module")
         logging.debug("multicastAlarm_delimiterRic is: %i" % self.config.get("multicastAlarm_delimiterRic"))
         logging.debug("multicastAlarm_delimiterSubric is: %i" % self.config.get("multicastAlarm_delimiterSubric"))
@@ -66,10 +72,7 @@ class BoswatchModule(ModuleBase):
         for aTextRic in self.config.get("multicastAlarm_textRics").split(','):
             self.textRics.append(int(aTextRic))
         self.initStorage()
-
-    def onLoad(self):
-        """!Called by import of the plugin
-        Remove if not implemented"""
+        
         pass
 
     def doWork(self, bwPacket):
