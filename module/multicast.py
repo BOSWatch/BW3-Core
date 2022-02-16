@@ -62,15 +62,16 @@ class BoswatchModule(ModuleBase):
         Remove if not implemented"""
         
         logging.debug("starting multicast module")
-        logging.debug("multicastAlarm_delimiterRic is: %i" % self.config.get("multicastAlarm_delimiterRic"))
-        logging.debug("multicastAlarm_delimiterSubric is: %i" % self.config.get("multicastAlarm_delimiterSubric"))
-        logging.debug("multicastAlarm_ignore_time is: %i" % self.config.get("multicastAlarm_ignore_time"))
-        logging.debug("multicastAlarm_textRics is: %s" % self.config.get("multicastAlarm_textRics"))
+        
         self.delimiterRic = int(self.config.get("multicastAlarm_delimiterRic"))
         self.delimiterSubric = int(self.config.get("multicastAlarm_delimiterSubric"))
         self.ignoreTime = int(self.config.get("multicastAlarm_ignore_time"))
         for aTextRic in self.config.get("multicastAlarm_textRics").split(','):
             self.textRics.append(int(aTextRic))
+        logging.debug("multicastAlarm_delimiterRic is: %i" % self.delimiterRic)
+        logging.debug("multicastAlarm_delimiterSubric is: %i" % self.delimiterSubric)
+        logging.debug("multicastAlarm_ignore_time is: %i" % self.ignoreTime)
+        logging.debug("multicastAlarm_textRics is: %s" % self.textRics)
         self.initStorage()
         
         pass
