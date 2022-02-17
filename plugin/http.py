@@ -64,7 +64,7 @@ class BoswatchPlugin(PluginBase):
         urls = self.config.get("msg")
         self._makeRequests(urls)
 
-    def makeRequests(self, urls):
+    def _makeRequests(self, urls):
         """Parses wildcard urls and handles asynchronus requests
 
         @param urls: array of urls"""
