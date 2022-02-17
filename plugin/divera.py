@@ -33,22 +33,21 @@ class BoswatchPlugin(PluginBase):
         """!Do not change anything here!"""
         super().__init__(__name__, config)  # you can access the config class on 'self.config'
 
-
     def fms(self, bwPacket):
         """!Called on FMS alarm
 
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
-        fms_data =  self.config.get("fms")
+        fms_data = self.config.get("fms")
         apicall = urllib.parse.urlencode({
-                                "accesskey": self.config.get("accesskey", default=""),
-                                "vehicle_ric": self.parseWildcards(fms_data.get("vehicle", default="")),
-                                "status_id": bwPacket.get("status"),
-                                "status_note": bwPacket.get("directionText"),
-                                "title": self.parseWildcards(fms_data.get("title", default="{FMS}")),
-                                "text": self.parseWildcards(fms_data.get("message", default="{FMS}")),
-                                "priority": fms_data.get("priority", default="false"),
-                            })
+            "accesskey": self.config.get("accesskey", default=""),
+            "vehicle_ric": self.parseWildcards(fms_data.get("vehicle", default="")),
+            "status_id": bwPacket.get("status"),
+            "status_note": bwPacket.get("directionText"),
+            "title": self.parseWildcards(fms_data.get("title", default="{FMS}")),
+            "text": self.parseWildcards(fms_data.get("message", default="{FMS}")),
+            "priority": fms_data.get("priority", default="false"),
+        })
         apipath = "/api/fms"
         self._makeRequests(apipath, apicall)
 
@@ -57,14 +56,14 @@ class BoswatchPlugin(PluginBase):
 
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
-        poc_data =  self.config.get("pocsag")
+        poc_data = self.config.get("pocsag")
         apicall = urllib.parse.urlencode({
-                                "accesskey": self.config.get("accesskey", default=""),
-                                "title": self.parseWildcards(poc_data.get("title", default="{RIC}({SRIC})\n{MSG}")),
-                                "ric": self.parseWildcards(poc_data.get("ric", default="")),
-                                "text": self.parseWildcards(poc_data.get("message", default="{MSG}")),
-                                "priority": poc_data.get("priority", default="false"),
-                            })
+            "accesskey": self.config.get("accesskey", default=""),
+            "title": self.parseWildcards(poc_data.get("title", default="{RIC}({SRIC})\n{MSG}")),
+            "ric": self.parseWildcards(poc_data.get("ric", default="")),
+            "text": self.parseWildcards(poc_data.get("message", default="{MSG}")),
+            "priority": poc_data.get("priority", default="false"),
+        })
         apipath = "/api/alarm"
         self._makeRequests(apipath, apicall)
 
@@ -73,14 +72,14 @@ class BoswatchPlugin(PluginBase):
 
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
-        zvei_data =  self.config.get("zvei")
+        zvei_data = self.config.get("zvei")
         apicall = urllib.parse.urlencode({
-                                "accesskey": self.config.get("accesskey", default=""),
-                                "title": self.parseWildcards(zvei_data.get("title", default="{TONE}")),
-                                "ric": self.parseWildcards(zvei_data.get("ric", default="{TONE}")),
-                                "text": self.parseWildcards(zvei_data.get("message", default="{TONE}")),
-                                "priority": zvei_data.get("priority", default="false"),
-                            })
+            "accesskey": self.config.get("accesskey", default=""),
+            "title": self.parseWildcards(zvei_data.get("title", default="{TONE}")),
+            "ric": self.parseWildcards(zvei_data.get("ric", default="{TONE}")),
+            "text": self.parseWildcards(zvei_data.get("message", default="{TONE}")),
+            "priority": zvei_data.get("priority", default="false"),
+        })
         apipath = "/api/alarm"
         self._makeRequests(apipath, apicall)
 
@@ -89,14 +88,14 @@ class BoswatchPlugin(PluginBase):
 
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
-        msg_data =  self.config.get("msg")
+        msg_data = self.config.get("msg")
         apicall = urllib.parse.urlencode({
-                                "accesskey": self.config.get("accesskey", default=""),
-                                "title": self.parseWildcards(msg_data.get("title", default="{MSG}")),
-                                "ric": self.parseWildcards(msg_data.get("ric", default="")),
-                                "text": self.parseWildcards(msg_data.get("message", default="{MSG}")),
-                                "priority": msg_data.get("priority", default="false"),
-                            })
+            "accesskey": self.config.get("accesskey", default=""),
+            "title": self.parseWildcards(msg_data.get("title", default="{MSG}")),
+            "ric": self.parseWildcards(msg_data.get("ric", default="")),
+            "text": self.parseWildcards(msg_data.get("message", default="{MSG}")),
+            "priority": msg_data.get("priority", default="false"),
+        })
         apipath = "/api/alarm"
         self._makeRequests(apipath, apicall)
 
