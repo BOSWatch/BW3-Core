@@ -1,20 +1,6 @@
 # <center>Changelog</center>
 ---
 
-## Version [3.0.1] - date
-### Added
- * Divera24/7-Plugin
- * Python3-pip for requirements in install-script
- * Alsa-utils in install-script
- * Add fir_size for RTL-FM as optionally value
-### Changed
-### Deprecated
-### Removed
-### Fixed
- * Install-Script to use GIT in boswatch3-folder
- * Running RTL-FM Version (on RPi buster)
-### Security
-
 ## Version [2.9.0] - date
 
 Functions implemented in initial version:
