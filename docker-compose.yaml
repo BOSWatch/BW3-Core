@@ -1,15 +1,8 @@
 version: '3'
 services:
   client:
-    build:
-      dockerfile: docker/localdev/Client.Dockerfile
-      context: .
-    command: python /opt/boswatch/bw_client.py -c client.yaml
+    image: docker.pkg.github.com/janspeller/bw3-core/client:latest
     devices:
       - "/dev/bus/usb"
   server:
-    build:
-      dockerfile: docker/localdev/Server.Dockerfile
-      context: .
-    command: python /opt/boswatch/bw_server.py -c server.yaml
-
+    image: docker.pkg.github.com/janspeller/bw3-core/server:latest

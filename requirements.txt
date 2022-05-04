@@ -5,7 +5,7 @@ pyyaml
 # for documentation generating
 mkdocs
 
-# for develope only
+# for develop only
 pytest
 pytest-cov
 pytest-flake8

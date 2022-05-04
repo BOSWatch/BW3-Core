@@ -12,14 +12,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag boswatch:latest
+    - name: Build the Docker image for the Client
+      run: docker build . --file Dockerfile --target client --tag docker.pkg.github.com/janspeller/bw3-core/client:latest
+    - name: Build the Docker image for the Server
+      run: docker build . --file Dockerfile --target server --tag docker.pkg.github.com/janspeller/bw3-core/server:latest
     - name: docker login
       env:
-        GH_PACKAGES_USERNAME: ${{ secrets.GH_PACKAGES_USERNAME }}
-        GH_PACKAGES_PASSWORD: ${{ secrets.GH_PACKAGES_PASSWORD }}
-      run: docker login docker.pkg.github.com --username $GH_PACKAGES_USERNAME --password $GH_PACKAGES_PASSWORD
-    - name: Rename the Docker image
-      run: docker tag boswatch docker.pkg.github.com/janspeller/bw3-core/boswatch:latest
-    - name: Push the Docker image to Github package repository
-      run: docker push docker.pkg.github.com/BOSWatch/bw3-core/boswatch:latest
+        GH_USERNAME: ${{ secrets.GH_USERNAME }}
+        GH_PAT: ${{ secrets.GH_PAT }}
+      run: echo $CR_PAT | docker login ghcr.io -u USERNAME --password-stdin
+    - name: Push the Client Docker image to Github package repository
+      run: docker push docker.pkg.github.com/BOSWatch/bw3-core/client:latest
+    - name: Push the Server Docker image to Github package repository
+      run: docker push docker.pkg.github.com/BOSWatch/bw3-core/se4rver:latest
