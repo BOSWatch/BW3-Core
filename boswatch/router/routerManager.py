@@ -31,6 +31,7 @@ class RouterManager:
 
     def __init__(self):
         """!Create new router"""
+        self.config = None
         self._routerDict = {}
         self._startTime = int(time.time())
 
@@ -40,6 +41,7 @@ class RouterManager:
 
         @param config: instance of ConfigYaml class
         @return True or False"""
+        self.config = config
         self._routerDict = {}  # all routers and instances of modules/plugins would be destroyed
         routerDict_tmp = {}
         logging.debug("build routers")
