@@ -23,4 +23,4 @@ jobs:
     - name: Push the Client Docker image to Github package repository
       run: docker push docker.pkg.github.com/BOSWatch/bw3-core/client:latest
     - name: Push the Server Docker image to Github package repository
-      run: docker push docker.pkg.github.com/BOSWatch/bw3-core/se4rver:latest
+      run: docker push docker.pkg.github.com/BOSWatch/bw3-core/server:latest
