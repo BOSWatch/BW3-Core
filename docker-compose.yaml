@@ -2,7 +2,11 @@ version: '3'
 services:
   client:
     image: docker.pkg.github.com/janspeller/bw3-core/client:latest
+    volumes:
+      - ./config:/opt/boswatch/config
     devices:
       - "/dev/bus/usb"
   server:
     image: docker.pkg.github.com/janspeller/bw3-core/server:latest
+    volumes:
+      - ./config:/opt/boswatch/config

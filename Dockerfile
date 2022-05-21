@@ -5,6 +5,7 @@ FROM build-base AS rtl_fm
 RUN git clone --depth 1 https://gitea.osmocom.org/sdr/rtl-sdr.git /opt/rtl_sdr
 WORKDIR /opt/rtl_sdr/build
 RUN cmake .. && make
+RUN make install
 
 FROM build-base AS multimon
 RUN git clone --depth 1 https://github.com/EliasOenal/multimon-ng.git /opt/multimon
@@ -17,22 +18,24 @@ RUN apk add git && \
     git clone --depth 1 --branch ${BW_VERSION} https://github.com/BOSWatch/BW3-Core.git /opt/boswatch
 
 
-FROM python:alpine AS boswatch-base
+FROM python:alpine AS client
 LABEL maintainer="bastian@schroll-software.de"
 
 #           for RTL    for MM
-RUN apk add libusb-dev libpulse && \
-    pip3 install pyyaml
+RUN apk add libusb-dev libpulse
+RUN pip3 install pyyaml
 
 COPY --from=boswatch /opt/boswatch/ /opt/boswatch/
-RUN mkdir /opt/boswatch/log
 COPY --from=multimon /opt/multimon/build/multimon-ng /opt/multimon/multimon-ng
-COPY --from=rtl_fm /opt/rtl_sdr/build/src/ /opt/rtl_sdr/
-WORKDIR /opt/boswatch
+COPY --from=rtl_fm /usr/local/bin/rtl_fm /opt/rtl_sdr/rtl_fm
+COPY --from=rtl_fm /usr/local/lib/librtlsdr.so.0 /usr/local/lib/librtlsdr.so.0
 
-FROM boswatch-base AS client
+WORKDIR /opt/boswatch
 CMD python3 /opt/boswatch/bw_client.py -c client.yaml
 
-FROM boswatch-base AS server
+FROM python:alpine AS server
+RUN pip3 install pyyaml
+COPY --from=boswatch /opt/boswatch/ /opt/boswatch/
+WORKDIR /opt/boswatch
 CMD python3 /opt/boswatch/bw_server.py -c server.yaml
 EXPOSE 8080

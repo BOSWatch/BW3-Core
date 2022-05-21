@@ -27,7 +27,7 @@ inputSource:
     squelch: 1
     gain: 100
     #fir_size: 0
-    rtlPath: /usr/local/bin/rtl_fm
+    rtlPath: /opt/rtl_sdr/rtl_fm
   lineIn:
     card: 1
     device: 0
@@ -38,5 +38,5 @@ decoder:
   poc512: yes
   poc1200: yes
   poc2400: yes
-  Path: /opt/multimon/multimon-ng
+  path: /opt/multimon/multimon-ng
   char: DE
