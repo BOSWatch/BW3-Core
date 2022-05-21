@@ -26,7 +26,8 @@ inputSource:
     error: 0
     squelch: 1
     gain: 100
-    rtlPath: /usr/bin/rtl_fm
+    #fir_size: 0
+    rtlPath: /usr/local/bin/rtl_fm
   lineIn:
     card: 1
     device: 0

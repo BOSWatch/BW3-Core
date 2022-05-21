@@ -28,6 +28,7 @@ logging.debug("- %s loaded", __name__)
 
 class RouterManager:
     """!Class to manage all routers"""
+
     def __init__(self):
         """!Create new router"""
         self._routerDict = {}
@@ -92,9 +93,8 @@ class RouterManager:
                         logging.error("unknown type '%s' in %s", routeType, route)
                         return False
 
-                # except ModuleNotFoundError:  # only since Py3.6
-                except ImportError:
-                    logging.error("%s not found: %s", route.get("type"), route.get("res"))
+                except ModuleNotFoundError:
+                    logging.exception("%s not found: %s", route.get("type"), route.get("res"))
                     return False
 
         logging.debug("finished building routers")
