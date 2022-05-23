@@ -85,7 +85,7 @@ class BoswatchPlugin(PluginBase):
         if bwPacket.get("lat") is not None and bwPacket.get("lon") is not None:
             logging.debug("Found coordinates in packet")
             (lat, lon) = (bwPacket.get("lat"), bwPacket.get("lon"))
-            self._sendMessage(lat, lon)
+            self._sendLocation(lat, lon)
 
     def zvei(self, bwPacket):
         """!Called on ZVEI alarm
