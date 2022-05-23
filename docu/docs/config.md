@@ -157,15 +157,16 @@ decoder:
 ```
 
 ---
-## Server
+<h2 id="server-configuration">Server</h2>
 Nachfolgend alle Paramater der Server Konfiguration
 
 ### `server:`
 |Feld|Beschreibung|Default|
 |----|------------|-------|
-|port|Port auf dem der Server lauscht|8080
+|port|Port auf dem der Server lauscht| 8080  
 |name|Name zur Identifizierung der Server Instanz||
 |useBroadcast|Verbindungsdaten per Broadcast Server bereitstellen|no|
+|logging|Aktivieren / Deaktivieren des Schreibens von Statistik-Dateien|False|
 
 ---
 ### `alarmRouter:`
@@ -215,3 +216,16 @@ router:
 ## Module/Plugins
 
 Die möglichen Einstellungen der einzelnen Module und Plugins sind im jeweiligen Kapitel aufgelistet.
+
+---
+## Logging
+
+Um den Datenträger, auf dem Boswatch läuft, zu schützen ist das Logging in
+Dateien standartmäßig auf Fehlermeldungen begrenzt.
+In den Dateien `logger_client.ini` bzw `logger_server.ini` kann dies
+entsprechend im Bereich `handler_file` unter `level=` angepasst werden.
+
+Das Schreiben einer Statistik-Datei, welche die Durchläufe aller Module
+und Plugins dokumentiert, kann in der Server-Konfiguration über den Parameter
+`logging` aktiviert werden.
+(siehe [Server-Konfiguration](#server-configuration))

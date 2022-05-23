@@ -11,7 +11,7 @@ server:
   port: 8080
   name: BW3 Server        # name of the BW3 Server instance
   useBroadcast: no        # serve server ip on broadcast request
-  log: false              # enable log file
+  logging: False          # enable log file
 
 alarmRouter:
 - Router 1

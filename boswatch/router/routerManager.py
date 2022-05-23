@@ -118,7 +118,7 @@ class RouterManager:
             else:
                 logging.warning("unknown router: %s", routerName)
 
-        if self.config.get('server.logging', False):
+        if self.config.get("server", "logging", default=False):
             self._saveStats()  # write stats to stats file
 
     def cleanup(self):
