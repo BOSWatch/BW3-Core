@@ -11,10 +11,19 @@ jobs:
   build_docs:
     name: Build documentation
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10']
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+        architecture: x64
 
     - name: Build doxygen
       uses: mattnotmitt/doxygen-action@v1
@@ -22,9 +31,7 @@ jobs:
         working-directory: './'
         doxyfile-path: 'docu/doxygen.ini'
 
-    - name: Build mkdocs
-      run: |
-        python -m pip install --upgrade pip
-        pip install mkdocs
-        python -m mkdocs build -f docu/mkdocs.yml
-    - run: python -m mkdocs gh-deploy -f docu/mkdocs.yml --force
+    - name: Install mkdocs
+      run: pip install mkdocs
+    - name: Build Docs and Deploy to Github Pages
+      run: python -m mkdocs gh-deploy -f docu/mkdocs.yml --force
