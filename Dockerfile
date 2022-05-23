@@ -20,6 +20,7 @@ RUN apk add git && \
 
 FROM python:alpine AS client
 LABEL maintainer="bastian@schroll-software.de"
+LABEL org.opencontainers.image.source=https://github.com/janspeller/BW3-Core
 
 #           for RTL    for MM
 RUN apk add libusb-dev libpulse
@@ -34,6 +35,9 @@ WORKDIR /opt/boswatch
 CMD python3 /opt/boswatch/bw_client.py -c client.yaml
 
 FROM python:alpine AS server
+LABEL maintainer="bastian@schroll-software.de"\
+LABEL org.opencontainers.image.source=https://github.com/janspeller/BW3-Core
+
 RUN pip3 install pyyaml
 COPY --from=boswatch /opt/boswatch/ /opt/boswatch/
 WORKDIR /opt/boswatch
