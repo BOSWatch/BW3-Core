@@ -19,7 +19,7 @@ RUN apk add git && \
 
 
 FROM python:alpine AS client
-LABEL maintainer="bastian@schroll-software.de"
+LABEL org.opencontainers.image.authors="info@schroll-it.de,jan@speller.biz"
 LABEL org.opencontainers.image.source=https://github.com/janspeller/BW3-Core
 
 #           for RTL    for MM
@@ -35,7 +35,7 @@ WORKDIR /opt/boswatch
 CMD python3 /opt/boswatch/bw_client.py -c client.yaml
 
 FROM python:alpine AS server
-LABEL maintainer="bastian@schroll-software.de"\
+LABEL org.opencontainers.image.authors="info@schroll-it.de,jan@speller.biz"
 LABEL org.opencontainers.image.source=https://github.com/janspeller/BW3-Core
 
 RUN pip3 install pyyaml
