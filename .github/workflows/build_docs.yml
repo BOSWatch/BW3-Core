@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - feature/gh-pages
 
 jobs:
 
@@ -26,14 +27,4 @@ jobs:
         python -m pip install --upgrade pip
         pip install mkdocs
         python -m mkdocs build -f docu/mkdocs.yml
-
-    - name: Upload to docs-server
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.SCP_HOST }}
-        port: ${{ secrets.SCP_PORT }}
-        username: ${{ secrets.SCP_USERNAME }}
-        password: ${{ secrets.SCP_PASSWORD }}
-        source: "docu/site/**"
-        target: ${{ secrets.SCP_TARGET_PATH }}
-        strip_components: 2
+    - run: python -m mkdocs gh-deploy --force
