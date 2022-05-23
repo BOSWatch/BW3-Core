@@ -27,4 +27,4 @@ jobs:
         python -m pip install --upgrade pip
         pip install mkdocs
         python -m mkdocs build -f docu/mkdocs.yml
-    - run: python -m mkdocs gh-deploy --force
+    - run: python -m mkdocs gh-deploy -f docu/mkdocs.yml --force
