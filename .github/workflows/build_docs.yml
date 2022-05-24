@@ -3,8 +3,8 @@ name: build_docs
 on:
   push:
     branches:
-      - master
-      - feature/gh-pages
+#     - master
+      - develop
 
 jobs:
 
