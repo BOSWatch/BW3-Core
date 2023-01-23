@@ -8,6 +8,7 @@ mkdocs
 # for develope only
 pytest
 pytest-cov
+flake8==4.0.1
 pytest-flake8
 pytest-flakes
 pytest-randomly
