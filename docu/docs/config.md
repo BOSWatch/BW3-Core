@@ -158,7 +158,7 @@ decoder:
 
 ---
 <h2 id="server-configuration">Server</h2>
-Nachfolgend alle Paramater der Server Konfiguration
+Nachfolgend alle Parameter der Server Konfiguration
 
 ### `server:`
 |Feld|Beschreibung|Default|
