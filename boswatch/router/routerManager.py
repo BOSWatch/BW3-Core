@@ -31,6 +31,7 @@ class RouterManager:
 
     def __init__(self):
         """!Create new router"""
+        self.config = None
         self._routerDict = {}
         self._startTime = int(time.time())
 
@@ -40,6 +41,7 @@ class RouterManager:
 
         @param config: instance of ConfigYaml class
         @return True or False"""
+        self.config = config
         self._routerDict = {}  # all routers and instances of modules/plugins would be destroyed
         routerDict_tmp = {}
         logging.debug("build routers")
@@ -116,7 +118,8 @@ class RouterManager:
             else:
                 logging.warning("unknown router: %s", routerName)
 
-        self._saveStats()  # write stats to stats file
+        if self.config.get("server", "logging", default=False):
+            self._saveStats()  # write stats to stats file
 
     def cleanup(self):
         """!Run cleanup routines for all loaded route points"""
