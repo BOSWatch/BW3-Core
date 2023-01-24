@@ -47,6 +47,11 @@ class PulseAudioInput(InputBase):
                 if not PulseAudioProc.isRunning:
                     logging.warning("PulseAudio was down - try to restart")
                     PulseAudioProc.start()
+
+                    if PulseAudioProc.isRunning:
+                        logging.info("rtl_fm is back up - restarting multimon...")
+                        mmProc.setStdin(PulseAudioProc.stdout)
+                        mmProc.start()
                 elif not mmProc.isRunning:
                     logging.warning("multimon was down - try to restart")
                     mmProc.start()
