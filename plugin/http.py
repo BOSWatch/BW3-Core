@@ -72,7 +72,7 @@ class BoswatchPlugin(PluginBase):
 
         loop = asyncio.get_event_loop()
 
-        future = asyncio.ensure_future(self.asyncRequests(urls))
+        future = asyncio.ensure_future(self._asyncRequests(urls))
         loop.run_until_complete(future)
 
     async def _asyncRequests(self, urls):
