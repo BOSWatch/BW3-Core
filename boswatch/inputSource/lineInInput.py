@@ -48,6 +48,11 @@ class LineInInput(InputBase):
                 if not lineInProc.isRunning:
                     logging.warning("asla was down - try to restart")
                     lineInProc.start()
+
+                    if lineInProc.isRunning:
+                        logging.info("rtl_fm is back up - restarting multimon...")
+                        mmProc.setStdin(lineInProc.stdout)
+                        mmProc.start()
                 elif not mmProc.isRunning:
                     logging.warning("multimon was down - try to restart")
                     mmProc.start()
