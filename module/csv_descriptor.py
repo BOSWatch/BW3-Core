@@ -38,7 +38,7 @@ class BoswatchModule(ModuleBase):
         logging.debug("POCCSV-File-Path '%s'", poccsv)
         with open(poccsv, mode='r') as inp:
             reader = csv.reader(inp)
-            self.poc_csv_dict = {rows[0]:rows[1] for rows in reader}
+            self.poc_csv_dict = {rows[0]: rows[1] for rows in reader}
 
     def doWork(self, bwPacket):
         """!start an run of the module.
