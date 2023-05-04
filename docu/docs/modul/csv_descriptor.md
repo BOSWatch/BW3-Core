@@ -1,4 +1,4 @@
-# <center>Descriptor</center> 
+# <center>CSV Descriptor</center> 
 ---
 
 ## Beschreibung
