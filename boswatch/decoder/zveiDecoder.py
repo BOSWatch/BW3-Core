@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -24,7 +24,7 @@ logging.debug("- %s loaded", __name__)
 
 
 class ZveiDecoder:
-    """!ZVEI decoder class
+    r"""!ZVEI decoder class
 
     This class decodes ZVEI data.
     First step is to validate the data and _check if the format is correct.
@@ -33,7 +33,7 @@ class ZveiDecoder:
 
     @staticmethod
     def decode(data):
-        """!Decodes ZVEI
+        r"""!Decodes ZVEI
 
         @param data: ZVEI for decoding
         @return BOSWatch ZVEI packet or None"""
@@ -51,7 +51,7 @@ class ZveiDecoder:
 
     @staticmethod
     def _solveDoubleTone(data):
-        """!Remove the doubleTone sign (here its the 'E')
+        r"""!Remove the doubleTone sign (here its the 'E')
 
         @param data: ZVEI for double tone sign replacement
         @return Double Tone replaced ZVEI"""

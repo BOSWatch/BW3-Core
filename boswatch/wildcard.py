@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -25,7 +25,7 @@ _additionalWildcards = {}
 
 
 def registerWildcard(wildcard, bwPacketField):
-    """!Register a new additional wildcard
+    r"""!Register a new additional wildcard
 
     @param wildcard: New wildcard string with format: '{WILDCARD}'
     @param bwPacketField: Field of the bwPacket which is used for wildcard replacement"""
@@ -37,7 +37,7 @@ def registerWildcard(wildcard, bwPacketField):
 
 
 def replaceWildcards(message, bwPacket):
-    """!Replace the wildcards in a given message
+    r"""!Replace the wildcards in a given message
 
     @param message: Message in which wildcards should be replaced
     @param bwPacket: bwPacket instance with the replacement information

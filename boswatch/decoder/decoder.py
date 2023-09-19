@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -27,7 +27,7 @@ class Decoder:
 
     @staticmethod
     def decode(data):
-        """!Choose the right decoder and return a bwPacket instance
+        r"""!Choose the right decoder and return a bwPacket instance
 
         @param data: data to decode
         @return bwPacket instance"""

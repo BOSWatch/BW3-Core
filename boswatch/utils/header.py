@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -23,22 +23,22 @@ logging.debug("- %s loaded", __name__)
 
 
 def logoToLog():
-    """!Prints the BOSWatch logo to the log at debug level
+    r"""!Prints the BOSWatch logo to the log at debug level
 
     @return True or False on error"""
-    logging.debug("    ____  ____  ______       __      __       __       _____ ")
-    logging.debug("   / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  / ")
-    logging.debug("  / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <  ")
-    logging.debug(" / /_/ / /_/ /___/ /| |/ |/ / /_/ / /_/ /__/ / / /   ___/ /  ")
-    logging.debug("/_____/\____//____/ |__/|__/\__,_/\__/\___/_/ /_/   /____/   ")
-    logging.debug("                German BOS Information Script                ")
-    logging.debug("                     by Bastian Schroll                      ")
-    logging.debug("")
+    logging.debug(r"    ____  ____  ______       __      __       __       _____ ")
+    logging.debug(r"   / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  / ")
+    logging.debug(r"  / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <  ")
+    logging.debug(r" / /_/ / /_/ /___/ /| |/ |/ / /_/ / /_/ /__/ / / /   ___/ /  ")
+    logging.debug(r"/_____/\____//____/ |__/|__/\__,_/\__/\___/_/ /_/   /____/   ")
+    logging.debug(r"                German BOS Information Script                ")
+    logging.debug(r"                     by Bastian Schroll                      ")
+    logging.debug(r"")
     return True
 
 
 def infoToLog():
-    """!Prints the BOSWatch and OS information to log at debug level
+    r"""!Prints the BOSWatch and OS information to log at debug level
 
     @return True or False on error"""
     logging.debug("BOSWatch and environment information")

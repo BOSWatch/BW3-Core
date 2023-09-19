@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -28,14 +28,14 @@ logging.debug("- %s loaded", __name__)
 
 
 class BoswatchPlugin(PluginBase):
-    """!Description of the Plugin"""
+    r"""!Description of the Plugin"""
 
     def __init__(self, config):
-        """!Do not change anything here!"""
+        r"""!Do not change anything here!"""
         super().__init__(__name__, config)  # you can access the config class on 'self.config'
 
     def onLoad(self):
-        """!Called by import of the plugin
+        r"""!Called by import of the plugin
         Remove if not implemented"""
         self.sqlInserts = {
             "pocsag": "INSERT INTO boswatch (packetTimestamp, packetMode, pocsag_ric, pocsag_subric, pocsag_subricText, pocsag_message, pocsag_bitrate, serverName, serverVersion, serverBuildDate, serverBranch, clientName, clientIP, clientVersion, clientBuildDate, clientBranch, inputSource, frequency) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
@@ -63,7 +63,7 @@ class BoswatchPlugin(PluginBase):
         self.cursor.close()
 
     def setup(self):
-        """!Called before alarm
+        r"""!Called before alarm
         Remove if not implemented"""
         try:
             self.connection.ping(reconnect=True, attempts=3, delay=2)
@@ -74,7 +74,7 @@ class BoswatchPlugin(PluginBase):
         self.cursor = self.connection.cursor()
 
     def fms(self, bwPacket):
-        """!Called on FMS alarm
+        r"""!Called on FMS alarm
 
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
@@ -105,7 +105,7 @@ class BoswatchPlugin(PluginBase):
         self.cursor.execute(self.sqlInserts.get("fms"), val)
 
     def pocsag(self, bwPacket):
-        """!Called on POCSAG alarm
+        r"""!Called on POCSAG alarm
 
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
@@ -132,7 +132,7 @@ class BoswatchPlugin(PluginBase):
         self.cursor.execute(self.sqlInserts.get("pocsag"), val)
 
     def zvei(self, bwPacket):
-        """!Called on ZVEI alarm
+        r"""!Called on ZVEI alarm
 
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
@@ -155,7 +155,7 @@ class BoswatchPlugin(PluginBase):
         self.cursor.execute(self.sqlInserts.get("pocsag"), val)
 
     def msg(self, bwPacket):
-        """!Called on MSG packet
+        r"""!Called on MSG packet
 
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
@@ -177,12 +177,12 @@ class BoswatchPlugin(PluginBase):
         self.cursor.execute(self.sqlInserts.get("msg"), val)
 
     def teardown(self):
-        """!Called after alarm
+        r"""!Called after alarm
         Remove if not implemented"""
         self.connection.commit()
         self.cursor.close()
 
     def onUnload(self):
-        """!Called by destruction of the plugin
+        r"""!Called by destruction of the plugin
         Remove if not implemented"""
         self.connection.close()

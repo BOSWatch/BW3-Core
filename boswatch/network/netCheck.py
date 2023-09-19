@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -21,10 +21,10 @@ logging.debug("- %s loaded", __name__)
 
 
 class NetCheck:
-    """!Worker class to check internet connection"""
+    r"""!Worker class to check internet connection"""
 
     def __init__(self, hostname="https://www.google.com/", timeout=1):
-        """!Create a new NetCheck instance
+        r"""!Create a new NetCheck instance
 
         @param hostname: host against connection check is running ("https://www.google.com/")
         @param timeout: timeout for connection check in sec. (1)"""
@@ -34,7 +34,7 @@ class NetCheck:
         self.checkConn()  # initiate a first check
 
     def checkConn(self):
-        """!Check the connection
+        r"""!Check the connection
 
         @return True or False"""
         try:

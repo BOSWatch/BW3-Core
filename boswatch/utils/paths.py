@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -34,7 +34,7 @@ def fileExist(filePath):
 
 
 def makeDirIfNotExist(dirPath):
-    """!Checks if an directory is existing and create it if not
+    r"""!Checks if an directory is existing and create it if not
 
     @param dirPath: Path of the directory
     @return Path of the directory or False"""
