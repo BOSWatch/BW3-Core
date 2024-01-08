@@ -69,6 +69,11 @@ class BoswatchModule(ModuleBase):
     def _check(self, bwPacket, filterFields):
         self._filterLists[bwPacket.get("mode")].insert(0, bwPacket)
 
+        for listPacket in self._filterLists[bwPacket.get("mode")][1:]:  # [1:] skip first entry, thats the new one
+            if all(listPacket.get(x) == bwPacket.get(x) for x in filterFields):
+                logging.debug("found duplicate: %s", bwPacket.get("mode"))
+                return False
+        
         # delete entries that are to old
         counter = 0
         for listPacket in self._filterLists[bwPacket.get("mode")][1:]:  # [1:] skip first entry, thats the new one
@@ -82,11 +87,6 @@ class BoswatchModule(ModuleBase):
         if len(self._filterLists[bwPacket.get("mode")]) > self.config.get("maxEntry", default=20):
             logging.debug("MaxEntry reached - delete oldest")
             self._filterLists[bwPacket.get("mode")].pop()
-
-        for listPacket in self._filterLists[bwPacket.get("mode")][1:]:  # [1:] skip first entry, thats the new one
-            if all(listPacket.get(x) == bwPacket.get(x) for x in filterFields):
-                logging.debug("found duplicate: %s", bwPacket.get("mode"))
-                return False
 
         logging.debug("doubleFilter ok")
         return None
