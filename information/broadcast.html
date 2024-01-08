@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="Bastian Schroll & BW3 Dev team">
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Broadcast Service - BOSWatch3 Core</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">BOSWatch3 Core</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Quick Start <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../tbd.html" class="dropdown-item">Installation</a>
+</li>
+                                    
+<li>
+    <a href="../config.html" class="dropdown-item">Konfiguration</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Informationen <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="serverclient.html" class="dropdown-item">Server/Cient Prinzip</a>
+</li>
+                                    
+<li>
+    <a href="broadcast.html" class="dropdown-item active">Broadcast Service</a>
+</li>
+                                    
+<li>
+    <a href="router.html" class="dropdown-item">Routing Mechanismus</a>
+</li>
+                                    
+<li>
+    <a href="../changelog.html" class="dropdown-item">Changelog</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Module <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../modul/descriptor.html" class="dropdown-item">Descriptor</a>
+</li>
+                                    
+<li>
+    <a href="../modul/geocoding.html" class="dropdown-item">Geocoding</a>
+</li>
+                                    
+<li>
+    <a href="../modul/mode_filter.html" class="dropdown-item">Mode Filter</a>
+</li>
+                                    
+<li>
+    <a href="../modul/regex_filter.html" class="dropdown-item">Regex Filter</a>
+</li>
+                                    
+<li>
+    <a href="../modul/double_filter.html" class="dropdown-item">Double Filter</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Plugins <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../plugin/http.html" class="dropdown-item">Http</a>
+</li>
+                                    
+<li>
+    <a href="../plugin/telegram.html" class="dropdown-item">Telegram</a>
+</li>
+                                    
+<li>
+    <a href="../plugin/divera.html" class="dropdown-item">Divera</a>
+</li>
+                                    
+<li>
+    <a href="../plugin/mysql.html" class="dropdown-item">MySQL</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Entwickler <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../develop/ModulPlugin.html" class="dropdown-item">Eigenes Modul/Plugin schreiben</a>
+</li>
+                                    
+<li>
+    <a href="../develop/packet.html" class="dropdown-item">BOSWatch Alarmpaket Format</a>
+</li>
+                                    
+<li>
+    <a href="../api/html/index.html" class="dropdown-item">BW3 Quellcode Dokumentation</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="serverclient.html" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="router.html" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/BOSWatch/BW3-Core/edit/develop/docu/docs/information/broadcast.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#broadcast-service" class="nav-link">Broadcast Service</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#aufbau" class="nav-link">Aufbau</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#ablauf" class="nav-link">Ablauf</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="broadcast-service"><center>Broadcast Service</center></h1>
+<p>Durch den Broadcast Service haben Clients die Möglichkeit, automatisch den Server zu finden und sich mit diesem zu verbinden. Dazu stellt der Server die benötigten Verbinungsinformationen per Broadcast Service bereit.</p>
+<p><strong>Hinweis:</strong> <em>Server und Client müssen sich im selben Subnetz befinden.</em></p>
+<hr />
+<h2 id="aufbau">Aufbau</h2>
+<p>Der Broadcast Service besteht aus 2 Teilen - einem Server und einem Clienten.<br />
+Nachfolgend soll der Ablauf einer Verbindung des Clienten zum Server mittels des Broadcast Services erklärt werden.</p>
+<p><center><img alt="" src="../img/broadcast.png" /></center></p>
+<hr />
+<h2 id="ablauf">Ablauf</h2>
+<h3 id="schritt-1-broadcast-server-starten">Schritt 1 - Broadcast Server starten</h3>
+<p>Im ersten Schritt wird auf dem Server ein zusätzlicher Broadcast Server in einem seperaten Thread gestartet. Dieser lauscht auf einem festgelegten Port auf UDP Broadcast Pakete. Nun kann eine beliebige Anzahl von Clienten mittels des Broadcast Services die Verbindungsgdaten des Servers abfragen.</p>
+<h3 id="schritt-2-broadcast-durch-clienten">Schritt 2 - Broadcast durch Clienten</h3>
+<p>Die Client Applikation startet nun zur Abfrage der Verbindungsdaten einen BC Clienten und sendet dort auf dem festgelegten Port ein Paket per UDP Boradcast. Der Inhalt des Paketes ist das Magic-Word <code>&lt;BW3-Request&gt;</code> und wird von allen im selben Subnetz befindlichen Gegenstellen empfangen. Nun wartet der Client auf eine Antwort des Broadcast Server mit den Verbindungsdaten.</p>
+<h3 id="schritt-3-verbindungsdaten-senden">Schritt 3 - Verbindungsdaten senden</h3>
+<p>Wird nun ein Broadcast Paket empfangen, prüft der BC Server die Daten auf das Magic-Word <code>&lt;BW3-Request&gt;</code>. Wird dieses erkannt, liest der Server die Absender-IP-Addresse aus dem Paket aus und sendet eine Antwort direkt an diesen Clienten. Dieses Antwortpaket sieht folgendermaßen aus: <code>&lt;BW3-Result&gt;;8080</code> wobei die <code>8080</code> hier den normalen TCP Kommunikationsport des Servers darstellt.</p>
+<h3 id="schritt-4-verbindungsdaten-empfangen">Schritt 4 - Verbindungsdaten empfangen</h3>
+<p>Nachdem der Client das direkt an ihn gerichtete Paket mit den Verbindungsdaten vom Server empfangen hat, prüft er auf das Magic-Word <code>&lt;BW3-Result&gt;</code>. Ist dieses enthalten wird der Port für die TCP Verbindung aus dem Paket extrahiert. Außerdem wird die IP-Addresse des Absenders aus dem Paket gelesen.<br />
+Anschließend stehen dem Clienten die Verbindungsdaten des Servers zur Verfügung und er kann sich per TCP auf den angegebenen Port mit dem BOSWatch Server verbinden um seine Alarmierungs-Pakete abzusetzen.</p>
+<p>Da der Broadcast Server in einem eigenen Thread, unabhängig vom Hauptprogram läuft, können ganz einfach weitere Clienten per Broadcast Service die Verbindungsdaten des Servers abrufen.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../js/jquery-3.6.0.min.js"></script>
+        <script src="../js/bootstrap.min.js"></script>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js"></script>
+        <script src="../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

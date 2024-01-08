@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="Bastian Schroll & BW3 Dev team">
+        
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <title>Konfiguration - BOSWatch3 Core</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href=".">BOSWatch3 Core</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="dropdown active">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Quick Start <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="tbd.html" class="dropdown-item">Installation</a>
+</li>
+                                    
+<li>
+    <a href="config.html" class="dropdown-item active">Konfiguration</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Informationen <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="information/serverclient.html" class="dropdown-item">Server/Cient Prinzip</a>
+</li>
+                                    
+<li>
+    <a href="information/broadcast.html" class="dropdown-item">Broadcast Service</a>
+</li>
+                                    
+<li>
+    <a href="information/router.html" class="dropdown-item">Routing Mechanismus</a>
+</li>
+                                    
+<li>
+    <a href="changelog.html" class="dropdown-item">Changelog</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Module <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="modul/descriptor.html" class="dropdown-item">Descriptor</a>
+</li>
+                                    
+<li>
+    <a href="modul/geocoding.html" class="dropdown-item">Geocoding</a>
+</li>
+                                    
+<li>
+    <a href="modul/mode_filter.html" class="dropdown-item">Mode Filter</a>
+</li>
+                                    
+<li>
+    <a href="modul/regex_filter.html" class="dropdown-item">Regex Filter</a>
+</li>
+                                    
+<li>
+    <a href="modul/double_filter.html" class="dropdown-item">Double Filter</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Plugins <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="plugin/http.html" class="dropdown-item">Http</a>
+</li>
+                                    
+<li>
+    <a href="plugin/telegram.html" class="dropdown-item">Telegram</a>
+</li>
+                                    
+<li>
+    <a href="plugin/divera.html" class="dropdown-item">Divera</a>
+</li>
+                                    
+<li>
+    <a href="plugin/mysql.html" class="dropdown-item">MySQL</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Entwickler <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="develop/ModulPlugin.html" class="dropdown-item">Eigenes Modul/Plugin schreiben</a>
+</li>
+                                    
+<li>
+    <a href="develop/packet.html" class="dropdown-item">BOSWatch Alarmpaket Format</a>
+</li>
+                                    
+<li>
+    <a href="api/html/index.html" class="dropdown-item">BW3 Quellcode Dokumentation</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="tbd.html" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="information/serverclient.html" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/BOSWatch/BW3-Core/edit/develop/docu/docs/config.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#konfiguration" class="nav-link">Konfiguration</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#client" class="nav-link">Client</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#server_1" class="nav-link">Server</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#moduleplugins" class="nav-link">Module/Plugins</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="konfiguration"><center>Konfiguration</center></h1>
+<p>Die Konfiguration von BOSWatch 3 ist im YAML Format abgelegt und wird nachfolgend beschrieben.<br />
+Immer wenn für eine Einstellung ein <strong>Default</strong> Wert angegeben ist, muss diese Einstellung nicht
+zwingend in die Konfiguration eingetragen werden.</p>
+<h2 id="client">Client</h2>
+<hr />
+<h3 id="client_1"><code>client:</code></h3>
+<table>
+<thead>
+<tr>
+<th>Feld</th>
+<th>Beschreibung</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>Name zur Identifizierung der Client Instanz</td>
+<td></td>
+</tr>
+<tr>
+<td>inputSource</td>
+<td>Art der zu nutzenden Input Quelle (<code>sdr</code>, <code>lineIn</code> oder <code>PulseAudio</code>)</td>
+<td></td>
+</tr>
+<tr>
+<td>useBroadcast</td>
+<td>Verbindungsdaten per <a href="information/broadcast.html">Broadcast</a> beziehen</td>
+<td>no</td>
+</tr>
+<tr>
+<td>reconnectDelay</td>
+<td>Verzögerung für erneuten Verbindungsversuch zum Server</td>
+<td>3</td>
+</tr>
+<tr>
+<td>sendTries</td>
+<td>Anzahl der Sendeversuche eines Pakets</td>
+<td>3</td>
+</tr>
+<tr>
+<td>sendDelay</td>
+<td>Verzögerung für einen erneuten Sendeversuch</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="server"><code>server:</code></h3>
+<p>Der Abschnitt <code>server:</code> wird nur genutzt, wenn <code>useBroadcast: no</code> gesetzt ist.<br />
+Ansonsten wird versucht die Verbindungsdaten per Broadcast Paket direkt vom Server zu beziehen.</p>
+<table>
+<thead>
+<tr>
+<th>Feld</th>
+<th>Beschreibung</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ip</td>
+<td>IP Adresse des Servers</td>
+<td>127.0.0.1</td>
+</tr>
+<tr>
+<td>port</td>
+<td>Port des Sever</td>
+<td>8080</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Beispiel:</strong></p>
+<pre><code class="language-yaml">server:
+  ip: 10.10.10.2
+  port: 9123
+</code></pre>
+<hr />
+<h3 id="inputsource"><code>inputSource:</code></h3>
+<p>Es gibt die Auswahl zwischen <code>sdr</code>, <code>lineIn</code> oder <code>PulseAudio</code> als Input Quelle.<br />
+Mit <code>sdr</code> wird direkt per <strong>rtl_sdr</strong> die zu empfangende Frequenz an Multimon-NG weitergereicht.<br />
+Mit <code>lineIn</code> wird eine Quelle die (per <strong>ALSA</strong>) direkt an die Soundkarte angeschlossen ist an Multimon-NG weitergereicht.<br />
+Mit <code>PulseAudio</code> wird ein PulseAudio-Sink an Multimon-NG weitergereicht, z.B. in Kombination mit <a href="https://github.com/szpajder/RTLSDR-Airband">RTLSDR-Airband</a> und/oder Docker.</p>
+<h4 id="sdr"><code>sdr:</code></h4>
+<table>
+<thead>
+<tr>
+<th>Feld</th>
+<th>Beschreibung</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>device</td>
+<td>rtl_fm Device ID</td>
+<td>0</td>
+</tr>
+<tr>
+<td>frequency</td>
+<td>Zu empfangende Frequenz</td>
+<td></td>
+</tr>
+<tr>
+<td>error</td>
+<td>Frequenz Abweichung in ppm</td>
+<td>0</td>
+</tr>
+<tr>
+<td>squelch</td>
+<td>Einstellung der Rauschsperre</td>
+<td>1</td>
+</tr>
+<tr>
+<td>gain</td>
+<td>Verstärkung des Eingangssignals</td>
+<td>100</td>
+</tr>
+<tr>
+<td>fir_size</td>
+<td>niedrig leckagearmen Filter</td>
+<td>None</td>
+</tr>
+<tr>
+<td>rtlPath</td>
+<td>Pfad zur rtl_fm Binary</td>
+<td>rtl_fm</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Beispiel:</strong></p>
+<pre><code class="language-yaml">inputSource:
+  sdr:
+    device: 0
+    frequency: 85M
+    error: 0
+    squelch: 1
+    gain: 100
+    rtlPath: /usr/bin/rtl-fm
+</code></pre>
+<h4 id="linein"><code>lineIn:</code></h4>
+<table>
+<thead>
+<tr>
+<th>Feld</th>
+<th>Beschreibung</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>device</td>
+<td>die device Id der Soundkarte</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Device herausfinden</strong>
+Durch eingabe des Befehls <code>aplay -l</code> werden alle Soundkarten ausgegeben. Das schaut ungefähr so aus:</p>
+<pre><code class="language-console">**** List of PLAYBACK Hardware Devices ****
+card 0: ALSA [bcm2835 ALSA], device 0: bcm2835 ALSA [bcm2835 ALSA]
+  Subdevices: 7/7
+  Subdevice #0: subdevice #0
+  Subdevice #1: subdevice #1
+  Subdevice #2: subdevice #2
+  Subdevice #3: subdevice #3
+  Subdevice #4: subdevice #4
+  Subdevice #5: subdevice #5
+  Subdevice #6: subdevice #6
+card 0: ALSA [bcm2835 ALSA], device 1: bcm2835 IEC958/HDMI [bcm2835 IEC958/HDMI]
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+card 0: ALSA [bcm2835 ALSA], device 2: bcm2835 IEC958/HDMI1 [bcm2835 IEC958/HDMI1]
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+card 1: Device [C-Media USB Audio Device], device 0: USB Audio [USB Audio]
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+</code></pre>
+<p>Wir betrachten das letzte Gerät: <code>card 1: Device [C-Media USB Audio Device], device 0: USB Audio [USB Audio]</code></p>
+<p>In dem Fall ist das letzte Gerät - <code>card 1</code> - unsere USB-Audio Schnittstelle die wir verwenden wollen.
+In der Konfiguration wird das Feld <code>card</code> nun auf den Wert 1 gesetzt.</p>
+<p>Nach dem Typ der Soundkarte steht das device, in diesem Fall <code>device 0</code>.
+In der Konfiguration wird das Feld <code>device</code> nun auf den Wert 0 gesetzt.</p>
+<p><strong>Beispiel:</strong></p>
+<pre><code class="language-yaml">inputSource:
+  ...
+  lineIn:
+    card: 1
+    device: 0
+</code></pre>
+<h4 id="pulseaudio"><code>PulseAudio:</code></h4>
+<table>
+<thead>
+<tr>
+<th>Feld</th>
+<th>Beschreibung</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>device</td>
+<td>Der Sinks-Name der Quelle</td>
+<td>boswatch</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Device herausfinden</strong>
+Durch eingabe des Befehls  <code>pacmd list-sinks | grep name:</code> werden alle Sinks ausgegeben. Beispiel:</p>
+<pre><code class="language-console">bash-5.0# pacmd list-sinks | grep name:
+    name: &lt;boswatch&gt;
+</code></pre>
+<p>In der Konfiguration wird das Feld <code>device</code> nun auf den den Namen des gewünschten Sinks gesetzt (ohne spitze Klammern, &lt;&gt;).</p>
+<p><strong>Beispiel:</strong></p>
+<pre><code class="language-yaml">inputSource:
+  ...
+  PulseAudio:
+    device: boswatch
+</code></pre>
+<hr />
+<h3 id="decoder"><code>decoder:</code></h3>
+<table>
+<thead>
+<tr>
+<th>Feld</th>
+<th>Beschreibung</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>fms</td>
+<td>FMS Decoder</td>
+<td>no</td>
+</tr>
+<tr>
+<td>zvei</td>
+<td>ZVEI Decoder</td>
+<td>no</td>
+</tr>
+<tr>
+<td>poc512</td>
+<td>POCSAG Decoder (Bitrate 512)</td>
+<td>no</td>
+</tr>
+<tr>
+<td>poc1200</td>
+<td>POCSAG Decoder (Bitrate 1200)</td>
+<td>no</td>
+</tr>
+<tr>
+<td>poc2400</td>
+<td>POCSAG Decoder (Bitrate 2400)</td>
+<td>no</td>
+</tr>
+<tr>
+<td>path</td>
+<td>Pfad zur multimon-ng Binary</td>
+<td>multimon-ng</td>
+</tr>
+<tr>
+<td>char</td>
+<td>multimon-ng char-Set</td>
+<td>not set</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Beispiel:</strong></p>
+<pre><code class="language-yaml">decoder:
+  fms: yes
+  zvei: yes
+  poc512: no
+  poc1200: no
+  poc2400: yes
+  path: /opt/multimon/multimon-ng
+  char: DE
+</code></pre>
+<hr />
+<h2 id="server_1">Server</h2>
+<p>Nachfolgend alle Paramater der Server Konfiguration</p>
+<h3 id="server_2"><code>server:</code></h3>
+<table>
+<thead>
+<tr>
+<th>Feld</th>
+<th>Beschreibung</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>port</td>
+<td>Port auf dem der Server lauscht</td>
+<td>8080</td>
+</tr>
+<tr>
+<td>name</td>
+<td>Name zur Identifizierung der Server Instanz</td>
+<td></td>
+</tr>
+<tr>
+<td>useBroadcast</td>
+<td>Verbindungsdaten per Broadcast Server bereitstellen</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="alarmrouter"><code>alarmRouter:</code></h3>
+<p>Enthält eine Liste der Router Namen, welche bei einem Alarm direkt gestartet werden sollen.</p>
+<p><strong>Beispiel:</strong></p>
+<pre><code class="language-yaml">alarmRouter:
+  - Name des Routers
+  - ein weiter Router
+</code></pre>
+<hr />
+<h3 id="router"><code>router:</code></h3>
+<p>Mit den Routern kann der Verarbeitungsweg eines Alarm-Paketes festgelegt werden. Es können beliebig viele Router in Form einer Liste angegeben werden.</p>
+<table>
+<thead>
+<tr>
+<th>Feld</th>
+<th>Beschreibung</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>Name des Routers</td>
+<td></td>
+</tr>
+<tr>
+<td>route</td>
+<td>Definiten des Routenverlaufs</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="route"><code>route:</code></h4>
+<p>Jeder Router kann eine beliebige Anzahl einzelner Routenpunkte enthalten. Diese werden innerhalb des Routers sequentiel abgearbeitet. Mögliche Typen der Routenpunkte sind dabei ein Modul, ein Plugin oder ein anderer Router. Sie werden ebenfalls in Form einer Liste definiert.</p>
+<table>
+<thead>
+<tr>
+<th>Feld</th>
+<th>Beschreibung</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>type</td>
+<td>Art des Routenpunktes (module, plugin, router)</td>
+<td></td>
+</tr>
+<tr>
+<td>res</td>
+<td>Zu ladende Resource (Siehe entsprechende Kapitel)</td>
+<td></td>
+</tr>
+<tr>
+<td>name</td>
+<td>Optionaler Name des Routenpunktes</td>
+<td>gleich wie Resource</td>
+</tr>
+<tr>
+<td>config</td>
+<td>Konfigurationseinstellungen des Routenpunktes (Siehe entsprechende Kapitel)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Beispiel:</strong></p>
+<pre><code class="language-yaml">router:
+  - name: Router 1
+    route:
+      - type: module
+        res: filter.modeFilter
+        name: Filter Fms/Zvei
+        config:
+          allowed:
+            - fms
+</code></pre>
+<hr />
+<h2 id="moduleplugins">Module/Plugins</h2>
+<p>Die möglichen Einstellungen der einzelnen Module und Plugins sind im jeweiligen Kapitel aufgelistet.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="js/jquery-3.6.0.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script>
+            var base_url = ".",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="js/base.js"></script>
+        <script src="search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
