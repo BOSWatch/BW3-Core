@@ -59,15 +59,22 @@ class _ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
                 logging.debug("%s recv header: '%s'", req_name, header)
                 logging.debug("%s recv %d bytes:\n%s", req_name, len(data), data)
 
-                # add a new entry and the decoded data dict as an string in utf-8 and an timestamp
-                self.server.alarmQueue.put_nowait((self.client_address[0], data, time.time()))  # queue is threadsafe
-                logging.debug("Add data to queue")
+                try:
+                    eval(str(data.strip()))
 
-                logging.debug("%s send: [ack]", req_name)
+                    # add a new entry and the decoded data dict as an string in utf-8 and an timestamp
+                    self.server.alarmQueue.put_nowait((self.client_address[0], data, time.time()))  # queue is threadsafe
+                    logging.debug("Add data to queue")
 
-                data = "[ack]".encode("utf-8")
-                header = str(len(data)).ljust(HEADERSIZE).encode("utf-8")
-                self.request.sendall(header + data)
+                    logging.debug("%s send: [ack]", req_name)
+                    data = "[ack]".encode("utf-8")
+                except SyntaxError:
+                    logging.warning("packet data loss, received: %s", data.strip())
+                    logging.debug("%s send: [nack]", req_name)
+                    data = "[nack]".encode("utf-8")
+                finally:
+                    header = str(len(data)).ljust(HEADERSIZE).encode("utf-8")
+                    self.request.sendall(header + data)
 
         except socket.error as e:
             logging.error(e)

@@ -90,15 +90,14 @@ try:
 
         while 1:
             if incomingQueue.empty():  # pause only when no data
-                time.sleep(0.1)  # reduce cpu load (wait 100ms)
-                # in worst case a packet have to wait 100ms until it will be processed
-
+                time.sleep(0.01)  # reduce cpu load (wait 10ms)
+                # in worst case a packet have to wait 10ms until it will be processed
             else:
                 data = incomingQueue.get()
 
                 logging.info("get data from %s (waited in queue %0.3f sec.)", data[0], time.time() - data[2])
                 logging.debug("%s packet(s) still waiting in queue", incomingQueue.qsize())
-                bwPacket = Packet((data[1]))
+                bwPacket = Packet(data[1])
 
                 bwPacket.set("clientIP", data[0])
                 misc.addServerDataToPacket(bwPacket, bwConfig)
