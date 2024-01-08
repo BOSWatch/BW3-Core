@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -21,7 +21,7 @@ logging.debug("- %s loaded", __name__)
 
 
 def addClientDataToPacket(bwPacket, config):
-    """!Add the client information to the decoded data
+    r"""!Add the client information to the decoded data
 
     This function adds the following data to the bwPacket:
     - clientName
@@ -40,7 +40,7 @@ def addClientDataToPacket(bwPacket, config):
 
 
 def addServerDataToPacket(bwPacket, config):
-    """!Add the server information to the decoded data
+    r"""!Add the server information to the decoded data
 
     This function adds the following data to the bwPacket:
     - serverName

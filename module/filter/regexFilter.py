@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -26,17 +26,17 @@ logging.debug("- %s loaded", __name__)
 
 
 class BoswatchModule(ModuleBase):
-    """!Regex based filter mechanism"""
+    r"""!Regex based filter mechanism"""
     def __init__(self, config):
-        """!Do not change anything here!"""
+        r"""!Do not change anything here!"""
         super().__init__(__name__, config)  # you can access the config class on 'self.config'
 
     def onLoad(self):
-        """!Called by import of the plugin"""
+        r"""!Called by import of the plugin"""
         pass
 
     def doWork(self, bwPacket):
-        """!start an run of the module.
+        r"""!start an run of the module.
 
         @param bwPacket: A BOSWatch packet instance"""
         for regexFilter in self.config:
@@ -61,5 +61,5 @@ class BoswatchModule(ModuleBase):
         return False  # False -> Router will stop further processing
 
     def onUnload(self):
-        """!Called by destruction of the plugin"""
+        r"""!Called by destruction of the plugin"""
         pass

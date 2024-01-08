@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -26,19 +26,19 @@ def setup_function(function):
 
 
 def test_decoderNoData():
-    """!Test a empty string"""
+    r"""!Test a empty string"""
     assert Decoder.decode("") is None
 
 
 def test_decoderZveiValid():
-    """!Test valid ZVEI"""
+    r"""!Test valid ZVEI"""
     assert not Decoder.decode("ZVEI1: 12345") is None
     assert not Decoder.decode("ZVEI1: 12838") is None
     assert not Decoder.decode("ZVEI1: 34675") is None
 
 
 def test_decoderZveiDoubleTone():
-    """!Test doubleTone included ZVEI"""
+    r"""!Test doubleTone included ZVEI"""
     assert not Decoder.decode("ZVEI1: 6E789") is None
     assert not Decoder.decode("ZVEI1: 975E7") is None
     assert not Decoder.decode("ZVEI1: 2E87E") is None
@@ -54,7 +54,7 @@ def test_decoderZveiInvalid():
 
 
 def test_decoderPocsagValid():
-    """!Test valid POCSAG"""
+    r"""!Test valid POCSAG"""
     assert not Decoder.decode("POCSAG512: Address: 1000000  Function: 0") is None
     assert not Decoder.decode("POCSAG512: Address: 1000001  Function: 1") is None
     assert not Decoder.decode("POCSAG1200: Address: 1000002  Function: 2") is None
@@ -62,7 +62,7 @@ def test_decoderPocsagValid():
 
 
 def test_decoderPocsagText():
-    """!Test POCSAG with text"""
+    r"""!Test POCSAG with text"""
     assert not Decoder.decode("POCSAG512: Address: 1000000  Function: 0  Alpha:   test") is None
     assert not Decoder.decode("POCSAG512: Address: 1000001  Function: 1  Alpha:   test") is None
     assert not Decoder.decode("POCSAG1200: Address: 1000002  Function: 2  Alpha:   test") is None
@@ -70,7 +70,7 @@ def test_decoderPocsagText():
 
 
 def test_decoderPocsagShortRic():
-    """!Test short POCSAG"""
+    r"""!Test short POCSAG"""
     assert not Decoder.decode("POCSAG512: Address:       3  Function: 0  Alpha:   test") is None
     assert not Decoder.decode("POCSAG512: Address:      33  Function: 0  Alpha:   test") is None
     assert not Decoder.decode("POCSAG1200: Address:     333  Function: 0  Alpha:   test") is None
@@ -81,14 +81,14 @@ def test_decoderPocsagShortRic():
 
 
 def test_decoderPocsagInvalid():
-    """!Test invalid POCSAG"""
+    r"""!Test invalid POCSAG"""
     assert Decoder.decode("POCSAG512: Address: 333333F  Function: 0  Alpha:   invalid") is None
     assert Decoder.decode("POCSAG512: Address: 333333F  Function: 1  Alpha:   invalid") is None
     assert Decoder.decode("POCSAG512: Address: 3333333  Function: 4  Alpha:   invalid") is None
 
 
 def test_decoderFmsValid():
-    """!Test valid FMS"""
+    r"""!Test valid FMS"""
     assert not Decoder.decode("""FMS: 43f314170000 (9=Rotkreuz       3=Bayern 1         Ort 0x25=037FZG  7141Status  3=Einsatz Ab     0=FZG->LST 2=I  (ohneNA,ohneSIGNAL)) CRC correct""") is None
     assert not Decoder.decode("""FMS: 43f314170000 (9=Rotkreuz       3=Bayern 1         Ort 0x25=037FZG  7141Status  3=Einsatz Ab     1=LST->FZG 2=I  (ohneNA,ohneSIGNAL)) CRC correct""") is None
     assert not Decoder.decode("""FMS: 43f314170000 (9=Rotkreuz       3=Bayern 1         Ort 0x25=037FZG  7141Status  3=Einsatz Ab     0=FZG->LST 2=II (ohneNA,mit SIGNAL)) CRC correct""") is None
@@ -97,7 +97,7 @@ def test_decoderFmsValid():
 
 
 def test_decoderFmsInvalid():
-    """!Test invalid FMS"""
+    r"""!Test invalid FMS"""
     assert Decoder.decode("""FMS: 14170000 (9=Rotkreuz       3=Bayern 1         Ort 0x25=037FZG  7141Status  3=Einsatz Ab     1=LST->FZG 2=III(mit NA,ohneSIGNAL)) CRC correct""") is None
     assert Decoder.decode("""FMS: 43f314170000 (9=Rotkreuz       3=Bayern 1         Ort 0x25=037FZG  7141Sta  3=Einsatz Ab     0=FZG->LST 2=IV (mit NA,mit SIGNAL)) CRC correct""") is None
     assert Decoder.decode("""FMS: 14170000 (9=Rotkreuz       3=Bayern 1         Ort 0x25=037FZG  7141Status  3=Einsatz Ab     1=LST->FZG 2=III(mit NA,ohneSIGNAL)) CRC incorrect""") is None

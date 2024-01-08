@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -22,9 +22,9 @@ logging.debug("- %s loaded", __name__)
 
 
 class Router:
-    """!Class for the Router"""
+    r"""!Class for the Router"""
     def __init__(self, name):
-        """!Create a new router
+        r"""!Create a new router
 
         @param name: name of the router"""
         self.name = name
@@ -40,7 +40,7 @@ class Router:
         logging.debug("[%s] add new router", self.name)
 
     def addRoute(self, route):
-        """!Adds a route point to the router
+        r"""!Adds a route point to the router
 
         @param route: instance of the Route class
         """
@@ -48,7 +48,7 @@ class Router:
         self.routeList.append(route)
 
     def runRouter(self, bwPacket):
-        """!Run the router
+        r"""!Run the router
 
         @param bwPacket: instance of Packet class
         @return a instance of Packet class
@@ -79,7 +79,7 @@ class Router:
         return bwPacket
 
     def _getStatistics(self):
-        """!Returns statistical information's from last router run
+        r"""!Returns statistical information's from last router run
 
         @return Statistics as pyton dict"""
         stats = {"type": "router",

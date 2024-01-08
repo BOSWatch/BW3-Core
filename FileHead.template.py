@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -22,8 +22,8 @@ logging.debug("- %s loaded", __name__)
 
 
 class ClassName:
-    """!General class comment"""
+    r"""!General class comment"""
 
     def __init__(self):
-        """!init comment"""
+        r"""!init comment"""
         pass
