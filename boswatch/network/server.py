@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -27,10 +27,10 @@ HEADERSIZE = 10
 
 
 class _ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
-    """!ThreadedTCPRequestHandler class for our TCPServer class."""
+    r"""!ThreadedTCPRequestHandler class for our TCPServer class."""
 
     def handle(self):
-        """!Handles the request from an single client in a own thread
+        r"""!Handles the request from an single client in a own thread
 
         Insert a request in the clients[] list and send a [ack]"""
         with self.server.clientsConnectedLock:  # because our list is not threadsafe
@@ -79,15 +79,15 @@ class _ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
 
 class _ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
-    """!ThreadedTCPServer class for our TCPServer class."""
+    r"""!ThreadedTCPServer class for our TCPServer class."""
     pass
 
 
 class TCPServer:
-    """!TCP server class"""
+    r"""!TCP server class"""
 
     def __init__(self, alarmQueue, timeout=3):
-        """!Create a new instance
+        r"""!Create a new instance
 
         @param alarmQueue: python queue instance
         @param timeout: server timeout in sec (3)
@@ -105,7 +105,7 @@ class TCPServer:
             self.stop()
 
     def start(self, port=8080):
-        """!Start a threaded TCP socket server
+        r"""!Start a threaded TCP socket server
 
         Start a TCP Socket Server in a new thread that will
         then start one more thread for each client request.
@@ -139,7 +139,7 @@ class TCPServer:
             return True
 
     def stop(self):
-        """!Stops the TCP socket server
+        r"""!Stops the TCP socket server
 
         @return True or False"""
         if self.isRunning:
@@ -155,14 +155,14 @@ class TCPServer:
         return True
 
     def countClientsConnected(self):
-        """!Number of currently connected Clients
+        r"""!Number of currently connected Clients
 
         @return Connected clients"""
         with self._clientsConnectedLock:  # because our list is not threadsafe
             return len(self._clientsConnected)
 
     def getClientsConnected(self):
-        """!A list of all connected clients
+        r"""!A list of all connected clients
         with their IP address and last seen timestamp
         _clients[ThreadName] = {"address", "timestamp"}
 
@@ -173,7 +173,7 @@ class TCPServer:
 
     @property
     def isRunning(self):
-        """!Property of server running state"""
+        r"""!Property of server running state"""
         if self._server:
             return True
         return False

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -21,7 +21,7 @@ logging.debug("- %s loaded", __name__)
 
 
 class ProcessManager:
-    """!class to manage a extern sub process"""
+    r"""!class to manage a extern sub process"""
     def __init__(self, process, textMode=False):
         logging.debug("create process instance %s - textMode: %s", process, textMode)
         self._args = []
@@ -33,7 +33,7 @@ class ProcessManager:
         self._textMode = textMode
 
     def addArgument(self, arg):
-        """!add a new argument
+        r"""!add a new argument
 
         @param arg: argument to add as string"""
         logging.debug("add argument to process: %s -> %s", self._args[0], arg)
@@ -41,11 +41,11 @@ class ProcessManager:
             self._args.append(splitArg)
 
     def clearArguments(self):
-        """!clear all arguments"""
+        r"""!clear all arguments"""
         self._args = self._args[0:1]  # kept first element (process name)
 
     def start(self):
-        """!start the new process
+        r"""!start the new process
 
         @return: True or False"""
         logging.debug("start new process: %s %s", self._args[0], self._args[1:])
@@ -67,7 +67,7 @@ class ProcessManager:
             return False
 
     def stop(self):
-        """!Stop the process by sending SIGTERM and wait for ending"""
+        r"""!Stop the process by sending SIGTERM and wait for ending"""
         logging.debug("stopping process: %s", self._args[0])
         if self.isRunning:
             self._processHandle.terminate()
@@ -76,7 +76,7 @@ class ProcessManager:
         logging.debug("process %s returned %d", self._args[0], self._processHandle.returncode)
 
     def readline(self):
-        """!Read one line from stdout stream
+        r"""!Read one line from stdout stream
 
         @return singe line or None"""
         if self.isRunning and self._stdout is not None:
@@ -88,7 +88,7 @@ class ProcessManager:
         return None
 
     def skipLines(self, lineCount=1):
-        """!Skip given number of lines from the output
+        r"""!Skip given number of lines from the output
 
         @param lineCount: number of lines to skip
         """
@@ -98,7 +98,7 @@ class ProcessManager:
             lineCount -= 1
 
     def skipLinesUntil(self, matchText):
-        """!Skip lines from the output until the given string is in it
+        r"""!Skip lines from the output until the given string is in it
 
         @param matchText: string to search for in output
         """
@@ -109,30 +109,30 @@ class ProcessManager:
             pass
 
     def setStdin(self, stdin):
-        """!Set the stdin stream instance"""
+        r"""!Set the stdin stream instance"""
         self._stdin = stdin
 
     def setStdout(self, stdout):
-        """!Set the stdout stream instance"""
+        r"""!Set the stdout stream instance"""
         self._stdout = stdout
 
     def setStderr(self, stderr):
-        """!Set the stderr stream instance"""
+        r"""!Set the stderr stream instance"""
         self._stderr = stderr
 
     @property
     def stdout(self):
-        """!Property to get the stdout stream"""
+        r"""!Property to get the stdout stream"""
         return self._processHandle.stdout
 
     @property
     def stderr(self):
-        """!Property to get the stderr stream"""
+        r"""!Property to get the stderr stream"""
         return self._processHandle.stderr
 
     @property
     def isRunning(self):
-        """!Property to get process running state
+        r"""!Property to get process running state
 
         @return True or False"""
         if self._processHandle:

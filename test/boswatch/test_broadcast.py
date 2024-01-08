@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -29,7 +29,7 @@ def setup_function(function):
 
 @pytest.fixture()
 def broadcastServer():
-    """!Server a BroadcastServer instance"""
+    r"""!Server a BroadcastServer instance"""
     broadcastServer = BroadcastServer()
     yield broadcastServer
     if broadcastServer.isRunning:
@@ -40,36 +40,36 @@ def broadcastServer():
 
 @pytest.fixture()
 def broadcastClient():
-    """!Server a BroadcastClient instance"""
+    r"""!Server a BroadcastClient instance"""
     return BroadcastClient()
 
 
 def test_serverStartStop(broadcastServer):
-    """!Start a BroadcastServer, check if running and stop it"""
+    r"""!Start a BroadcastServer, check if running and stop it"""
     assert broadcastServer.start()
     assert broadcastServer.isRunning
     assert broadcastServer.stop()
 
 
 def test_serverDoubleStart(broadcastServer):
-    """!Try to start a BroadcastServer twice"""
+    r"""!Try to start a BroadcastServer twice"""
     assert broadcastServer.start()
     assert broadcastServer.start()
     assert broadcastServer.stop()
 
 
 def test_serverStopNotStarted(broadcastServer):
-    """!Try to stop a BroadcastServer where is not running"""
+    r"""!Try to stop a BroadcastServer where is not running"""
     assert broadcastServer.stop()
 
 
 def test_clientWithoutServer(broadcastClient):
-    """!Use BroadcastClient with no server"""
+    r"""!Use BroadcastClient with no server"""
     assert not broadcastClient.getConnInfo(1)
 
 
 def test_serverClientFetchConnInfo(broadcastClient, broadcastServer):
-    """!Fetch connection info from BroadcastServer"""
+    r"""!Fetch connection info from BroadcastServer"""
     assert broadcastServer.start()
     assert broadcastClient.getConnInfo()
     assert broadcastServer.stop()

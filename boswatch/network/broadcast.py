@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -22,10 +22,10 @@ logging.debug("- %s loaded", __name__)
 
 
 class BroadcastClient:
-    """!BroadcastClient class"""
+    r"""!BroadcastClient class"""
 
     def __init__(self, port=5000):
-        """!Create an BroadcastClient instance
+        r"""!Create an BroadcastClient instance
 
         @param port: port to send broadcast packets (5000)"""
         self._broadcastPort = port
@@ -39,7 +39,7 @@ class BroadcastClient:
         self._socket.settimeout(3)
 
     def getConnInfo(self, retry=0):
-        """!Get the connection info from server over udp broadcast
+        r"""!Get the connection info from server over udp broadcast
 
         This function will send broadcast package(s)
         to get connection info from the server.
@@ -73,20 +73,20 @@ class BroadcastClient:
 
     @property
     def serverIP(self):
-        """!Property to get the server IP after successful broadcast"""
+        r"""!Property to get the server IP after successful broadcast"""
         return self._serverIP
 
     @property
     def serverPort(self):
-        """!Property to get the server Port after successful broadcast"""
+        r"""!Property to get the server Port after successful broadcast"""
         return self._serverPort
 
 
 class BroadcastServer:
-    """!BroadcastServer class"""
+    r"""!BroadcastServer class"""
 
     def __init__(self, servePort=8080, listenPort=5000):
-        """!Create an BroadcastServer instance
+        r"""!Create an BroadcastServer instance
 
         @param servePort: port to serve as connection info (8080)
         @param listenPort: port to listen for broadcast packets (5000)"""
@@ -106,7 +106,7 @@ class BroadcastServer:
                 pass
 
     def start(self):
-        """!Start the broadcast server in a new thread
+        r"""!Start the broadcast server in a new thread
 
         @return True or False"""
         if not self.isRunning:
@@ -121,7 +121,7 @@ class BroadcastServer:
         return True
 
     def stop(self):
-        """!Stop the broadcast server
+        r"""!Stop the broadcast server
 
         Due to the timeout of the socket,
         stopping the thread can be delayed by two seconds.
@@ -138,7 +138,7 @@ class BroadcastServer:
             return True
 
     def _listen(self):
-        """!Broadcast server worker thread
+        r"""!Broadcast server worker thread
 
         This function listen for magic packets on broadcast
         address and send the connection info to the clients.
@@ -161,7 +161,7 @@ class BroadcastServer:
 
     @property
     def isRunning(self):
-        """!Property of broadcast server running state"""
+        r"""!Property of broadcast server running state"""
         if self._serverThread:
             return True
         return False

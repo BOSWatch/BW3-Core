@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -24,12 +24,12 @@ logging.debug("- %s loaded", __name__)
 
 
 class ModuleBase(ABC):
-    """!Main module class"""
+    r"""!Main module class"""
 
     _modulesActive = []
 
     def __init__(self, moduleName, config):
-        """!init preload some needed locals and then call onLoad() directly"""
+        r"""!init preload some needed locals and then call onLoad() directly"""
         self._moduleName = moduleName
         self.config = config
         self._modulesActive.append(self)
@@ -46,13 +46,13 @@ class ModuleBase(ABC):
         self.onLoad()
 
     def _cleanup(self):
-        """!Cleanup routine calls onUnload() directly"""
+        r"""!Cleanup routine calls onUnload() directly"""
         logging.debug("[%s] onUnload()", self._moduleName)
         self._modulesActive.remove(self)
         self.onUnload()
 
     def _run(self, bwPacket):
-        """!start an run of the module.
+        r"""!start an run of the module.
 
         @param bwPacket: A BOSWatch packet instance
         @return bwPacket or False"""
@@ -75,7 +75,7 @@ class ModuleBase(ABC):
         return bwPacket
 
     def _getStatistics(self):
-        """!Returns statistical information's from last module run
+        r"""!Returns statistical information's from last module run
 
         @return Statistics as pyton dict"""
         stats = {"type": "module",
@@ -86,25 +86,25 @@ class ModuleBase(ABC):
         return stats
 
     def onLoad(self):
-        """!Called by import of the module
+        r"""!Called by import of the module
         can be inherited"""
         pass
 
     def doWork(self, bwPacket):
-        """!Called module run
+        r"""!Called module run
         can be inherited
 
         @param bwPacket: bwPacket instance"""
         logging.warning("no functionality in module %s", self._moduleName)
 
     def onUnload(self):
-        """!Called on shutdown of boswatch
+        r"""!Called on shutdown of boswatch
         can be inherited"""
         pass
 
     @staticmethod
     def registerWildcard(newWildcard, bwPacketField):
-        """!Register a new wildcard
+        r"""!Register a new wildcard
 
         @param newWildcard: wildcard where parser searching for
         @param bwPacketField: field from bwPacket where holds replacement data"""

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -24,12 +24,12 @@ logging.debug("- %s loaded", __name__)
 
 
 class PluginBase(ABC):
-    """!Main plugin class"""
+    r"""!Main plugin class"""
 
     _pluginsActive = []
 
     def __init__(self, pluginName, config):
-        """!init preload some needed locals and then call onLoad() directly"""
+        r"""!init preload some needed locals and then call onLoad() directly"""
         self._pluginName = pluginName
         self.config = config
         self._pluginsActive.append(self)
@@ -54,13 +54,13 @@ class PluginBase(ABC):
         self.onLoad()
 
     def _cleanup(self):
-        """!Cleanup routine calls onUnload() directly"""
+        r"""!Cleanup routine calls onUnload() directly"""
         logging.debug("[%s] onUnload()", self._pluginName)
         self._pluginsActive.remove(self)
         self.onUnload()
 
     def _run(self, bwPacket):
-        """!start an complete running turn of an plugin.
+        r"""!start an complete running turn of an plugin.
         Calls setup(), alarm() and teardown() in this order.
         The alarm() method serves the BOSWatch packet to the plugin.
 
@@ -121,7 +121,7 @@ class PluginBase(ABC):
         return None
 
     def _getStatistics(self):
-        """!Returns statistical information's from last plugin run
+        r"""!Returns statistical information's from last plugin run
 
         @return Statistics as pyton dict"""
         stats = {"type": "plugin",
@@ -137,55 +137,55 @@ class PluginBase(ABC):
         return stats
 
     def onLoad(self):
-        """!Called by import of the plugin
+        r"""!Called by import of the plugin
         can be inherited"""
         pass
 
     def setup(self):
-        """!Called before alarm
+        r"""!Called before alarm
         can be inherited"""
         pass
 
     def fms(self, bwPacket):
-        """!Called on FMS alarm
+        r"""!Called on FMS alarm
         can be inherited
 
         @param bwPacket: bwPacket instance"""
         logging.warning("ZVEI not implemented in %s", self._pluginName)
 
     def pocsag(self, bwPacket):
-        """!Called on POCSAG alarm
+        r"""!Called on POCSAG alarm
         can be inherited
 
         @param bwPacket: bwPacket instance"""
         logging.warning("POCSAG not implemented in %s", self._pluginName)
 
     def zvei(self, bwPacket):
-        """!Called on ZVEI alarm
+        r"""!Called on ZVEI alarm
         can be inherited
 
         @param bwPacket: bwPacket instance"""
         logging.warning("ZVEI not implemented in %s", self._pluginName)
 
     def msg(self, bwPacket):
-        """!Called on MSG packet
+        r"""!Called on MSG packet
         can be inherited
 
         @param bwPacket: bwPacket instance"""
         logging.warning("MSG not implemented in %s", self._pluginName)
 
     def teardown(self):
-        """!Called after alarm
+        r"""!Called after alarm
         can be inherited"""
         pass
 
     def onUnload(self):
-        """!Called on shutdown of boswatch
+        r"""!Called on shutdown of boswatch
         can be inherited"""
         pass
 
     def parseWildcards(self, msg):
-        """!Return the message with parsed wildcards"""
+        r"""!Return the message with parsed wildcards"""
         if self._bwPacket is None:
             logging.warning("wildcard replacing not allowed - no bwPacket set")
             return msg

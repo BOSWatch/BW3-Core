@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -34,15 +34,15 @@ class ConfigYAML:
                 yield item
 
     def __len__(self):
-        """!returns the length of an config element"""
+        r"""!returns the length of an config element"""
         return len(self._config)
 
     def __str__(self):
-        """!Returns the string representation of the internal config dict"""
+        r"""!Returns the string representation of the internal config dict"""
         return str(self._config)
 
     def loadConfigFile(self, configPath):
-        """!loads a given configuration file
+        r"""!loads a given configuration file
 
         @param configPath: Path to the config file
         @return True or False"""
@@ -59,7 +59,7 @@ class ConfigYAML:
         return False
 
     def get(self, *args, default=None):
-        """!Get a single value from the config
+        r"""!Get a single value from the config
         or a value set in a new configYAML class instance
 
         @param *args: Config section (one ore more strings)
