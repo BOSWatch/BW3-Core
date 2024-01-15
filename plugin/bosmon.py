@@ -111,7 +111,7 @@ class BoswatchPlugin(PluginBase):
             
             response = requests.request("POST", url, headers=headers, data=payload)
 
-            def _getInfo(self, get_tacticalInfo, get_direction):
+            def _getInfo(get_tacticalInfo, get_direction):
                  
                 # BosMon-Telegramin expected assembly group, direction and tsi in one field
                 # structure (binary as hex in base10):
