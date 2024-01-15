@@ -99,19 +99,12 @@ class BoswatchPlugin(PluginBase):
         async with aiohttp.ClientSession() as session:
             async with session.post(url, data=payload, headers=headers) as response:
                 response_text = await response.text()
-                
-                asyncio.ensure_future(self._fetch(url, session))
-
+            
                 logging.exception(response_text)
 
-                await response_text
-
-        async def _fetch(self, url, session):
-            """Fetches requests
-
-            @param url: url
-
-            @param session: Clientsession instance"""
-            async with session.get(url) as response:
-                logging.info("{} returned [{}]".format(response.url, response.status))
-                return await response.read()
+    def teardown(self):
+        r"""!Called after alarm
+        Remove if not implemented"""
+        
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(_post_Request())
