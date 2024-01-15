@@ -20,7 +20,7 @@ from plugin.pluginBase import PluginBase
 # ###################### #
 # Custom plugin includes #
 
-import requests
+import asyncio
 from basicauth import encode
 import aiohttp
 
@@ -66,11 +66,10 @@ class BoswatchPlugin(PluginBase):
         BM_passwd=self.config.get("passwd")
         BM_channel=self.config.get("channel")
 
-        get_ric=bwPacket.get("ric")
-        get_subric=bwPacket.get("subricText")
-        get_message=bwPacket.get("message")
+        the_request = 'type=pocsag&address='+bwPacket.get("ric")+'&flags=0&function='+bwPacket.get("subricText")+'&message='+bwPacket.get("message")
 
-        self._BosmonRequest_Poc(BM_hostname, BM_port, BM_user, BM_passwd, BM_channel, get_ric, get_subric, get_message)
+        self._post_Request(BM_hostname, BM_port, BM_user, BM_passwd, BM_channel, the_request)
+
 
     def zvei(self, bwPacket):
         r"""!Called on ZVEI alarm
@@ -87,11 +86,11 @@ class BoswatchPlugin(PluginBase):
 
         self._BosmonRequest_Zvei(BM_hostname, BM_port, BM_user, BM_passwd, BM_channel, get_zvei_adress)
 
-    async def _BosmonRequest_Poc(self, BM_hostname, BM_port, BM_user, BM_passwd, BM_channel, get_ric, get_subric, get_message):
+    async def _post_Request(self, BM_hostname, BM_port, BM_user, BM_passwd, BM_channel, the_request):
         
-        url = BM_hostname+":"+BM_port+"/telegramin/"+BM_channel+"/input.xml"
+        url = BM_hostname+':'+BM_port+'/telegramin/'+BM_channel+'/input.xml'
 
-        payload = 'type=pocsag&address='+get_ric+'&flags=0&function='+get_subric+'&message='+get_message
+        payload = the_request
         headers = {
             'Content-Type': 'application/x-www-form-urlencoded',
             'Authorization': encode(BM_user, BM_passwd)
@@ -100,63 +99,19 @@ class BoswatchPlugin(PluginBase):
         async with aiohttp.ClientSession() as session:
             async with session.post(url, data=payload, headers=headers) as response:
                 response_text = await response.text()
-                logging.exception('Bosmon Plugin: '+response_text)
+                
+                asyncio.ensure_future(self._fetch(url, session))
 
-            response = requests.request("POST", url, headers=headers, data=payload)
+                logging.exception(response_text)
 
-    async def _BosmonRequest_FMS(self, BM_hostname, BM_port, BM_user, BM_passwd, BM_channel, get_FMS, get_status, get_direction, get_tacticalInfo):
-        
-        url = BM_hostname+":"+BM_port+"/telegramin/"+BM_channel+"/input.xml"
+                await response_text
 
-        payload = 'type=fms&address='+get_FMS+'&flags=0&status='+get_status+'&info='._getInfo(get_tacticalInfo, get_direction)
-        headers = {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': encode(BM_user, BM_passwd)
-        }
+        async def _fetch(self, url, session):
+            """Fetches requests
 
-        async with aiohttp.ClientSession() as session:
-            async with session.post(url, data=payload, headers=headers) as response:
-                response_text = await response.text()
-                logging.exception('Bosmon Plugin: '+response_text)
+            @param url: url
 
-            response = requests.request("POST", url, headers=headers, data=payload)
-
-            def _getInfo(self, get_tacticalInfo, get_direction):
-                 
-                # BosMon-Telegramin expected assembly group, direction and tsi in one field
-                # structure (binary as hex in base10):
-                #     Byte 1: assembly group; Byte 2: Direction; Byte 3+4: tactic short info
-                info = 0
-                # assembly group:
-                info = info + 1          # + b0001 (Assumption: is in every time 1 (no output from multimon-ng))
-                # direction:
-                if get_direction == "1":
-                    info = info + 2      # + b0010
-                    # tsi:
-                if "IV" in get_tacticalInfo:
-                    info = info + 12     # + b1100
-                elif "III" in get_tacticalInfo:
-                        info = info + 8      # + b1000
-                elif "II" in get_tacticalInfo:
-                    info = info + 4      # + b0100
-                    # "I" is nothing to do     + b0000
-
-                return info
-            
-
-    async def _BosmonRequest_Zvei(self, BM_hostname, BM_port, BM_user, BM_passwd, BM_channel, get_zvei_adress):
-        
-        url = BM_hostname+":"+BM_port+"/telegramin/"+BM_channel+"/input.xml"
-
-        payload = 'type=pocsag&address='+get_zvei_adress+'&flags=0'
-        headers = {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': encode(BM_user, BM_passwd)
-        }
-
-        async with aiohttp.ClientSession() as session:
-            async with session.post(url, data=payload, headers=headers) as response:
-                response_text = await response.text()
-                logging.exception('Bosmon Plugin: '+response_text)
-
-            response = requests.request("POST", url, headers=headers, data=payload)
+            @param session: Clientsession instance"""
+            async with session.get(url) as response:
+                logging.info("{} returned [{}]".format(response.url, response.status))
+                return await response.read()
