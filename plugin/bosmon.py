@@ -96,7 +96,7 @@ class BoswatchPlugin(PluginBase):
                     'Authorization': encode(BM_user, BM_passwd)
                 }
 
-        response = requests.request("POST", url, headers=headers, data=payload)
+        requests.request("POST", url, headers=headers, data=payload)
 
     def _BosmonRequest_FMS(self, BM_hostname, BM_port, BM_user, BM_passwd, BM_channel, get_FMS, get_status, get_direction, get_tacticalInfo):
                                                         
@@ -109,9 +109,23 @@ class BoswatchPlugin(PluginBase):
                     'Authorization': encode(BM_user, BM_passwd)
                 }
             
-            response = requests.request("POST", url, headers=headers, data=payload)
+            requests.request("POST", url, headers=headers, data=payload)
 
-            def _getInfo(get_tacticalInfo, get_direction):
+            
+            
+    def _BosmonRequest_Zvei(self, BM_hostname, BM_port, BM_user, BM_passwd, BM_channel, get_zvei_adress):
+         
+        url = 'http://'+BM_hostname+':'+BM_port+'/telegramin/'+BM_channel+'/input.xml'
+
+        payload = 'type=pocsag&address='+get_zvei_adress+'&flags=0'
+        headers = {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': encode(BM_user, BM_passwd)
+                }
+
+        requests.request("POST", url, headers=headers, data=payload)
+
+        def _getInfo(get_tacticalInfo, get_direction):
                  
                 # BosMon-Telegramin expected assembly group, direction and tsi in one field
                 # structure (binary as hex in base10):
@@ -132,15 +146,3 @@ class BoswatchPlugin(PluginBase):
                     # "I" is nothing to do     + b0000
 
                 return info
-            
-    def _BosmonRequest_Zvei(self, BM_hostname, BM_port, BM_user, BM_passwd, BM_channel, get_zvei_adress):
-         
-        url = 'http://'+BM_hostname+':'+BM_port+'/telegramin/'+BM_channel+'/input.xml'
-
-        payload = 'type=pocsag&address='+get_zvei_adress+'&flags=0'
-        headers = {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': encode(BM_user, BM_passwd)
-                }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
