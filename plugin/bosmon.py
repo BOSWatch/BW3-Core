@@ -136,7 +136,7 @@ class BoswatchPlugin(PluginBase):
          
         url = 'http://'+BM_hostname+':'+BM_port+'/telegramin/'+BM_channel+'/input.xml'
 
-        payload = 'type=pocsag&address='+get_zvei_adress+'&flags=0'
+        payload = 'type=zvei&address='+get_zvei_adress+'&flags=0'
         headers = {
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'Authorization': encode(BM_user, BM_passwd)
