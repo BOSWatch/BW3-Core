@@ -100,9 +100,29 @@ class BoswatchPlugin(PluginBase):
 
     def _BosmonRequest_FMS(self, BM_hostname, BM_port, BM_user, BM_passwd, BM_channel, get_FMS, get_status, get_direction, get_tacticalInfo):
                                                         
+            
+            # BosMon-Telegramin expected assembly group, direction and tsi in one field
+            # structure (binary as hex in base10):
+            #     Byte 1: assembly group; Byte 2: Direction; Byte 3+4: tactic short info
+            info = 0
+            # assembly group:
+            info = info + 1          # + b0001 (Assumption: is in every time 1 (no output from multimon-ng))
+            # direction:
+            if get_direction == "1":
+                info = info + 2      # + b0010
+                # tsi:
+            if "IV" in get_tacticalInfo:
+                info = info + 12     # + b1100
+            elif "III" in get_tacticalInfo:
+                info = info + 8      # + b1000
+            elif "II" in get_tacticalInfo:
+                info = info + 4      # + b0100
+                # "I" is nothing to do     + b0000
+                
+            
             url = 'http://'+BM_hostname+':'+BM_port+'/telegramin/'+BM_channel+'/input.xml'
     
-            payload = 'type=fms&address='+get_FMS+'&flags=0&status='+get_status+'&info='+_getInfo(get_tacticalInfo, get_direction)
+            payload = 'type=fms&address='+get_FMS+'&flags=0&status='+get_status+'&info='+info
 
             headers = {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -110,28 +130,7 @@ class BoswatchPlugin(PluginBase):
                 }
             
             requests.request("POST", url, headers=headers, data=payload)
-
-            def _getInfo(get_tacticalInfo2, get_direction2):
-                 
-                # BosMon-Telegramin expected assembly group, direction and tsi in one field
-                # structure (binary as hex in base10):
-                #     Byte 1: assembly group; Byte 2: Direction; Byte 3+4: tactic short info
-                info = 0
-                # assembly group:
-                info = info + 1          # + b0001 (Assumption: is in every time 1 (no output from multimon-ng))
-                # direction:
-                if get_direction2 == "1":
-                    info = info + 2      # + b0010
-                    # tsi:
-                if "IV" in get_tacticalInfo2:
-                    info = info + 12     # + b1100
-                elif "III" in get_tacticalInfo2:
-                        info = info + 8      # + b1000
-                elif "II" in get_tacticalInfo2:
-                    info = info + 4      # + b0100
-                    # "I" is nothing to do     + b0000
-
-                return info
+                
             
     def _BosmonRequest_Zvei(self, BM_hostname, BM_port, BM_user, BM_passwd, BM_channel, get_zvei_adress):
          
