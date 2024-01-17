@@ -102,7 +102,7 @@ class BoswatchPlugin(PluginBase):
                                                         
             url = 'http://'+BM_hostname+':'+BM_port+'/telegramin/'+BM_channel+'/input.xml'
     
-            payload = 'type=fms&address='+get_FMS+'&flags=0&status='+get_status+'&info='._getInfo(get_tacticalInfo, get_direction)
+            payload = 'type=fms&address='+get_FMS+'&flags=0&status='+get_status+'&info='+_getInfo(get_tacticalInfo, get_direction)
 
             headers = {
                     'Content-Type': 'application/x-www-form-urlencoded',
