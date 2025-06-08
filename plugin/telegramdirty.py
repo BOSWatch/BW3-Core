@@ -97,7 +97,7 @@ class BoswatchPlugin(PluginBase):
     def msg(self, bwPacket):
         """!Called on MSG packet
         @param bwPacket: bwPacket instance"""
-        msg = self.parseWildcards(
+        msg_payload = self.parseWildcards(
             self.config.get("message_msg") # Übergabe mit Wildcards aus config/server.yaml der "message_msg", falls nicht definiert, Defaultwert
         )
         self.msg_send(bwPacket, msg_payload)
