@@ -12,7 +12,7 @@
 @file:        telegramdirty.py
 @date:        06.06.2025
 @author:      Claus Schichl
-@description: Telegram dirty
+@description: Telegram quick and dirty
 """
 import logging
 from plugin.pluginBase import PluginBase
