@@ -39,11 +39,11 @@ class BoswatchPlugin(PluginBase):
         """!Called by import of the plugin"""
         bot_token = self.config.get("botToken") #Import von Token aus config/server.yaml
         chat_id = self.config.get("chatIds") #Import von ChatIDs aus config/server.yaml
-        nachricht = "Server up and running!"
+        msg_payload = "Server up and running!"
         url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
         payload = {
             'chat_id': chat_id,
-            'text': nachricht
+            'text': msg_payload
         }
         response = requests.post(url, data=payload)
 
@@ -79,12 +79,12 @@ class BoswatchPlugin(PluginBase):
         @param bwPacket: bwPacket instance"""
         bot_token = self.config.get("botToken") #Import von Token aus config/server.yaml
         chat_id = self.config.get("chatIds") #Import von ChatIDs aus config/server.yaml
-        nachricht = self.parseWildcards(self.config.get("message_zvei", default="{TONE}")) # Übergabe mit Wildcards aus config/server.yaml der "message_zvei", falls nicht definiert, Defaultwert
-        #nachricht = bwPacket.get("clientName") + ": " + (bwPacket.get("description") or bwPacket.get("tone")) # Name vom Client und ": " und wenn Description vorhanden, ansonsten ZVEI
+        msg_payload = self.parseWildcards(self.config.get("message_zvei", default="{TONE}")) # Übergabe mit Wildcards aus config/server.yaml der "message_zvei", falls nicht definiert, Defaultwert
+        #msg_payload = bwPacket.get("clientName") + ": " + (bwPacket.get("description") or bwPacket.get("tone")) # Name vom Client und ": " und wenn Description vorhanden, ansonsten ZVEI
         url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
         payload = {
             'chat_id': chat_id,
-            'text': nachricht
+            'text': msg_payload
         }
         response = requests.post(url, data=payload)
 
@@ -109,4 +109,24 @@ class BoswatchPlugin(PluginBase):
     def onUnload(self):
         """!Called by destruction of the plugin
         Remove if not implemented"""
+        pass
+
+    def msg_send(self, bwPacket):
+        """!Funktion zum senden einer Nachricht
+        @param bwPacket: bwPacket instance"""
+        bot_token = self.config.get("botToken") #Import von Token aus config/server.yaml
+        chat_id = self.config.get("chatIds") #Import von ChatIDs aus config/server.yaml
+        msg_payload = self.parseWildcards(self.config.get("message_zvei", default="{TONE}")) # Übergabe mit Wildcards aus config/server.yaml der "message_zvei", falls nicht definiert, Defaultwert
+        #msg_payload = bwPacket.get("clientName") + ": " + (bwPacket.get("description") or bwPacket.get("tone")) # mit bwPacket anstelle Wildcards: Name vom Client und ": " und wenn Description vorhanden, ansonsten ZVEI
+        url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+        payload = {
+            'chat_id': chat_id,
+            'text': msg_payload
+        }
+        response = requests.post(url, data=payload)
+
+        if response.status_code == 200:
+            print("Nachricht erfolgreich gesendet!")
+        else:
+            print("Fehler beim Senden:", response.text)
         pass
