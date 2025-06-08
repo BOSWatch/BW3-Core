@@ -35,25 +35,32 @@ class BoswatchPlugin(PluginBase):
         """!Do not change anything here!"""
         super().__init__(__name__, config)  # you can access the config class on 'self.config'
 
-    def onLoad(self):
-        """!Called by import of the plugin"""
-        bot_token = self.config.get("botToken") #Import von Token aus config/server.yaml
-        chat_id = self.config.get("chatIds") #Import von ChatIDs aus config/server.yaml
-        msg_payload = "Server up and running!"
+    def msg_send(self, bwPacket, msg_payload):
+        """!Funktion zum Senden einer Nachricht über Telegram
+        @param bwPacket: bwPacket instance
+        @param msg_payload: Nachrichtentext, der gesendet werden soll"""
+        
+        bot_token = self.config.get("botToken")
+        chat_id = self.config.get("chatIds")
+
         url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
         payload = {
             'chat_id': chat_id,
             'text': msg_payload
         }
+
         response = requests.post(url, data=payload)
 
         if response.status_code == 200:
             print("Nachricht erfolgreich gesendet!")
         else:
             print("Fehler beim Senden:", response.text)
+
+    def onLoad(self):
+        """!Called by import of the plugin"""
+        msg_payload = "Server up and running!"
+        self.msg_send(None, msg_payload)
         pass
-
-
 
     def setup(self):
         """!Called before alarm
@@ -77,21 +84,10 @@ class BoswatchPlugin(PluginBase):
     def zvei(self, bwPacket):
         """!Called on ZVEI alarm
         @param bwPacket: bwPacket instance"""
-        bot_token = self.config.get("botToken") #Import von Token aus config/server.yaml
-        chat_id = self.config.get("chatIds") #Import von ChatIDs aus config/server.yaml
-        msg_payload = self.parseWildcards(self.config.get("message_zvei", default="{TONE}")) # Übergabe mit Wildcards aus config/server.yaml der "message_zvei", falls nicht definiert, Defaultwert
-        #msg_payload = bwPacket.get("clientName") + ": " + (bwPacket.get("description") or bwPacket.get("tone")) # Name vom Client und ": " und wenn Description vorhanden, ansonsten ZVEI
-        url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
-        payload = {
-            'chat_id': chat_id,
-            'text': msg_payload
-        }
-        response = requests.post(url, data=payload)
-
-        if response.status_code == 200:
-            print("Nachricht erfolgreich gesendet!")
-        else:
-            print("Fehler beim Senden:", response.text)
+        msg_payload = self.parseWildcards(
+            self.config.get("message_zvei", default="{TONE}") # Übergabe mit Wildcards aus config/server.yaml der "message_zvei", falls nicht definiert, Defaultwert
+        )
+        self.msg_send(bwPacket, msg_payload)
         pass
 
     def msg(self, bwPacket):
@@ -109,24 +105,4 @@ class BoswatchPlugin(PluginBase):
     def onUnload(self):
         """!Called by destruction of the plugin
         Remove if not implemented"""
-        pass
-
-    def msg_send(self, bwPacket):
-        """!Funktion zum senden einer Nachricht
-        @param bwPacket: bwPacket instance"""
-        bot_token = self.config.get("botToken") #Import von Token aus config/server.yaml
-        chat_id = self.config.get("chatIds") #Import von ChatIDs aus config/server.yaml
-        msg_payload = self.parseWildcards(self.config.get("message_zvei", default="{TONE}")) # Übergabe mit Wildcards aus config/server.yaml der "message_zvei", falls nicht definiert, Defaultwert
-        #msg_payload = bwPacket.get("clientName") + ": " + (bwPacket.get("description") or bwPacket.get("tone")) # mit bwPacket anstelle Wildcards: Name vom Client und ": " und wenn Description vorhanden, ansonsten ZVEI
-        url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
-        payload = {
-            'chat_id': chat_id,
-            'text': msg_payload
-        }
-        response = requests.post(url, data=payload)
-
-        if response.status_code == 200:
-            print("Nachricht erfolgreich gesendet!")
-        else:
-            print("Fehler beim Senden:", response.text)
         pass
