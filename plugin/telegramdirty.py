@@ -69,16 +69,20 @@ class BoswatchPlugin(PluginBase):
 
     def fms(self, bwPacket):
         """!Called on FMS alarm
-
-        @param bwPacket: bwPacket instance
-        Remove if not implemented"""
+        @param bwPacket: bwPacket instance"""
+        msg_payload = self.parseWildcards(
+            self.config.get("message_fms", default="{FMS}") # Übergabe mit Wildcards aus config/server.yaml der "message_fms", falls nicht definiert, Defaultwert
+        )
+        self.msg_send(bwPacket, msg_payload)
         pass
 
     def pocsag(self, bwPacket):
         """!Called on POCSAG alarm
-
-        @param bwPacket: bwPacket instance
-        Remove if not implemented"""
+        @param bwPacket: bwPacket instance"""
+        msg_payload = self.parseWildcards(
+            self.config.get("message_pocsag", default="{RIC}({SRIC})\n{MSG}") # Übergabe mit Wildcards aus config/server.yaml der "message_pocsag", falls nicht definiert, Defaultwert
+        )
+        self.msg_send(bwPacket, msg_payload)
         pass
 
     def zvei(self, bwPacket):
@@ -92,9 +96,11 @@ class BoswatchPlugin(PluginBase):
 
     def msg(self, bwPacket):
         """!Called on MSG packet
-
-        @param bwPacket: bwPacket instance
-        Remove if not implemented"""
+        @param bwPacket: bwPacket instance"""
+        msg = self.parseWildcards(
+            self.config.get("message_msg") # Übergabe mit Wildcards aus config/server.yaml der "message_msg", falls nicht definiert, Defaultwert
+        )
+        self.msg_send(bwPacket, msg_payload)
         pass
 
     def teardown(self):
