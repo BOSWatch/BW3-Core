@@ -10,7 +10,7 @@
                      by Bastian Schroll
 
 @file:        telegramdirty.py
-@date:        06.06.2025
+@date:        08.06.2025
 @author:      Claus Schichl
 @description: Telegram quick and dirty
 """
