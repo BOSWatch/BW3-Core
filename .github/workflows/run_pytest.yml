@@ -33,7 +33,7 @@ jobs:
         pytest -c 'test/pytest.ini'
 
     - name: Save artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: test.log
         path: log/test.log
