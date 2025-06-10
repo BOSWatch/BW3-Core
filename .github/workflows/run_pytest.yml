@@ -35,5 +35,5 @@ jobs:
     - name: Save artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: test.log
+        name: test-${{ matrix.python-version }}.log
         path: log/test.log
