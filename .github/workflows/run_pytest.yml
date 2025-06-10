@@ -1,6 +1,9 @@
 name: pytest
 
-on: [push, pull_request]
+on:
+  workflow_dispatch:       # Hier manuelles Starten erlauben
+  push:
+  pull_request:
 
 jobs:
   build:
