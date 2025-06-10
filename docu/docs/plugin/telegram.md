@@ -22,11 +22,14 @@ Die abarbeitung der Alarmierungen erfolgt per Queue nach den Limits der Telegram
 |----|------------|-------|
 |botToken|Der Api-Key des Telegram-Bots||
 |chatIds|Liste mit Chat-Ids der Empfängers / der Emfänger-Gruppen||
+|startup_message|Nachricht, dass das Telegram-Plugin erfolgreich geladen wurde|leer|
 |message_fms|Format der Nachricht für FMS|`{FMS}`|
 |message_pocsag|Format der Nachricht für Pocsag|`{RIC}({SRIC})\n{MSG}`|
 |message_zvei|Format der Nachricht für ZVEI|`{TONE}`|
 |message_msg|Format der Nachricht für MSG||
-|queue|Aktivieren/Deaktivieren der MessageQueue|true|
+|max_retries|Anzahl der Versuche, bis das Senden abgebrochen wird|5|
+|initial_delay|Verzögerung des zweiten Sendeversuchs|2 [Sek.]|
+|max_delay|Maximale Verzögerung|60 [Sek.]|
 
 **Beispiel:**
 ```yaml
@@ -35,6 +38,7 @@ Die abarbeitung der Alarmierungen erfolgt per Queue nach den Limits der Telegram
     res: telegram
     config:
       message_pocsag: "{RIC}({SRIC})\n{MSG}"
+      startup_message: "Server up and running!"
       botToken: "BOT_TOKEN"
       chatIds:
         - "CHAT_ID"
