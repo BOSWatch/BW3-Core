@@ -1,6 +1,9 @@
 name: pytest
 
-on: [push, pull_request]
+on:
+  #workflow_dispatch:       # Hier manuelles Starten erlauben, automatisch nach jedem Commit
+  push:
+  pull_request:
 
 jobs:
   build:
@@ -8,7 +11,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
     runs-on: ${{matrix.os}}
 
     steps:
@@ -30,7 +33,7 @@ jobs:
         pytest -c 'test/pytest.ini'
 
     - name: Save artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: test.log
+        name: test-${{ matrix.python-version }}.log
         path: log/test.log
