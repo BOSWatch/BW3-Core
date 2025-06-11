@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -26,10 +26,10 @@ logging.debug("- %s loaded", __name__)
 
 
 class InputBase(ABC):
-    """!Base class for handling inout sources"""
+    r"""!Base class for handling inout sources"""
 
     def __init__(self, inputQueue, inputConfig, decoderConfig):
-        """!Build a new InputSource class
+        r"""!Build a new InputSource class
 
         @param  inputQueue: Python queue object to store input data
         @param inputConfig: ConfigYaml object with the inoutSource config
@@ -41,7 +41,7 @@ class InputBase(ABC):
         self._decoderConfig = decoderConfig
 
     def start(self):
-        """!Start the input source thread"""
+        r"""!Start the input source thread"""
         logging.debug("starting input thread")
         self._isRunning = True
         self._inputThread = threading.Thread(target=self._runThread, name="inputThread",
@@ -51,10 +51,10 @@ class InputBase(ABC):
 
     @abstractmethod
     def _runThread(self, dataQueue, sdrConfig, decoderConfig):
-        """!Thread routine of the input source has to be inherit"""
+        r"""!Thread routine of the input source has to be inherit"""
 
     def shutdown(self):
-        """!Stop the input source thread"""
+        r"""!Stop the input source thread"""
         if self._isRunning:
             logging.debug("wait for stopping the input thread")
             self._isRunning = False
@@ -62,7 +62,7 @@ class InputBase(ABC):
             logging.debug("input thread stopped")
 
     def addToQueue(self, data):
-        """!Decode and add alarm data to the queue for further processing during boswatch client"""
+        r"""!Decode and add alarm data to the queue for further processing during boswatch client"""
         bwPacket = Decoder.decode(data)
         if bwPacket is not None:
             self._inputQueue.put_nowait((bwPacket, time.time()))

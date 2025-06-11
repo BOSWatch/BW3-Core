@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -27,13 +27,13 @@ logging.debug("- %s loaded", __name__)
 
 
 class BoswatchPlugin(PluginBase):
-    """!Description of the Plugin"""
+    r"""!Description of the Plugin"""
     def __init__(self, config):
-        """!Do not change anything here!"""
+        r"""!Do not change anything here!"""
         super().__init__(__name__, config)  # you can access the config class on 'self.config'
 
     def fms(self, bwPacket):
-        """!Called on FMS alarm
+        r"""!Called on FMS alarm
 
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
@@ -41,7 +41,7 @@ class BoswatchPlugin(PluginBase):
         self._makeRequests(urls)
 
     def pocsag(self, bwPacket):
-        """!Called on POCSAG alarm
+        r"""!Called on POCSAG alarm
 
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
@@ -49,7 +49,7 @@ class BoswatchPlugin(PluginBase):
         self._makeRequests(urls)
 
     def zvei(self, bwPacket):
-        """!Called on ZVEI alarm
+        r"""!Called on ZVEI alarm
 
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
@@ -57,7 +57,7 @@ class BoswatchPlugin(PluginBase):
         self._makeRequests(urls)
 
     def msg(self, bwPacket):
-        """!Called on MSG packet
+        r"""!Called on MSG packet
 
         @param bwPacket: bwPacket instance
         Remove if not implemented"""

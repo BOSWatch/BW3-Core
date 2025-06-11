@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -24,7 +24,7 @@ logging.debug("- %s loaded", __name__)
 
 
 class FmsDecoder:
-    """!FMS decoder class
+    r"""!FMS decoder class
 
     This class decodes FMS data.
     First step is to validate the data and _check if the format is correct.
@@ -32,7 +32,7 @@ class FmsDecoder:
 
     @staticmethod
     def decode(data):
-        """!Decodes FMS
+        r"""!Decodes FMS
 
         @param data: FMS for decoding
         @return BOSWatch FMS packet or None"""

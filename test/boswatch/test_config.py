@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -29,41 +29,41 @@ def setup_function(function):
 
 @pytest.fixture
 def getConfig():
-    """!Build a config object"""
+    r"""!Build a config object"""
     return ConfigYAML()
 
 
 @pytest.fixture
 def getFilledConfig():
-    """!Build a config object and fill it with the config data"""
+    r"""!Build a config object and fill it with the config data"""
     filledConfig = ConfigYAML()
     assert filledConfig.loadConfigFile(paths.TEST_PATH + "test_config.yaml") is True
     return filledConfig
 
 
 def test_loadConfigFile(getConfig):
-    """!load a config file"""
+    r"""!load a config file"""
     assert getConfig.loadConfigFile(paths.TEST_PATH + "test_config.yaml") is True
 
 
 def test_loadConfigFileFailed(getConfig):
-    """!load a config file with syntax error"""
+    r"""!load a config file with syntax error"""
     assert getConfig.loadConfigFile(paths.TEST_PATH + "test_configFailed.yaml") is False
 
 
 def test_loadConfigFileNotFound(getConfig):
-    """!load a config file where is not available"""
+    r"""!load a config file where is not available"""
     assert getConfig.loadConfigFile(paths.TEST_PATH + "test_configNotFound.yaml") is False
 
 
 def test_getConfigAsString(getFilledConfig):
-    """!Get the string representation of the config"""
+    r"""!Get the string representation of the config"""
     assert type(str(getFilledConfig)) is str
     logging.debug(getFilledConfig)
 
 
 def test_getTypes(getFilledConfig):
-    """!Get and check different data types in config"""
+    r"""!Get and check different data types in config"""
     assert type(getFilledConfig.get("types")) is ConfigYAML
     assert type(getFilledConfig.get("types", "string")) is str
     assert type(getFilledConfig.get("types", "bool")) is bool
@@ -72,19 +72,19 @@ def test_getTypes(getFilledConfig):
 
 
 def test_getDefaultValue(getFilledConfig):
-    """!Get the default value of an not existent entry"""
+    r"""!Get the default value of an not existent entry"""
     assert getFilledConfig.get("notExistent", default="defaultValue") == "defaultValue"
 
 
 def test_getNestedConfig(getFilledConfig):
-    """!Work with nested sub-config elements"""
+    r"""!Work with nested sub-config elements"""
     nestedConfig = getFilledConfig.get("types")
     assert type(nestedConfig) is ConfigYAML
     assert nestedConfig.get("string") == "Hello World"
 
 
 def test_configIterationList(getFilledConfig):
-    """!Try to iterate over a list in the config"""
+    r"""!Try to iterate over a list in the config"""
     counter = 0
     for item in getFilledConfig.get("list"):
         assert type(item) is str
@@ -93,7 +93,7 @@ def test_configIterationList(getFilledConfig):
 
 
 def test_configIterationListWithNestedList(getFilledConfig):
-    """!Try to iterate over a list in the config where its elements are lists itself"""
+    r"""!Try to iterate over a list in the config where its elements are lists itself"""
     listCnt = 0
     strCnt = 0
     for item in getFilledConfig.get("list1"):

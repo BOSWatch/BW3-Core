@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -23,7 +23,7 @@ logging.debug("- %s loaded", __name__)
 
 
 class PulseAudioInput(InputBase):
-    """!Class for the PulseAudio input source"""
+    r"""!Class for the PulseAudio input source"""
 
     def _runThread(self, dataQueue, PulseAudioConfig, decoderConfig):
         PulseAudioProc = None
