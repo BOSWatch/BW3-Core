@@ -1,6 +1,8 @@
 name: pytest
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
 
 jobs:
   build:
@@ -8,11 +10,11 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.7', '3.8', '3.9', '3.10']
+        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
     runs-on: ${{matrix.os}}
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
 
     - name: Set up Python ${{matrix.python-version}} at ${{matrix.os}}
       uses: actions/setup-python@v3
@@ -23,14 +25,14 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        mkdir log/
+        mkdir -p log/
 
     - name: Test with pytest
       run: |
         pytest -c 'test/pytest.ini'
 
     - name: Save artifacts
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@v4
       with:
-        name: test.log
+        name: test-${{ matrix.python-version }}.log
         path: log/test.log
