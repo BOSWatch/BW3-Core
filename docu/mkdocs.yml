@@ -26,6 +26,8 @@ nav:
   - Plugins:
       - Http: plugin/http.md
       - Telegram: plugin/telegram.md
+      - Divera: plugin/divera.md
+      - MySQL: plugin/mysql.md
   - Entwickler:
     - Eigenes Modul/Plugin schreiben: develop/ModulPlugin.md
     - BOSWatch Alarmpaket Format: develop/packet.md

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -31,7 +31,7 @@ def setup_method(method):
 
 @pytest.fixture
 def makeDescriptor():
-    """!Build a descriptor object with loaded configuration"""
+    r"""!Build a descriptor object with loaded configuration"""
     config = ConfigYAML()
     assert config.loadConfigFile(paths.TEST_PATH + "test_config.yaml") is True
     descriptor = Descriptor(config.get("descriptor_test"))
@@ -40,33 +40,33 @@ def makeDescriptor():
 
 @pytest.fixture
 def makePacket():
-    """!Build a BW Packet object"""
+    r"""!Build a BW Packet object"""
     packet = Packet()
     return packet
 
 
 def test_descriptorFoundFirst(makeDescriptor, makePacket):
-    """!Run descriptor on the first entry in list"""
+    r"""!Run descriptor on the first entry in list"""
     makePacket.set("tone", "12345")
     makePacket = makeDescriptor.doWork(makePacket)
     assert makePacket.get("description") == "Test 12345"
 
 
 def test_descriptorFoundSecond(makeDescriptor, makePacket):
-    """!Run descriptor on the second entry in list"""
+    r"""!Run descriptor on the second entry in list"""
     makePacket.set("tone", "23456")
     makePacket = makeDescriptor.doWork(makePacket)
     assert makePacket.get("description") == "Test 23456"
 
 
 def test_descriptorNotFound(makeDescriptor, makePacket):
-    """!Run descriptor no matching data found"""
+    r"""!Run descriptor no matching data found"""
     makePacket.set("tone", "99999")
     makePacket = makeDescriptor.doWork(makePacket)
     assert makePacket.get("description") == "99999"
 
 
 def test_descriptorScanFieldNotAvailable(makeDescriptor, makePacket):
-    """!Run descriptor on a non existent scanField"""
+    r"""!Run descriptor on a non existent scanField"""
     makePacket = makeDescriptor.doWork(makePacket)
     assert makePacket.get("description") is None

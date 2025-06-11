@@ -49,7 +49,7 @@ Mit `PulseAudio` wird ein PulseAudio-Sink an Multimon-NG weitergereicht, z.B. in
 |error|Frequenz Abweichung in ppm|0|
 |squelch|Einstellung der Rauschsperre|1|
 |gain|Verstärkung des Eingangssignals|100|
-|fir_size| niedrig leckagearmen Filter, default 0 = off||
+|fir_size| niedrig leckagearmen Filter|None|
 |rtlPath|Pfad zur rtl_fm Binary|rtl_fm|
 
 **Beispiel:**

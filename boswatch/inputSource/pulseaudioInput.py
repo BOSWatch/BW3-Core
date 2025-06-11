@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -23,7 +23,7 @@ logging.debug("- %s loaded", __name__)
 
 
 class PulseAudioInput(InputBase):
-    """!Class for the PulseAudio input source"""
+    r"""!Class for the PulseAudio input source"""
 
     def _runThread(self, dataQueue, PulseAudioConfig, decoderConfig):
         PulseAudioProc = None
@@ -47,6 +47,11 @@ class PulseAudioInput(InputBase):
                 if not PulseAudioProc.isRunning:
                     logging.warning("PulseAudio was down - try to restart")
                     PulseAudioProc.start()
+
+                    if PulseAudioProc.isRunning:
+                        logging.info("rtl_fm is back up - restarting multimon...")
+                        mmProc.setStdin(PulseAudioProc.stdout)
+                        mmProc.start()
                 elif not mmProc.isRunning:
                     logging.warning("multimon was down - try to restart")
                     mmProc.start()

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -24,7 +24,7 @@ logging.debug("- %s loaded", __name__)
 
 
 class SdrInput(InputBase):
-    """!Class for the sdr input source"""
+    r"""!Class for the sdr input source"""
 
     def _runThread(self, dataQueue, sdrConfig, decoderConfig):
         sdrProc = None
@@ -36,7 +36,7 @@ class SdrInput(InputBase):
             sdrProc.addArgument("-p " + str(sdrConfig.get("error", default="0")))      # frequency error in ppm
             sdrProc.addArgument("-l " + str(sdrConfig.get("squelch", default="1")))    # squelch
             sdrProc.addArgument("-g " + str(sdrConfig.get("gain", default="100")))     # gain
-            if sdrConfig.get("fir_size", default=None):
+            if (sdrConfig.get("fir_size", default=None) is not None):
                 sdrProc.addArgument("-F " + str(sdrConfig.get("fir_size")))            # fir_size
             sdrProc.addArgument("-M fm")                                               # set mode to fm
             sdrProc.addArgument("-E DC")                                               # set DC filter

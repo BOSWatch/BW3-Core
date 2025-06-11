@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -26,19 +26,19 @@ logging.debug("- %s loaded", __name__)
 
 
 class BoswatchModule(ModuleBase):
-    """!Adds descriptions to bwPackets"""
+    r"""!Adds descriptions to bwPackets"""
     def __init__(self, config):
-        """!Do not change anything here!"""
+        r"""!Do not change anything here!"""
         super().__init__(__name__, config)  # you can access the config class on 'self.config'
 
     def onLoad(self):
-        """!Called by import of the plugin"""
+        r"""!Called by import of the plugin"""
         for descriptor in self.config:
             if descriptor.get("wildcard", default=None):
                 self.registerWildcard(descriptor.get("wildcard"), descriptor.get("descrField"))
 
     def doWork(self, bwPacket):
-        """!start an run of the module.
+        r"""!start an run of the module.
 
         @param bwPacket: A BOSWatch packet instance"""
         for descriptor in self.config:
@@ -54,5 +54,5 @@ class BoswatchModule(ModuleBase):
         return bwPacket
 
     def onUnload(self):
-        """!Called by destruction of the plugin"""
+        r"""!Called by destruction of the plugin"""
         pass

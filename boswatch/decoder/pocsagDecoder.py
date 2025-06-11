@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -24,7 +24,7 @@ logging.debug("- %s loaded", __name__)
 
 
 class PocsagDecoder:
-    """!POCSAG decoder class
+    r"""!POCSAG decoder class
 
     This class decodes POCSAG data.
     First step is to validate the data and _check if the format is correct.
@@ -32,7 +32,7 @@ class PocsagDecoder:
 
     @staticmethod
     def decode(data):
-        """!Decodes POCSAG
+        r"""!Decodes POCSAG
 
         @param data: POCSAG for decoding
         @return BOSWatch POCSAG packet or None"""
@@ -63,7 +63,7 @@ class PocsagDecoder:
 
     @staticmethod
     def _getBitrateRicSubric(data):
-        """!Gets the Bitrate, Ric and Subric from data
+        r"""!Gets the Bitrate, Ric and Subric from data
 
         @param data: POCSAG data string
         @return bitrate

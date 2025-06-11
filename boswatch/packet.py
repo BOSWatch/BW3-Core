@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -21,10 +21,10 @@ logging.debug("- %s loaded", __name__)
 
 
 class Packet:
-    """!Class implementation of an BOSWatch packet"""
+    r"""!Class implementation of an BOSWatch packet"""
 
     def __init__(self, bwPacket=None):
-        """!Build a new BOSWatch packet or copy existing data in it
+        r"""!Build a new BOSWatch packet or copy existing data in it
 
         @param bwPacket: Existing data to copy"""
         if bwPacket is None:
@@ -35,18 +35,18 @@ class Packet:
             self._packet = eval(str(bwPacket.strip()))
 
     def __str__(self):
-        """!Return the intern _packet dict as string"""
+        r"""!Return the intern _packet dict as string"""
         return str(self._packet)
 
     def set(self, fieldName, value):
-        """!Set a field in the intern _packet dict
+        r"""!Set a field in the intern _packet dict
 
         @param fieldName: Name of the data to set
         @param value: Value to set"""
         self._packet[fieldName] = str(value)
 
     def get(self, fieldName):
-        """!Returns the value from a single field.
+        r"""!Returns the value from a single field.
         If field not existing `None` is returned
 
         @param fieldName: Name of the field
@@ -58,7 +58,7 @@ class Packet:
             return None
 
     def printInfo(self):
-        """!Print a info message to the log on INFO level.
+        r"""!Print a info message to the log on INFO level.
         Contains the most useful info about this packet.
         @todo not complete yet - must be edit to print nice formatted messages on console
         """

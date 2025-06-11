@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -24,7 +24,7 @@ logging.debug("- %s loaded", __name__)
 class RepeatedTimer:
 
     def __init__(self, interval, targetFunction, *args, **kwargs):
-        """!Create a new instance of the RepeatedTimer
+        r"""!Create a new instance of the RepeatedTimer
 
         @param interval: interval in sec. to recall target function
         @param targetFunction: function to call on timer event
@@ -43,7 +43,7 @@ class RepeatedTimer:
         self._thread = None
 
     def start(self):
-        """!Start a new timer worker thread
+        r"""!Start a new timer worker thread
 
         @return True or False"""
         if self._thread is None:
@@ -58,7 +58,7 @@ class RepeatedTimer:
         return True
 
     def stop(self):
-        """!Stop the timer worker thread
+        r"""!Stop the timer worker thread
 
         @return True or False"""
         if self._thread is not None:
@@ -71,7 +71,7 @@ class RepeatedTimer:
         return True
 
     def _target(self):
-        """!Runs the target function with his arguments in own thread"""
+        r"""!Runs the target function with his arguments in own thread"""
         self._start = time.time()
         while not self._event.wait(self.restTime):
             logging.debug("work")
@@ -96,12 +96,12 @@ class RepeatedTimer:
 
     @property
     def isRunning(self):
-        """!Property for repeatedTimer running state"""
+        r"""!Property for repeatedTimer running state"""
         if self._thread:
             return True
         return False
 
     @property
     def restTime(self):
-        """!Property to get remaining time till next call"""
+        r"""!Property to get remaining time till next call"""
         return self._interval - ((time.time() - self._start) % self._interval)

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -24,17 +24,17 @@ HEADERSIZE = 10
 
 
 class TCPClient:
-    """!TCP client class"""
+    r"""!TCP client class"""
 
     def __init__(self, timeout=3):
-        """!Create a new instance
+        r"""!Create a new instance
 
         @param timeout: timeout for the client in sec. (3)"""
         socket.setdefaulttimeout(timeout)
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def connect(self, host="localhost", port=8080):
-        """!Connect to the server
+        r"""!Connect to the server
 
         @param host: Server IP address ("localhost")
         @param port: Server Port (8080)
@@ -52,7 +52,7 @@ class TCPClient:
         return False
 
     def disconnect(self):
-        """!Disconnect from the server
+        r"""!Disconnect from the server
 
         @return True or False"""
         try:
@@ -68,7 +68,7 @@ class TCPClient:
         return False
 
     def transmit(self, data):
-        """!Send a data packet to the server
+        r"""!Send a data packet to the server
 
         @param data: data to send to the server
         @return True or False"""
@@ -84,7 +84,7 @@ class TCPClient:
         return False
 
     def receive(self, timeout=1):
-        """!Receive data from the server
+        r"""!Receive data from the server
 
         @param timeout: to wait for incoming data in seconds
         @return received data"""
@@ -109,7 +109,7 @@ class TCPClient:
 
     @property
     def isConnected(self):
-        """!Property of client connected state"""
+        r"""!Property of client connected state"""
         try:
             if self._sock:
                 _, write, _ = select.select([], [self._sock], [], 0.1)
