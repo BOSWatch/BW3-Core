@@ -51,6 +51,10 @@ Vereinfacht kann man sagen, dass einzelnen Router ODER-verknüpft und die jeweil
           regex: "fms"  # check if mode is fms
         - field: status
           regex: "3"  # check if status is 3
+    - name: "Allowed RICs"
+      checks:
+        - field: ric
+          regex: "(0000001|0000002|0000003)"  # check if RIC is in the list
 ```
 
 ---
