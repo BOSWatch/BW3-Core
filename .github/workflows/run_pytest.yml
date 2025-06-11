@@ -1,7 +1,6 @@
 name: pytest
 
 on:
-  #workflow_dispatch:       # Hier manuelles Starten erlauben, automatisch nach jedem Commit
   push:
   pull_request:
 
