@@ -113,7 +113,7 @@ tput cup 13 15
 echo "[ 2/9] [##-------]"
 tput cup 15 5
 echo "-> download GIT and other stuff.........."
-apt-get -y install git cmake build-essential libusb-1.0 qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools qt5-default libpulse-dev libx11-dev sox >> ${boswatch_install_path}/setup_log.txt 2>&1
+apt-get -y install git cmake build-essential libusb-1.0 qmake6 qt6-base-dev libpulse-dev libx11-dev sox >> ${boswatch_install_path}/setup_log.txt 2>&1
 exitcodefunction $? download stuff
 
 tput cup 13 15
@@ -166,7 +166,7 @@ tput cup 15 5
 echo "-> compile multimon-ng................."
 mkdir -p build
 cd build
-qmake -qt=qt5 ../multimon-ng.pro >> ${boswatch_install_path}/setup_log.txt 2>&1
+qmake6 ../multimon-ng.pro >> ${boswatch_install_path}/setup_log.txt 2>&1
 exitcodefunction $? qmake multimonNG
 
 make >> ${boswatch_install_path}/setup_log.txt 2>&1
