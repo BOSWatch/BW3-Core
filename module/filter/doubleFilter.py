@@ -73,7 +73,6 @@ class BoswatchModule(ModuleBase):
             if all(listPacket.get(x) == bwPacket.get(x) for x in filterFields):
                 logging.debug("found duplicate: %s", bwPacket.get("mode"))
                 return False
-        
         # delete entries that are to old
         counter = 0
         for listPacket in self._filterLists[bwPacket.get("mode")][1:]:  # [1:] skip first entry, thats the new one
