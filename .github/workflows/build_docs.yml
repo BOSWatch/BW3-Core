@@ -3,8 +3,8 @@ name: build_docs
 on:
   push:
     branches:
-     #- master
-     - develop
+      #- master
+      - develop
 
 permissions:
   contents: read
