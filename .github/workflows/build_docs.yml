@@ -3,35 +3,50 @@ name: build_docs
 on:
   push:
     branches:
-#     - master
+      #- master
       - develop
 
-jobs:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
   build_docs:
     name: Build documentation
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['3.10']
-
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-        architecture: x64
-
+      uses: actions/checkout@v4
+    - name: Setup Pages
+      uses: actions/configure-pages@v5
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y doxygen
+        pip install mkdocs
     - name: Build doxygen
-      uses: mattnotmitt/doxygen-action@v1
+      run: doxygen docu/doxygen.ini
+    - name: Build MkDocs site
+      working-directory: docu
+      run: mkdocs build --site-dir site
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
       with:
-        working-directory: './'
-        doxyfile-path: 'docu/doxygen.ini'
+        path: ./docu/site
 
-    - name: Install mkdocs
-      run: pip install mkdocs
-    - name: Build Docs and Deploy to Github Pages
-      run: python -m mkdocs gh-deploy -f docu/mkdocs.yml --force
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build_docs
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
