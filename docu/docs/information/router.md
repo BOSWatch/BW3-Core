@@ -8,7 +8,7 @@ BOSWatch 3 hat einen Routing Mechanismus integriert. Mit diesem ist es auf einfa
 
 Nachfolgender Ablauf soll am Beispiel eines Alarms mit einem Pocsag Paket erklärt werden.
 
-<center>![](../img/router.png)</center>
+![Routing-Mechanismus](../img/router.png)
 
 - BOSWatch startet alle Router, welche in der config als `alarmRouter` konfiguriert worden sind (in diesem Fall nur `Router1`)
 - Der Router `Router1` beginnt seine Ausführung und arbeitet die einzelnen Routenpunkte sequentiell ab

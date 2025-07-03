@@ -10,7 +10,7 @@ Durch den Broadcast Service haben Clients die Möglichkeit, automatisch den Serv
 Der Broadcast Service besteht aus 2 Teilen - einem Server und einem Clienten.  
 Nachfolgend soll der Ablauf einer Verbindung des Clienten zum Server mittels des Broadcast Services erklärt werden.
 
-<center>![](../img/broadcast.png)</center>
+![Broadcast](../img/broadcast.png)
 
 ---
 ## Ablauf
