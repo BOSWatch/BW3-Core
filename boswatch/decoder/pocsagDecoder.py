@@ -40,7 +40,7 @@ class PocsagDecoder:
 
         if re.search("[0-9]{7}", ric) and re.search("[1-4]", subric):
             if "Alpha:" in data:
-                message = data.split('Alpha:   ')[1].strip()
+                message = data.split('Alpha:')[1].strip()
                 message = message.replace('<NUL>', '').replace('<NUL', '').replace('< NUL>', '').replace('<EOT>', '').strip()
             else:
                 message = ""
