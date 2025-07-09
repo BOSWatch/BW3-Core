@@ -41,4 +41,8 @@ theme:
   highlightjs: true
   hljs_style: github
 
+extra_css:
+  - stylesheets/extra.css
 
+markdown_extensions:
+  - attr_list

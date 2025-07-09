@@ -17,7 +17,7 @@ nachträglich an den Server übermittelt werden.
 
 Dabei überwacht der Client selbstständig die benötigten Programme zum Empfang der Daten und startet diese bei einem Fehler ggf. neu.
 
-![Client-Prinzip](../img/client.png)
+![Client-Prinzip](../img/client.png){ .center }
 
 ---
 ## BOSWatch Server
@@ -30,4 +30,4 @@ dauernden Plugin Ausführung alle Pakete korrekt empfangen werden können und es
 Die Verarbeitung der Pakete geschieht anschließend in sogenannten Routern, welche aufgrund ihres Umfangs jedoch in einem eigenen Kapitel
 erklärt werden. Diese steuern die Verteilung der Daten an die einzelnen Plugins.
 
-![Server-Prinzip](../img/server.png)
+![Server-Prinzip](../img/server.png){ .center }
