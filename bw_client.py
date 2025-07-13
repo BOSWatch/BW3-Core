@@ -10,7 +10,7 @@ r"""!
                      by Bastian Schroll
 
 @file:        bw_client.py
-@date:        09.12.2017
+@date:        16.07.2025
 @author:      Bastian Schroll
 @description: BOSWatch client application
 """
@@ -28,7 +28,42 @@ if not paths.makeDirIfNotExist(paths.LOG_PATH):
     exit(1)
 
 import logging.config
-logging.config.fileConfig(paths.CONFIG_PATH + "logger_client.ini")
+import argparse
+import os
+
+# Argumente zuerst parsen
+parser = argparse.ArgumentParser(prog="bw_client.py",
+                                 description="""BOSWatch is a Python Script to receive and
+                                 decode german BOS information with rtl_fm and multimon-NG""",
+                                 epilog="""More options you can find in the extern client.ini
+                                 file in the folder /config""")
+# With -h or --help you get the Args help
+parser.add_argument("-c", "--config", help="Name to configuration File", required=True)
+parser.add_argument("-t", "--test", help="Start Client with testdata-set", action="store_true")
+args = parser.parse_args()
+
+# Logging-Konfiguration laden
+logging.config.fileConfig(paths.CONFIG_PATH + "logger_client.ini", disable_existing_loggers=False)
+
+# Dynamischer Logdateiname basierend auf YAML-Datei
+yaml_basename = os.path.splitext(args.config)[0]
+log_filename = f"{paths.LOG_PATH}{yaml_basename}.log"
+
+for handler in logging.getLogger().handlers:
+    if isinstance(handler, logging.handlers.TimedRotatingFileHandler):
+        handler.baseFilename = os.path.abspath(log_filename)
+        handler.stream.close()
+        handler.stream = open(handler.baseFilename, handler.mode)
+
+# Placeholder-Logdatei löschen, falls dynamisch umgebogen
+placeholder_log = os.path.abspath(os.path.join(paths.LOG_PATH, "client.log"))
+if os.path.abspath(log_filename) != placeholder_log and os.path.isfile(placeholder_log):
+    try:
+        os.remove(placeholder_log)
+        logging.debug("Überflüssige client.log gelöscht.")
+    except Exception as e:
+        logging.warning("Fehler beim Löschen von client.log: %s", e)
+
 logging.debug("")
 logging.debug("######################## NEW LOG ############################")
 logging.debug("BOSWatch client has started ...")
@@ -56,15 +91,6 @@ from boswatch.decoder.decoder import Decoder  # for test mode
 header.logoToLog()
 header.infoToLog()
 
-# With -h or --help you get the Args help
-parser = argparse.ArgumentParser(prog="bw_client.py",
-                                 description="""BOSWatch is a Python Script to receive and
-                                 decode german BOS information with rtl_fm and multimon-NG""",
-                                 epilog="""More options you can find in the extern client.ini
-                                 file in the folder /config""")
-parser.add_argument("-c", "--config", help="Name to configuration File", required=True)
-parser.add_argument("-t", "--test", help="Start Client with testdata-set", action="store_true")
-args = parser.parse_args()
 
 bwConfig = ConfigYAML()
 if not bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config):
