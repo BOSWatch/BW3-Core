@@ -27,11 +27,14 @@ if not paths.makeDirIfNotExist(paths.LOG_PATH):
     print("cannot find/create log directory: %s", paths.LOG_PATH)
     exit(1)
 
+import logging
 import logging.config
+import logging.handlers
 import argparse
 import os
+import builtins
 
-# Argumente zuerst parsen
+# parsing arguments first - this is needed to load the logging config file with the correct log filename
 parser = argparse.ArgumentParser(prog="bw_client.py",
                                  description="""BOSWatch is a Python Script to receive and
                                  decode german BOS information with rtl_fm and multimon-NG""",
@@ -42,27 +45,12 @@ parser.add_argument("-c", "--config", help="Name to configuration File", require
 parser.add_argument("-t", "--test", help="Start Client with testdata-set", action="store_true")
 args = parser.parse_args()
 
-# Logging-Konfiguration laden
+# set the log filename in the global namespace (mandatory for fileConfig)
+basename = os.path.splitext(args.config)[0]
+log_filename = f"{paths.LOG_PATH}{basename}.log"
+builtins.log_filename = log_filename
+
 logging.config.fileConfig(paths.CONFIG_PATH + "logger_client.ini", disable_existing_loggers=False)
-
-# Dynamischer Logdateiname basierend auf YAML-Datei
-yaml_basename = os.path.splitext(args.config)[0]
-log_filename = f"{paths.LOG_PATH}{yaml_basename}.log"
-
-for handler in logging.getLogger().handlers:
-    if isinstance(handler, logging.handlers.TimedRotatingFileHandler):
-        handler.baseFilename = os.path.abspath(log_filename)
-        handler.stream.close()
-        handler.stream = open(handler.baseFilename, handler.mode)
-
-# Placeholder-Logdatei löschen, falls dynamisch umgebogen
-placeholder_log = os.path.abspath(os.path.join(paths.LOG_PATH, "client.log"))
-if os.path.abspath(log_filename) != placeholder_log and os.path.isfile(placeholder_log):
-    try:
-        os.remove(placeholder_log)
-        logging.debug("Überflüssige client.log gelöscht.")
-    except Exception as e:
-        logging.warning("Fehler beim Löschen von client.log: %s", e)
 
 logging.debug("")
 logging.debug("######################## NEW LOG ############################")
