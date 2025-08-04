@@ -10,7 +10,7 @@ r"""!
                      by Bastian Schroll
 
 @file:        bw_client.py
-@date:        09.12.2017
+@date:        16.07.2025
 @author:      Bastian Schroll
 @description: BOSWatch client application
 """
@@ -27,8 +27,31 @@ if not paths.makeDirIfNotExist(paths.LOG_PATH):
     print("cannot find/create log directory: %s", paths.LOG_PATH)
     exit(1)
 
+import logging
 import logging.config
-logging.config.fileConfig(paths.CONFIG_PATH + "logger_client.ini")
+import logging.handlers
+import argparse
+import os
+import builtins
+
+# parsing arguments first - this is needed to load the logging config file with the correct log filename
+parser = argparse.ArgumentParser(prog="bw_client.py",
+                                 description="""BOSWatch is a Python Script to receive and
+                                 decode german BOS information with rtl_fm and multimon-NG""",
+                                 epilog="""More options you can find in the extern client.ini
+                                 file in the folder /config""")
+# With -h or --help you get the Args help
+parser.add_argument("-c", "--config", help="Name to configuration File", required=True)
+parser.add_argument("-t", "--test", help="Start Client with testdata-set", action="store_true")
+args = parser.parse_args()
+
+# set the log filename in the global namespace (mandatory for fileConfig)
+basename = os.path.splitext(args.config)[0]
+log_filename = f"{paths.LOG_PATH}{basename}.log"
+builtins.log_filename = log_filename
+
+logging.config.fileConfig(paths.CONFIG_PATH + "logger_client.ini", disable_existing_loggers=False)
+
 logging.debug("")
 logging.debug("######################## NEW LOG ############################")
 logging.debug("BOSWatch client has started ...")
@@ -56,15 +79,6 @@ from boswatch.decoder.decoder import Decoder  # for test mode
 header.logoToLog()
 header.infoToLog()
 
-# With -h or --help you get the Args help
-parser = argparse.ArgumentParser(prog="bw_client.py",
-                                 description="""BOSWatch is a Python Script to receive and
-                                 decode german BOS information with rtl_fm and multimon-NG""",
-                                 epilog="""More options you can find in the extern client.ini
-                                 file in the folder /config""")
-parser.add_argument("-c", "--config", help="Name to configuration File", required=True)
-parser.add_argument("-t", "--test", help="Start Client with testdata-set", action="store_true")
-args = parser.parse_args()
 
 bwConfig = ConfigYAML()
 if not bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config):
