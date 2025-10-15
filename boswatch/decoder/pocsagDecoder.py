@@ -9,8 +9,8 @@ r"""!
                 German BOS Information Script
                      by Bastian Schroll
 
-@file:        pocsag.py
-@date:        06.01.2018
+@file:        pocsagDecoder.py
+@date:        15.10.2025
 @author:      Bastian Schroll
 @description: Decoder class for pocsag
 """
@@ -38,10 +38,15 @@ class PocsagDecoder:
         @return BOSWatch POCSAG packet or None"""
         bitrate, ric, subric = PocsagDecoder._getBitrateRicSubric(data)
 
-        if re.search("[0-9]{7}", ric) and re.search("[1-4]", subric):
+        # If no valid SubRIC (Function 0–3) detected → abort
+        if subric is None:
+            logging.warning("Invalid POCSAG function (not 0–3)")
+            return None
+
+        if ric and len(ric) == 7:
             if "Alpha:" in data:
                 message = data.split('Alpha:')[1].strip()
-                message = message.replace('<NUL>', '').replace('<NUL', '').replace('< NUL>', '').replace('<EOT>', '').strip()
+                message = re.sub(r'<\s*(?:NUL|EOT)\s*>?', '', message).strip()
             else:
                 message = ""
             subricText = subric.replace("1", "a").replace("2", "b").replace("3", "c").replace("4", "d")
@@ -63,27 +68,27 @@ class PocsagDecoder:
 
     @staticmethod
     def _getBitrateRicSubric(data):
-        r"""!Gets the Bitrate, Ric and Subric from data
+        """Gets the Bitrate, Ric and Subric from data using robust regex parsing."""
+        bitrate = "0"
+        ric = None
+        subric = None
 
-        @param data: POCSAG data string
-        @return bitrate
-        @return ric
-        @return subric"""
-        bitrate, ric, subric = "0", "0", "0"
-
+        # determine bitrate
         if "POCSAG512:" in data:
             bitrate = "512"
-            ric = data[20:27].replace(" ", "").zfill(7)
-            subric = str(int(data[39]) + 1)
-
         elif "POCSAG1200:" in data:
             bitrate = "1200"
-            ric = data[21:28].replace(" ", "").zfill(7)
-            subric = str(int(data[40]) + 1)
-
         elif "POCSAG2400:" in data:
             bitrate = "2400"
-            ric = data[21:28].replace(" ", "").zfill(7)
-            subric = str(int(data[40]) + 1)
+
+        # extract RIC (address)
+        m_ric = re.search(r'Address:\s*(\d{1,7})(?=\s|$)', data)
+        if m_ric:
+            ric = m_ric.group(1).zfill(7)
+
+        # extract SubRIC (function)
+        m_sub = re.search(r'Function:\s*([0-3])', data)
+        if m_sub:
+            subric = str(int(m_sub.group(1)) + 1)
 
         return bitrate, ric, subric
