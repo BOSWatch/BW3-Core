@@ -10,7 +10,7 @@ r"""!
                      by Bastian Schroll
 
 @file:        telegram.py
-@date:        12.07.2025
+@date:        17.11.2025
 @author:      Claus Schichl nach der Idee von Jan Speller
 @description: Telegram-Plugin mit Retry-Logik ohne externe Telegram-Abhängigkeiten
 """
@@ -31,16 +31,17 @@ logger = logging.getLogger(__name__)
 
 
 # ===========================
-# TelegramSender-Klasse
+# TelegramSender-Class
 # ===========================
 
 class TelegramSender:
-    def __init__(self, bot_token, chat_ids, max_retries=None, initial_delay=None, max_delay=None):
+    def __init__(self, bot_token, chat_ids, max_retries=None, initial_delay=None, max_delay=None, parse_mode=None):
         self.bot_token = bot_token
         self.chat_ids = chat_ids
         self.max_retries = max_retries if max_retries is not None else 5
         self.initial_delay = initial_delay if initial_delay is not None else 2
         self.max_delay = max_delay if max_delay is not None else 300
+        self.parse_mode = parse_mode
         self.msg_queue = queue.Queue()
         self._worker = threading.Thread(target=self._worker_loop, daemon=True)
         self._worker.start()
@@ -75,11 +76,11 @@ class TelegramSender:
                     logger.warning(f"Erneutes Einreihen der Nachricht (Versuch {retry_count + 1}).")
                     self.msg_queue.put((msg_type, chat_id, content, retry_count + 1))
 
-                    # Nutze den von Telegram gelieferten Wert (retry_after), falls vorhanden
+                    # use the Telegram-provided value (retry_after) if available
                     wait_time = custom_delay if custom_delay is not None else delay
                     time.sleep(wait_time)
 
-                    # Erhöhe Delay für den nächsten Versuch (exponentielles Backoff)
+                    # increase delay for the next attempt (exponential backoff)
                     delay = min(delay * 2, self.max_delay)
 
             except Exception as e:
@@ -91,8 +92,10 @@ class TelegramSender:
             url = f"https://api.telegram.org/bot{self.bot_token}/sendMessage"
             payload = {
                 'chat_id': chat_id,
-                'text': content
+                'text': content,
             }
+            if self.parse_mode:
+                payload['parse_mode'] = self.parse_mode
         elif msg_type == "location":
             url = f"https://api.telegram.org/bot{self.bot_token}/sendLocation"
             payload = {
@@ -101,25 +104,25 @@ class TelegramSender:
             }
         else:
             logger.error("Unbekannter Nachrichtentyp.")
-            return False, True, None  # Unbekannter Typ = permanent falsch
+            return False, True, None  # unknown message type = permanent failure
 
         try:
-            custom_delay = None  # Standardwert für Rückgabe, außer bei 429
+            custom_delay = None  # standardvalue for return, except in case of 429
 
             response = requests.post(url, data=payload, timeout=10)
 
             if response.status_code == 429:
                 custom_delay = response.json().get("parameters", {}).get("retry_after", 5)
                 logger.warning(f"Rate Limit erreicht – warte {custom_delay} Sekunden.")
-                return False, False, custom_delay  # Telegram gibt genaue Wartezeit vor
+                return False, False, custom_delay  # Telegram gives exact wait time
 
             if response.status_code == 400:
                 logger.error("Ungültige Parameter – Nachricht wird nicht erneut gesendet.")
-                return False, True, custom_delay  # Permanent fehlerhaft
+                return False, True, custom_delay  # permanent failure
 
             if response.status_code == 401:
                 logger.critical("Ungültiger Bot-Token – bitte prüfen!")
-                return False, True, custom_delay  # Permanent fehlerhaft
+                return False, True, custom_delay  # permanent failure
 
             response.raise_for_status()
             logger.info(f"Erfolgreich gesendet an Chat-ID {chat_id}")
@@ -131,7 +134,7 @@ class TelegramSender:
 
 
 # ===========================
-# BoswatchPlugin-Klasse
+# BoswatchPlugin-Class
 # ===========================
 
 
@@ -149,17 +152,19 @@ class BoswatchPlugin(PluginBase):
             logger.error("botToken oder chatIds fehlen in der Konfiguration!")
             return
 
-        # Konfigurierbare Parameter mit Fallback-Defaults
+        # configurable parameters with fallback defaults
         max_retries = self.config.get("max_retries")
         initial_delay = self.config.get("initial_delay")
         max_delay = self.config.get("max_delay")
+        parse_mode = self.config.get("parse_mode")
 
         self.sender = TelegramSender(
             bot_token=bot_token,
             chat_ids=chat_ids,
             max_retries=max_retries,
             initial_delay=initial_delay,
-            max_delay=max_delay
+            max_delay=max_delay,
+            parse_mode=parse_mode
         )
 
         startup_message = self.config.get("startup_message")
