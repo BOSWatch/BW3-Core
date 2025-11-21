@@ -21,6 +21,20 @@ Ein BOSWatch Datenpaket wird in einem Python Dict abgebildet. In der nachfolgend
 |mode|X|X|X|X|`{MODE}`|(fms, pocsag, zvei, msg)|
 
 ---
+### Allgemeine (feldunabhängige) Wildcards
+
+Diese Wildcards sind **nicht an ein bestimmtes Feld im BOSWatch Paket gebunden**.  
+Sie können **in allen Texten** verwendet werden, die Wildcards unterstützen
+(z. B. Descriptor, Templates, Benachrichtigungen).
+
+|Wildcard|Beschreibung|
+|--------|------------|
+|`{BR}`|Zeilenumbruch (`\r\n`)|
+|`{LPAR}`|Öffnende Klammer `(`|
+|`{RPAR}`|Schließende Klammer `)`|
+|`{TIME}`|Aktueller Zeitstempel im Format `%d.%m.%Y %H:%M:%S`|
+
+---
 ## Speziell für POCSAG
 |Feldname|FMS|POCSAG|ZVEI|MSG|Wildcard|Beschreibung|
 |--------|:-:|:----:|:--:|:-:|--------|------------|
