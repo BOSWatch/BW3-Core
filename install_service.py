@@ -10,7 +10,7 @@ r"""!
                      by Bastian Schroll
 
 @file:        install_service.py
-@date:        15.11.2025
+@date:        21.11.2025
 @author:      Claus Schichl
 @description: Install Service File with argparse CLI
 """
@@ -151,14 +151,12 @@ TEXT = {
 }
 
 
-# === COLORAMA AUTO-INSTALL (dual language) ===
+# === COLORAMA AUTO-INSTALL ===
 def colorama_auto_install():
     r"""
-    Auto-installs colorama if missing.
-    Note: Language detection happens before colorama is available.
+    Auto-installs colorama if missing using pip in the current venv.
     """
     # recognize language early (before colorama installation)
-    import argparse
     early_parser = argparse.ArgumentParser(add_help=False)
     early_parser.add_argument('--lang', '-l', choices=['de', 'en'], default='de')
     early_args, _ = early_parser.parse_known_args()
@@ -176,7 +174,8 @@ def colorama_auto_install():
 
         # install Colorama
         print(txt["colorama_install"])
-        subprocess.run(["sudo", "apt", "install", "-y", "python3-colorama"], check=False)
+        python_exe = sys.executable
+        subprocess.run([python_exe, "-m", "pip", "install", "colorama"], check=False)
 
         # retry importing Colorama
         try:
@@ -248,6 +247,7 @@ def setup_logging(verbose=False, quiet=False):
     return logger
 
 
+# === Helpers ===
 def t(key):
     r"""
     Translation helper: returns the localized string for the given key.
@@ -358,12 +358,12 @@ def install_service(yaml_file, dry_run=False):
     service_path = SERVICE_DIR / service_name
 
     if is_server:
-        exec_line = f"/usr/bin/python3 {BW_DIR}/bw_server.py -c {yaml_file}"
+        exec_line = f"{BW_DIR}/venv/bin/python3 {BW_DIR}/bw_server.py -c {yaml_file}"
         description = "BOSWatch Server"
         after = "network-online.target"
         wants = "Wants=network-online.target"
     else:
-        exec_line = f"/usr/bin/python3 {BW_DIR}/bw_client.py -c {yaml_file}"
+        exec_line = f"{BW_DIR}/venv/bin/python3 {BW_DIR}/bw_client.py -c {yaml_file}"
         description = "BOSWatch Client"
         after = "network.target"
         wants = ""
@@ -382,17 +382,15 @@ Restart=on-abort
 [Install]
 WantedBy=multi-user.target
 """
-
     logging.info(t("creating_service_file").format(yaml_file, service_name))
 
     if not dry_run:
         try:
-            with open(service_path, 'w', encoding='utf-8') as f:
-                f.write(service_content)
+            service_path.write_text(service_content, encoding='utf-8')
+            verify_service(service_path)
         except IOError as e:
             logging.error(t("file_write_error").format(service_path, e))
             return
-        verify_service(service_path)
 
     execute("systemctl daemon-reload", dry_run=dry_run)
     execute(f"systemctl enable {service_name}", dry_run=dry_run)
@@ -412,6 +410,22 @@ WantedBy=multi-user.target
             logging.warning(t("status_timeout").format(service_name))
     else:
         logging.info(t("dryrun_status_check").format(service_name))
+
+
+# === import / install colorama ===
+colorama_available, Fore, Style = colorama_auto_install()
+
+if not colorama_available:
+    # provides dummy classes if colorama is not available (no crash)
+    class DummyStyle:
+        RESET_ALL = ""
+        BRIGHT = ""
+
+    class DummyFore:
+        RED = GREEN = YELLOW = BLUE = CYAN = MAGENTA = WHITE = RESET = ""
+
+    Fore = DummyFore()
+    Style = DummyStyle()
 
 
 def remove_service(service_name, dry_run=False):

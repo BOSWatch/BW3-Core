@@ -1,6 +1,6 @@
-# for pip to install all needed
-# called with 'pip install -r requirements.txt'
-pyyaml
+# requirements.txt (complete dependencies)
+# for venv all needed dependencies
+-r requirements-runtime.txt
 
 # for documentation generating
 mkdocs

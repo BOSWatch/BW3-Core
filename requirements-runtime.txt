@@ -1,0 +1,7 @@
+# requirements-runtime.txt (dependencies needed at runtime)
+# for venv all needed dependencies
+pyyaml
+requests # Telegram
+aiohttp # HTTP, Divera
+mysql-connector-python # MySQL
+geocoder # Geocoding
