@@ -65,6 +65,15 @@ class PluginBase(ABC):
         The alarm() method serves the BOSWatch packet to the plugin.
 
         @param bwPacket: A BOSWatch packet instance"""
+
+        # --- FIX: Multicast list support ---
+        if isinstance(bwPacket, list):
+            # if we got a list of packets, we have to run each packet through the complete alarm process (Setup -> Alarm -> Teardown)
+            for single_packet in bwPacket:
+                self._run(single_packet)
+            return None
+        # ---------------------------------------------------------------------
+
         self._runCount += 1
         logging.debug("[%s] run #%d", self._pluginName, self._runCount)
 

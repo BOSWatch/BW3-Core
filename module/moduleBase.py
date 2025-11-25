@@ -56,6 +56,32 @@ class ModuleBase(ABC):
 
         @param bwPacket: A BOSWatch packet instance
         @return bwPacket or False"""
+
+        # --- FIX: Multicast list support for Module ---
+        if isinstance(bwPacket, list):
+            result_packets = []
+            for single_packet in bwPacket:
+                # Recursive call for single packet
+                processed = self._run(single_packet)
+
+                # new logic:
+                if processed is False:
+                    # filter called 'False' -> packet discarded
+                    continue
+                elif processed is None:
+                    # module returned None -> keep packet unchanged
+                    result_packets.append(single_packet)
+                elif isinstance(processed, list):
+                    # module returned new list -> extend
+                    result_packets.extend(processed)
+                else:
+                    # module returned modified packet -> add
+                    result_packets.append(processed)
+
+            # if list is not empty, return it. else False (filter all).
+            return result_packets if result_packets else False
+        # -----------------------------------------------
+
         self._runCount += 1
         logging.debug("[%s] run #%d", self._moduleName, self._runCount)
 
