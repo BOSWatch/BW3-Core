@@ -57,8 +57,11 @@ class BoswatchPlugin(PluginBase):
         if self.cursor.fetchone() is None:
             with open('init_db.sql') as f:
                 for stmnt in f.read().split(';'):
-                    self.cursor.execute(stmnt)
-                    self.connection.commit()
+                    # Change: Remove whitespace and check for empty strings
+                    clean_stmnt = stmnt.strip()
+                    if clean_stmnt:  # only if the string is not empty
+                        self.cursor.execute(clean_stmnt)
+                        self.connection.commit()
 
         self.cursor.close()
 
