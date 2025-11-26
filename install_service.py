@@ -9,8 +9,8 @@ r"""!
                 German BOS Information Script
                      by Bastian Schroll
 
-@file:        http.py
-@date:        21.07.2025
+@file:        install_service.py
+@date:        15.11.2025
 @author:      Claus Schichl
 @description: Install Service File with argparse CLI
 """
@@ -21,13 +21,9 @@ import sys
 import logging
 import argparse
 import yaml
-from colorama import init as colorama_init, Fore, Style
 from pathlib import Path
 
-# === Initialisiere Colorama für Windows/Konsole ===
-colorama_init(autoreset=True)
-
-# === Konstanten ===
+#  === constants for directories and files ===
 BASE_DIR = Path(__file__).resolve().parent
 BW_DIR = '/opt/boswatch3'
 SERVICE_DIR = Path('/etc/systemd/system')
@@ -35,7 +31,8 @@ CONFIG_DIR = (BASE_DIR / 'config').resolve()
 LOG_FILE = (BASE_DIR / 'log' / 'install' / 'service_install.log').resolve()
 os.makedirs(LOG_FILE.parent, exist_ok=True)
 
-# === Sprache (kapselt globale Variable) ===
+
+#  === language management (default german)===
 _lang = 'de'
 
 
@@ -48,7 +45,7 @@ def set_lang(lang):
     _lang = lang
 
 
-# === Texte ===
+#  === text-dictionary ===
 TEXT = {
     "de": {
         "script_title": "🛠️ BOSWatch Service Manager",
@@ -88,7 +85,17 @@ TEXT = {
         "service_active": "✅ Service {0} läuft erfolgreich.",
         "service_inactive": "⚠  Service {0} ist **nicht aktiv** – bitte prüfen.",
         "dryrun_status_check": "🧪 [Dry-Run] Service-Status von {0} würde jetzt geprüft.",
-        "max_attempts_exceeded": "❌ Maximale Anzahl an Eingabeversuchen überschritten. Das Menü wird beendet."
+        "max_attempts_exceeded": "❌ Maximale Anzahl an Eingabeversuchen überschritten. Das Menü wird beendet.",
+        "user_interrupt": "\nAbbruch durch Benutzer.",
+        "unhandled_error": "Unbehandelter Fehler: {}",
+        "max_retries_skip": "Maximale Anzahl Eingabeversuche überschritten. Überspringe Service.",
+        "max_retries_exit": "Maximale Anzahl Eingabeversuche überschritten. Beende Programm.",
+        "colorama_missing": "⚠️ Colorama nicht installiert – versuche automatische Installation...",
+        "colorama_install": "➡️ Installiere Colorama...",
+        "colorama_install_ok": "✅ Colorama erfolgreich installiert.",
+        "colorama_install_fail": "❌ Colorama konnte nicht automatisch installiert werden.",
+        "verify_timeout": "⚠ Timeout bei systemd-analyze verify für: {}",
+        "status_timeout": "⚠ Timeout beim Prüfen des Service-Status: {}"
 
     },
     "en": {
@@ -129,14 +136,78 @@ TEXT = {
         "service_active": "✅ Service {0} is running successfully.",
         "service_inactive": "⚠ Service {0} is **not active** – please check.",
         "dryrun_status_check": "🧪 [Dry-Run] Service status of {0} would be checked now.",
-        "max_attempts_exceeded": "❌ Maximum number of input attempts exceeded. Exiting menu."
+        "max_attempts_exceeded": "❌ Maximum number of input attempts exceeded. Exiting menu.",
+        "user_interrupt": "\nInterrupted by user.",
+        "unhandled_error": "Unhandled error: {}",
+        "max_retries_skip": "Maximum input attempts exceeded. Skipping service.",
+        "max_retries_exit": "Maximum input attempts exceeded. Exiting program.",
+        "colorama_missing": "⚠️ Colorama not installed – attempting automatic installation...",
+        "colorama_install": "➡️ Installing Colorama...",
+        "colorama_install_ok": "✅ Colorama installed successfully.",
+        "colorama_install_fail": "❌ Colorama could not be installed automatically.",
+        "verify_timeout": "⚠ Timeout during systemd-analyze verify for: {}",
+        "status_timeout": "⚠ Timeout while checking service status: {}"
     }
 }
 
 
-# === Logging Setup ===
-def setup_logging(verbose=False, quiet=False):
+# === COLORAMA AUTO-INSTALL (dual language) ===
+def colorama_auto_install():
+    r"""
+    Auto-installs colorama if missing.
+    Note: Language detection happens before colorama is available.
     """
+    # recognize language early (before colorama installation)
+    import argparse
+    early_parser = argparse.ArgumentParser(add_help=False)
+    early_parser.add_argument('--lang', '-l', choices=['de', 'en'], default='de')
+    early_args, _ = early_parser.parse_known_args()
+    lang = early_args.lang
+
+    # use text from global TEXT dictionary
+    txt = TEXT[lang]
+
+    try:
+        from colorama import init as colorama_init, Fore, Style
+        colorama_init(autoreset=True)
+        return True, Fore, Style
+    except ImportError:
+        print(txt["colorama_missing"])
+
+        # install Colorama
+        print(txt["colorama_install"])
+        subprocess.run(["sudo", "apt", "install", "-y", "python3-colorama"], check=False)
+
+        # retry importing Colorama
+        try:
+            from colorama import init as colorama_init, Fore, Style
+            colorama_init(autoreset=True)
+            print(txt["colorama_install_ok"])
+            return True, Fore, Style
+        except ImportError:
+            print(txt["colorama_install_fail"])
+            return False, None, None
+
+
+# === import / install colorama ===
+colorama_available, Fore, Style = colorama_auto_install()
+
+if not colorama_available:
+    # provides dummy classes if colorama is not available (no crash)
+    class DummyStyle:
+        RESET_ALL = ""
+        BRIGHT = ""
+
+    class DummyFore:
+        RED = GREEN = YELLOW = BLUE = CYAN = MAGENTA = WHITE = RESET = ""
+
+    Fore = DummyFore()
+    Style = DummyStyle()
+
+
+# === logging Setup ===
+def setup_logging(verbose=False, quiet=False):
+    r"""
     Setup logging to file and console with colorized output.
     """
     log_level = logging.INFO
@@ -178,7 +249,7 @@ def setup_logging(verbose=False, quiet=False):
 
 
 def t(key):
-    """
+    r"""
     Translation helper: returns the localized string for the given key.
     """
     lang = get_lang()
@@ -186,7 +257,7 @@ def t(key):
 
 
 def get_user_input(prompt, valid_inputs, max_attempts=3):
-    """
+    r"""
     Prompt user for input until a valid input from valid_inputs is entered or max_attempts exceeded.
     Raises RuntimeError on failure.
     """
@@ -197,22 +268,22 @@ def get_user_input(prompt, valid_inputs, max_attempts=3):
             return value
         logging.warning(t("invalid_input").format(", ".join(valid_inputs)))
         attempts += 1
-    raise RuntimeError("Maximale Anzahl Eingabeversuche überschritten.")
+    raise RuntimeError(t("max_attempts_exceeded"))
 
 
 def list_yaml_files():
-    """
+    r"""
     Returns a list of .yaml or .yml files in the config directory.
     """
-    return [f.name for f in CONFIG_DIR.glob("*.y*ml")]
+    return sorted([f.name for f in CONFIG_DIR.glob("*.y*ml")])
 
 
 def test_yaml_file(file_path):
-    """
+    r"""
     Tests if YAML file can be loaded without error.
     """
     try:
-        content = file_path.read_text()
+        content = file_path.read_text(encoding='utf-8')
         yaml.safe_load(content)
         return True
     except Exception as e:
@@ -221,11 +292,11 @@ def test_yaml_file(file_path):
 
 
 def detect_yaml_type(file_path):
-    """
+    r"""
     Detects if YAML config is 'client' or 'server' type.
     """
     try:
-        with open(file_path, 'r') as f:
+        with open(file_path, 'r', encoding='utf-8') as f:
             data = yaml.safe_load(f)
         if 'client' in data:
             return 'client'
@@ -240,7 +311,7 @@ def detect_yaml_type(file_path):
 
 
 def execute(command, dry_run=False):
-    """
+    r"""
     Executes shell command unless dry_run is True.
     """
     logging.debug(f"→ {command}")
@@ -249,21 +320,28 @@ def execute(command, dry_run=False):
 
 
 def verify_service(service_path):
-    """
+    r"""
     Runs 'systemd-analyze verify' on the service file and logs warnings/errors.
     """
     try:
-        result = subprocess.run(['systemd-analyze', 'verify', service_path], capture_output=True, text=True)
+        result = subprocess.run(
+            ['systemd-analyze', 'verify', service_path],
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
         if result.returncode != 0 or result.stderr:
             logging.warning(t("verify_warn").format(result.stderr.strip()))
         else:
             logging.debug(t("verify_ok").format(os.path.basename(service_path)))
+    except subprocess.TimeoutExpired:
+        logging.warning(t("verify_timeout").format(os.path.basename(service_path)))
     except Exception as e:
         logging.error(t("yaml_error").format(service_path, e))
 
 
 def install_service(yaml_file, dry_run=False):
-    """
+    r"""
     Creates and installs systemd service based on YAML config.
     """
     yaml_path = CONFIG_DIR / yaml_file
@@ -280,7 +358,7 @@ def install_service(yaml_file, dry_run=False):
     service_path = SERVICE_DIR / service_name
 
     if is_server:
-        exec_line = f"/usr/bin/python {BW_DIR}/bw_server.py -c {yaml_file}"
+        exec_line = f"/usr/bin/python3 {BW_DIR}/bw_server.py -c {yaml_file}"
         description = "BOSWatch Server"
         after = "network-online.target"
         wants = "Wants=network-online.target"
@@ -309,49 +387,56 @@ WantedBy=multi-user.target
 
     if not dry_run:
         try:
-            with open(service_path, 'w') as f:
+            with open(service_path, 'w', encoding='utf-8') as f:
                 f.write(service_content)
         except IOError as e:
             logging.error(t("file_write_error").format(service_path, e))
             return
         verify_service(service_path)
 
-    execute("systemctl daemon-reexec", dry_run=dry_run)
+    execute("systemctl daemon-reload", dry_run=dry_run)
     execute(f"systemctl enable {service_name}", dry_run=dry_run)
     execute(f"systemctl start {service_name}", dry_run=dry_run)
+
     if not dry_run:
         try:
             subprocess.run(
                 ["systemctl", "is-active", "--quiet", service_name],
-                check=True
+                check=True,
+                timeout=5
             )
             logging.info(t("service_active").format(service_name))
         except subprocess.CalledProcessError:
             logging.warning(t("service_inactive").format(service_name))
+        except subprocess.TimeoutExpired:
+            logging.warning(t("status_timeout").format(service_name))
     else:
         logging.info(t("dryrun_status_check").format(service_name))
 
 
 def remove_service(service_name, dry_run=False):
-    """
+    r"""
     Stops, disables and removes the given systemd service.
     """
     logging.warning(t("removing_service").format(service_name))
     execute(f"systemctl stop {service_name}", dry_run=dry_run)
     execute(f"systemctl disable {service_name}", dry_run=dry_run)
-    service_path = Path(SERVICE_DIR) / service_name
+
+    service_path = SERVICE_DIR / service_name
     if not dry_run and service_path.exists():
         try:
-            os.remove(service_path)
+            service_path.unlink()
             logging.info(t("service_deleted").format(service_name))
         except Exception as e:
             logging.error(t("file_write_error").format(service_path, e))
     else:
         logging.warning(t("service_not_found").format(service_name))
 
+    execute("systemctl daemon-reload", dry_run=dry_run)
+
 
 def remove_menu(dry_run=False):
-    """
+    r"""
     Interactive menu to remove services.
     """
     while True:
@@ -384,16 +469,16 @@ def remove_menu(dry_run=False):
         elif auswahl == 'a':
             for s in services:
                 remove_service(s, dry_run=dry_run)
-            # Danach direkt weiter zur nächsten Schleife (aktualisierte Liste!)
+            # directly continue to the next loop (updated list!)
             continue
         else:
             remove_service(services[int(auswahl)], dry_run=dry_run)
-            # Danach ebenfalls weiter zur nächsten Schleife (aktualisierte Liste!)
+            # also directly continue to the next loop (updated list!)
             continue
 
 
 def init_language():
-    """
+    r"""
     Parses --lang/-l argument early to set language before other parsing.
     """
     lang_parser = argparse.ArgumentParser(add_help=False)
@@ -410,8 +495,8 @@ def init_language():
 
 
 def main(dry_run=False):
-    """
-    Hauptprogramm: Service installieren oder entfernen.
+    r"""
+    main program: install or remove service.
     """
     print(Fore.GREEN + Style.BRIGHT + t("script_title") + Style.RESET_ALL)
     print(t('mode_dry') if dry_run else t('mode_live'))
@@ -432,7 +517,7 @@ def main(dry_run=False):
     try:
         action = get_user_input(t("action_prompt"), ['i', 'r', 'e'])
     except RuntimeError:
-        logging.error("Maximale Anzahl Eingabeversuche überschritten. Beende Programm.")
+        logging.error(t("max_retries_exit"))
         sys.exit(1)
 
     if action == 'e':
@@ -444,7 +529,7 @@ def main(dry_run=False):
     try:
         edited = get_user_input(t("edited_prompt"), ['y', 'n'])
     except RuntimeError:
-        logging.error("Maximale Anzahl Eingabeversuche überschritten. Beende Programm.")
+        logging.error(t("max_retries_exit"))
         sys.exit(1)
 
     if edited == 'n':
@@ -464,7 +549,7 @@ def main(dry_run=False):
         try:
             install = get_user_input(t("install_confirm").format(yaml_file), ['y', 'n'])
         except RuntimeError:
-            logging.error("Maximale Anzahl Eingabeversuche überschritten. Überspringe Service.")
+            logging.error(t("max_retries_skip"))
             skipped += 1
             continue
 
@@ -501,9 +586,8 @@ if __name__ == "__main__":
     try:
         main(dry_run=args.dry_run)
     except KeyboardInterrupt:
-        print("\nAbbruch durch Benutzer.")
+        print(t("user_interrupt"))
         sys.exit(1)
     except Exception as e:
-        logging.critical(f"Unbehandelter Fehler: {e}")
+        logging.critical(t("unhandled_error").format(e))
         sys.exit(1)
-# === Ende des Skripts ===
