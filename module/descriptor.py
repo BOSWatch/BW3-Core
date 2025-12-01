@@ -10,7 +10,7 @@ r"""!
                      by Bastian Schroll
 
 @file:        descriptor.py
-@date:        04.08.2025
+@date:        03.12.2025
 @author:      Bastian Schroll
 @description: Module to add descriptions to bwPackets with CSV and Regex support
 """
@@ -89,11 +89,15 @@ class BoswatchModule(ModuleBase):
                 reader = csv.DictReader(csvfile)
                 for row in reader:
                     # Set default values if columns are missing
+                    raw_for = str(row.get('for', '')).strip()
+                    # Remove enclosing quotes
+                    clean_for = raw_for.strip().strip('"').strip("'")
                     entry = {
-                        'for': str(row.get('for', '')),
-                        'add': row.get('add', ''),
+                        'for': clean_for,
+                        'add': row.get('add', '').strip(),
                         'isRegex': row.get('isRegex', 'false').lower() == 'true'  # Default: False
                     }
+                    logging.debug("CSV row read: %s", row)
                     self.unified_cache[descriptor_key].append(entry)
                     csv_count += 1
 
@@ -103,41 +107,56 @@ class BoswatchModule(ModuleBase):
             logging.error("Error loading CSV file %s: %s", csv_path, str(e))
 
     def _find_description(self, descriptor_key, scan_value, bw_packet):
-        r"""!Find matching description for a scan value with Regex group support."""
+        r"""!Find matching description for a scan value with Regex group support.
+
+        The search is performed in two passes for performance optimization:
+        1. First pass: Check for exact string matches (fast, no regex compilation)
+        2. Second pass: Check regex patterns only if no exact match was found
+
+        Regex patterns support capture groups that can be referenced in the description
+        using standard regex backreferences (\1, \2, etc.) via match.expand().
+
+        Example:
+            Pattern: r"(\d{7})"
+            Input: "1234567"
+            Description template: "RIC: \1"
+            Result: "RIC: 1234567"
+
+        @param descriptor_key: Cache key identifying the descriptor configuration
+        @param scan_value: Value to search for in the descriptor cache
+        @param bw_packet: BOSWatch packet for wildcard replacement
+        @return: Matched description string or None if no match found
+        """
+
         descriptions = self.unified_cache.get(descriptor_key, [])
-        scan_value_str = str(scan_value)
+        scan_value_str = str(scan_value).strip()
 
-        # Search for matching description
+        # First pass: Search for exact matches (performance optimization)
+        # Exact matches are checked first because they don't require regex compilation
         for desc in descriptions:
-            description_text = desc.get('add', '')
-            match_pattern = desc.get('for', '')
-            is_regex = desc.get('isRegex', False)
+            if not desc.get('isRegex', False):
+                if desc['for'] == scan_value_str:
+                    description_text = desc.get('add', '')
+                    final_description = self._replace_wildcards(description_text, bw_packet)
+                    return final_description
 
-            if is_regex:
-                # Regex matching
+        # Second pass: Search for regex matches
+        # Only executed if no exact match was found in the first pass
+        for desc in descriptions:
+            if desc.get('isRegex', False):
+                match_pattern = desc.get('for', '')
                 try:
                     match = re.search(match_pattern, scan_value_str)
                     if match:
-                        # Expand regex groups (\1, \2) in the description
+                        description_text = desc.get('add', '')
+                        # match.expand() replaces backreferences (\1, \2, etc.) with captured groups
+                        # Example: pattern="(\d+)-(\d+)", input="123-456", template="First: \1, Second: \2"
+                        #          result="First: 123, Second: 456"
                         expanded_description = match.expand(description_text)
-
-                        # Replace standard wildcards like {TONE}
                         final_description = self._replace_wildcards(expanded_description, bw_packet)
-
-                        logging.debug("Regex match '%s' -> '%s' for descriptor '%s'",
-                                      match_pattern, final_description, descriptor_key)
                         return final_description
                 except re.error as e:
-                    logging.error("Invalid regex pattern '%s': %s", match_pattern, str(e))
-                    continue
-            else:
-                # Exact match
-                if match_pattern == scan_value_str:
-                    # Replace standard wildcards like {TONE}
-                    final_description = self._replace_wildcards(description_text, bw_packet)
-                    logging.debug("Exact match '%s' -> '%s' for descriptor '%s'",
-                                  match_pattern, final_description, descriptor_key)
-                    return final_description
+                    logging.error("Invalid regex pattern '%s': %s", match_pattern, e)
 
         return None
 

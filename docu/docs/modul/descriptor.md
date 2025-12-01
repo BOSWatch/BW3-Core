@@ -2,9 +2,9 @@
 ---
 
 ## Beschreibung
-Mit diesem Modul können einem Alarmpaket beliebige Beschreibungen in Abhänigkeit der enthaltenen Informationen hinzugefügt werden.
+Mit diesem Modul können einem Alarmpaket beliebige Beschreibungen in Abhängigkeit der enthaltenen Informationen hinzugefügt werden.
 
-## Unterstütze Alarmtypen
+## Unterstützte Alarmtypen
 - Fms
 - Pocsag
 - Zvei
@@ -16,12 +16,12 @@ Mit diesem Modul können einem Alarmpaket beliebige Beschreibungen in Abhänigke
 ## Konfiguration
 Informationen zum Aufbau eines [BOSWatch Pakets](../develop/packet.md)
 
-**Achtung:** Zahlen welche führende Nullen entahlten müssen in Anführungszeichen gesetzt werden Bsp. `'0012345'`
+**Achtung:** Zahlen, die führende Nullen enthalten, müssen in der YAML-Konfiguration in Anführungszeichen gesetzt werden, z.B. `'0012345'`. In CSV-Dateien ist dies nicht zwingend erforderlich.
 
 |Feld|Beschreibung|Default|
 |----|------------|-------|
-|scanField|Feld des BW Pakets welches geprüft werden soll||
-|descrField|Name des Feldes im BW Paket in welchem die Beschreibung gespeichert werden soll||
+|scanField|Feld des BW Pakets, welches geprüft werden soll||
+|descrField|Name des Feldes im BW Paket, in welchem die Beschreibung gespeichert werden soll||
 |wildcard|Optional: Es kann für das angelegte `descrField` automatisch ein Wildcard registriert werden|None|
 |descriptions|Liste der Beschreibungen||
 |csvPath|Pfad der CSV-Datei (relativ zum Projektverzeichnis)||
@@ -29,9 +29,9 @@ Informationen zum Aufbau eines [BOSWatch Pakets](../develop/packet.md)
 #### `descriptions:`
 |Feld|Beschreibung|Default|
 |----|------------|-------|
-|for|Inhalt im `scanField` auf welchem geprüft werden soll||
-|add|Beschreibungstext welcher im `descrField` hinterlegt werden soll||
-|isRegex|Muss explizit auf `true` gesetzt werden, falls RegEx verwendet wird|false|
+|for|Wert im `scanField`, der geprüft werden soll||
+|add|Beschreibungstext, der im `descrField` hinterlegt werden soll||
+|isRegex|Muss explizit auf `true` gesetzt werden, wenn RegEx verwendet wird|false|
 
 **Beispiel:**
 ```yaml
@@ -88,20 +88,25 @@ Eine neue CSV-Datei (z. B. `descriptions_tone.csv`) hat folgendes Format:
 for,add,isRegex
 11111,KBI Landkreis Z,false
 12345,FF A-Dorf,false
-23456,FF B-Dorf,false
-^3456[0-9]$,FF Grossdorf, true
+23456,FF B-Dorf
+^3456[0-9]$,FF Grossdorf,true
 ```
 
-In der Spalte isRegex kann **zusätzlich** angegeben werden, ob der Wert in for als regulärer Ausdruck interpretiert werden soll (true/false). Standardmäßig ist `false`.
-Wenn `isRegex` auf `true` gesetzt ist, wird der Wert aus `for` als regulärer Ausdruck ausgewertet.
+**Hinweis:** In CSV-Dateien müssen Werte mit führenden Nullen **nicht** in Anführungszeichen gesetzt werden (können aber, falls gewünscht). Die Spalte `isRegex` gibt an, ob der Wert in `for` als regulärer Ausdruck interpretiert werden soll (true/false). Falls kein Wert angegeben ist, ist die Paarung standardmäßig `false`, wie z.B. beim Eintrag der FF B-Dorf im obigen Beispiel.
 
 ### Kombination von YAML- und CSV-Konfiguration
 
-Beide Varianten können parallel genutzt werden. In diesem Fall werden zuerst die Beschreibungen aus der YAML-Konfiguration und zusätzlich die Beschreibungen aus der angegebenen CSV-Datei geladen.
+Beide Varianten können parallel genutzt werden. In diesem Fall werden die Beschreibungen aus der YAML-Konfiguration und aus der angegebenen CSV-Datei in einer gemeinsamen Datenbank zusammengeführt.
 
-**Beispiel**
+#### Matching-Reihenfolge und Priorität
 
-```
+Das Modul wendet folgende Prioritäten beim Matching an:
+
+1. **Exakte Matches** (aus YAML und CSV) werden zuerst geprüft
+2. **Regex-Matches** (aus YAML und CSV) werden nur geprüft, wenn kein exakter Match gefunden wurde
+
+**Beispiel für Kombination:**
+```yaml
 - type: module
   res: descriptor
   config:
@@ -110,11 +115,14 @@ Beide Varianten können parallel genutzt werden. In diesem Fall werden zuerst di
       wildcard: "{DESCR}"
       descriptions:
         - for: 12345
-          add: FF YAML-Test
-        - for: '05678' # führende Nullen in '' !
-          add: FF YAML-Nullen
+          add: FF YAML-Test (exakt)
+        - for: '123.*'
+          add: FF YAML-Regex
+          isRegex: true
       csvPath: "config/descriptions_tone.csv"
 ```
+
+Bei einem `scanField`-Wert von `12345` wird **immer** "FF YAML-Test (exakt)" verwendet, auch wenn der Regex ebenfalls zutreffen würde. Regex-Matches werden nur verwendet, wenn kein exakter Match gefunden wurde - unabhängig davon, ob die Einträge aus YAML oder CSV stammen.
 
 ---
 ## Modul Abhängigkeiten
