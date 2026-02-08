@@ -11,6 +11,7 @@ nav:
       - Konfiguration: config.md
       - BOSWatch benutzen: usage.md
       - Als Service einrichten: service.md
+      - Konfigurations Editor: config-editor.html
   - Informationen:
        - Server/Client Prinzip: information/serverclient.md
        - Broadcast Service: information/broadcast.md

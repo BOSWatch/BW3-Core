@@ -1,0 +1,1340 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BOSWatch3 ServerConfig Editor</title>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --card: #10182a;
+      --card2: #0e1524;
+      --text: #e8eefc;
+      --muted: #a8b3ce;
+      --line: rgba(232, 238, 252, 0.12);
+      --accent: #7aa2ff;
+      --bad: #ff7a8b;
+      --good: #5fe1b0;
+      --warn: #ffd37a;
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      background: radial-gradient(1200px 700px at 15% 10%, rgba(122,162,255,.22), transparent 60%),
+                  radial-gradient(900px 600px at 80% 35%, rgba(95,225,176,.16), transparent 55%),
+                  var(--bg);
+      color: var(--text);
+    }
+
+    .app { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+    header {
+      display:flex;
+      gap: 14px;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    header h1 { font-size: 18px; margin: 0; letter-spacing: .3px; }
+    header .hint { color: var(--muted); font-size: 13px; }
+
+    .grid {
+      display:grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 14px;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0)), var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .card .hd {
+      padding: 14px 14px 10px 14px;
+      border-bottom: 1px solid var(--line);
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .card .hd strong { font-size: 13px; letter-spacing: .35px; text-transform: uppercase; color: var(--muted); }
+    .card .bd { padding: 14px; }
+
+    .row { display:flex; gap: 10px; flex-wrap: wrap; }
+    .row > * { flex: 1 1 220px; }
+
+    label { display:block; font-size: 12px; color: var(--muted); margin: 10px 0 6px; }
+    input[type=text], input[type=number], select, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(232,238,252,.14);
+      background: var(--card2);
+      color: var(--text);
+      outline: none;
+    }
+    textarea { min-height: 110px; font-family: var(--mono); font-size: 12px; line-height: 1.35; }
+
+    .btnbar { display:flex; gap: 10px; flex-wrap: wrap; }
+    button {
+      cursor: pointer;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(232,238,252,.16);
+      background: rgba(122,162,255,.14);
+      color: var(--text);
+      font-weight: 600;
+      letter-spacing: .2px;
+    }
+    button.ghost { background: transparent; }
+    button.good { background: rgba(95,225,176,.18); }
+    button.bad { background: rgba(255,122,139,.14); }
+    button.warn { background: rgba(255,211,122,.14); }
+
+    .pill {
+      display:inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(232,238,252,.14);
+      background: rgba(0,0,0,.12);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .router {
+      border: 1px solid rgba(232,238,252,.12);
+      border-radius: 14px;
+      overflow: hidden;
+      margin: 10px 0 14px;
+      background: rgba(0,0,0,.10);
+    }
+    .router .rhd {
+      display:flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(232,238,252,.10);
+      background: rgba(255,255,255,.03);
+      flex-wrap: wrap;
+    }
+    .router .rhd .left { display:flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .router .rbd { padding: 12px; }
+
+    .routepoint {
+      border: 1px solid rgba(232,238,252,.12);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(16,24,42,.55);
+      margin: 10px 0;
+    }
+    .routepoint .top { display:flex; gap: 10px; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    .routepoint .top .meta { display:flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+    .err {
+      border: 1px solid rgba(255,122,139,.35);
+      background: rgba(255,122,139,.08);
+      color: #ffd6db;
+      border-radius: 14px;
+      padding: 10px 12px;
+      margin: 10px 0 0;
+      font-size: 12px;
+      white-space: pre-wrap;
+    }
+    .ok {
+      border: 1px solid rgba(95,225,176,.35);
+      background: rgba(95,225,176,.08);
+      color: #d9fff2;
+      border-radius: 14px;
+      padding: 10px 12px;
+      margin: 10px 0 0;
+      font-size: 12px;
+      white-space: pre-wrap;
+    }
+
+    .small { font-size: 12px; color: var(--muted); }
+    details { border: 1px dashed rgba(232,238,252,.18); border-radius: 12px; padding: 10px 12px; }
+    details summary { cursor: pointer; color: var(--text); font-weight: 700; }
+
+    .testline { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .dot { width:10px; height:10px; border-radius:999px; background: rgba(232,238,252,.2); border: 1px solid rgba(232,238,252,.18); }
+    .dot.ok { background: rgba(95,225,176,.55); border-color: rgba(95,225,176,.75); }
+    .dot.err { background: rgba(255,122,139,.55); border-color: rgba(255,122,139,.75); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1>BOSWatch3 Server Config Editor</h1>
+        <div class="hint">Client-seitig • YAML Import/Export • Router/Route Punkte • Module/Plugins Formulare || created with AI by MrMurdog</div>
+      </div>
+      <div class="btnbar">
+        <button class="alert" onclick="location.href='/'">Zurück</button>
+        <button class="ghost" id="btnNew">Neu</button>
+        <button class="ghost" id="btnLoad" style="display: none">Aus LocalStorage laden</button>
+        <button class="ghost" id="btnSave" style="display: none">In LocalStorage speichern</button>
+        <button class="warn" id="btnImport">YAML importieren</button>
+        <button class="good" id="btnExport">YAML exportieren</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <strong>Server-Konfiguration</strong>
+          <span class="pill" id="statusPill">bereit</span>
+        </div>
+        <div class="bd" id="editor"></div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <strong>YAML</strong>
+          <span class="pill">Import/Export</span>
+        </div>
+        <div class="bd">
+          <label for="yaml">Konfig (YAML)</label>
+          <textarea id="yaml" spellcheck="false" placeholder="Hier YAML einfügen oder exportieren…"></textarea>
+          <div class="row" style="margin-top:10px">
+            <div>
+              <button class="good" style="width:100%" id="btnValidate">Validieren</button>
+            </div>
+            <div>
+              <button class="ghost" style="width:100%" id="btnDownload">YAML herunterladen</button>
+            </div>
+          </div>
+          <div id="msg"></div>
+
+          <details style="margin-top:12px">
+            <summary>Beispiel-Startkonfig</summary>
+            <div class="small" style="margin-top:10px">Klicke „Neu“ um diese Konfig zu laden.</div>
+            <pre class="small" style="white-space:pre-wrap; margin:10px 0 0; font-family: var(--mono);">server:
+  port: 8080
+  name: "BOSWatch3-Server"
+  useBroadcast: no
+  logging: false
+
+alarmRouter:
+  - "Default"
+
+router:
+  - name: "Default"
+    route:
+      - type: module
+        res: filter.modeFilter
+        name: "Filter FMS/POC"
+        config:
+          allowed:
+            - fms
+            - pocsag
+
+      - type: plugin
+        res: telegram
+        name: "Telegram"
+        config:
+          botToken: "BOT_TOKEN"
+          chatIds:
+            - "CHAT_ID"
+          parse_mode: "HTML"
+          message_pocsag: |
+            <b>POCSAG Alarm:</b>
+            RIC: <b>{RIC}</b> ({SRIC})
+            {MSG}
+</pre>
+          </details>
+
+          <details style="margin-top:12px">
+            <summary>Self-Tests (Debug)</summary>
+            <div class="small" style="margin-top:10px">Diese Tests laufen automatisch beim Start.</div>
+            <div class="testline" style="margin-top:10px">
+              <span class="dot" id="testDot"></span>
+              <span class="small" id="testSummary">Noch nicht ausgeführt</span>
+            </div>
+            <pre class="small" id="testOutput" style="white-space:pre-wrap; margin:10px 0 0; font-family: var(--mono);"></pre>
+          </details>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // ------------------------------
+    // Robust js-yaml loader
+    // ------------------------------
+    function loadScript(src){
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.async = true;
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error('Failed to load: ' + src));
+        document.head.appendChild(s);
+      });
+    }
+
+    async function ensureJsYaml(){
+      if (window.jsyaml) return;
+
+      const candidates = [
+        // Offline/local (optional): place js-yaml.min.js next to this html
+        './js-yaml.min.js',
+        // CDN candidates
+        'https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js',
+        'https://unpkg.com/js-yaml@4.1.0/dist/js-yaml.min.js'
+      ];
+
+      let lastErr = null;
+      for (const url of candidates){
+        try {
+          await loadScript(url);
+          if (window.jsyaml) return;
+        } catch(e){
+          lastErr = e;
+        }
+      }
+      throw lastErr ?? new Error('jsyaml is not defined');
+    }
+
+    function setDot(state){
+      const dot = document.getElementById('testDot');
+      if(!dot) return;
+      dot.classList.remove('ok','err');
+      if(state) dot.classList.add(state);
+    }
+    function setTest(text, output){
+      const s = document.getElementById('testSummary');
+      const o = document.getElementById('testOutput');
+      if(s) s.textContent = text;
+      if(o) o.textContent = output || '';
+    }
+
+    // Boot after YAML is available
+    (async function boot(){
+      try {
+        await ensureJsYaml();
+        initApp();
+      } catch(e){
+        setDot('err');
+        setTest(
+          'Fehler: YAML-Library konnte nicht geladen werden (CSP/CDN/Offline?)',
+          String(e?.stack || e)
+        );
+        const msg = document.getElementById('msg');
+        if(msg){
+          msg.innerHTML = '';
+          const div = document.createElement('div');
+          div.className = 'err';
+          div.textContent = 'js-yaml konnte nicht geladen werden. Wenn du offline bist oder CSP aktiv ist: lade js-yaml.min.js lokal neben diese HTML-Datei und stelle sicher, dass ./js-yaml.min.js erreichbar ist.\n\n' + String(e?.message || e);
+          msg.appendChild(div);
+        }
+      }
+    })();
+
+    // ------------------------------
+    // App (runs after js-yaml loaded)
+    // ------------------------------
+    function initApp(){
+
+      // ------------------------------
+      // Resource Schemas (extendable)
+      // ------------------------------
+      const RESOURCE_SCHEMAS = {
+        // Modules
+        "descriptor": {
+          kind: "module",
+          title: "Descriptor",
+          fields: [
+            { key: "_items", type: "yaml", label: "Konfiguration (Liste) – scanField/descrField/descriptions/csvPath", placeholder:
+`- scanField: tone
+  descrField: description
+  wildcard: '{DESCR}'
+  descriptions:
+    - for: '05678'
+      add: 'FF Test'
+    - for: '890(1[1-9]|2[0-9])'
+      add: 'Wache \\\\1'
+      isRegex: true` }
+          ],
+          toConfig: (ui) => (Array.isArray(ui._items) ? ui._items : (ui._items ?? [])),
+          fromConfig: (cfg) => ({ _items: cfg ?? [] })
+        },
+
+        "geocoding": {
+          kind: "module",
+          title: "Geocoding",
+          fields: [
+            { key: "apiProvider", type: "select", label: "apiProvider", options: ["mapbox", "google"], required: true },
+            { key: "apiToken", type: "text", label: "apiToken", required: true },
+            { key: "geoRegex", type: "text", label: "geoRegex / regex", placeholder: "((?:[^ ]*,)*?)" }
+          ]
+        },
+
+        "filter.modeFilter": {
+          kind: "module",
+          title: "Mode Filter",
+          fields: [
+            { key: "allowed", type: "list_select", label: "allowed", options: ["fms", "zvei", "pocsag", "msg"], required: true }
+          ]
+        },
+
+        "filter.regexFilter": {
+          kind: "module",
+          title: "Regex Filter",
+          fields: [
+            { key: "_filters", type: "yaml", label: "Konfiguration (Liste) – Filter mit checks", placeholder:
+`- name: 'Allowed RICs'
+  checks:
+    - field: ric
+      regex: '(0000001|0000002)'
+- name: 'FMS Stat 3'
+  checks:
+    - field: mode
+      regex: 'fms'
+    - field: status
+      regex: '3'` }
+          ],
+          toConfig: (ui) => (Array.isArray(ui._filters) ? ui._filters : (ui._filters ?? [])),
+          fromConfig: (cfg) => ({ _filters: cfg ?? [] })
+        },
+
+        "filter.doubleFilter": {
+          kind: "module",
+          title: "Double Filter",
+          fields: [
+            { key: "ignoreTime", type: "number", label: "ignoreTime (Sek.)", default: 10 },
+            { key: "maxEntry", type: "number", label: "maxEntry", default: 20 },
+            { key: "pocsagFields", type: "list_select", label: "pocsagFields", options: ["ric", "subric", "message"] }
+          ]
+        },
+
+        // Plugins
+        "http": {
+          kind: "plugin",
+          title: "Http",
+          fields: [
+            { key: "pocsag", type: "list_text", label: "pocsag URLs", placeholder: "http://example?q={MSG}" },
+            { key: "fms", type: "list_text", label: "fms URLs" },
+            { key: "zvei", type: "list_text", label: "zvei URLs" },
+            { key: "msg", type: "list_text", label: "msg URLs" }
+          ]
+        },
+
+        "telegram": {
+          kind: "plugin",
+          title: "Telegram",
+          fields: [
+            { key: "botToken", type: "text", label: "botToken", required: true },
+            { key: "chatIds", type: "list_text", label: "chatIds", required: true },
+            { key: "startup_message", type: "text", label: "startup_message" },
+            { key: "parse_mode", type: "select", label: "parse_mode", options: ["", "HTML", "MarkdownV2"], default: "" },
+            { key: "message_fms", type: "text", label: "message_fms", default: "{FMS}" },
+            { key: "message_pocsag", type: "yaml_string", label: "message_pocsag (mehrzeilig möglich)", default: "{RIC}({SRIC})\n{MSG}" },
+            { key: "message_zvei", type: "text", label: "message_zvei", default: "{TONE}" },
+            { key: "message_msg", type: "text", label: "message_msg" },
+            { key: "max_retries", type: "number", label: "max_retries", default: 5 },
+            { key: "initial_delay", type: "number", label: "initial_delay (Sek.)", default: 2 },
+            { key: "max_delay", type: "number", label: "max_delay (Sek.)", default: 300 }
+          ]
+        },
+
+        "divera": {
+          kind: "plugin",
+          title: "Divera 24/7",
+          fields: [
+            { key: "accesskey", type: "text", label: "accesskey", required: true },
+            { key: "pocsag", type: "yaml", label: "pocsag Block (priority/title/message/ric/vehicle)", placeholder:
+`priority: false
+title: '{RIC}({SRIC})\\n{MSG}'
+message: '{MSG}'
+ric: Probealarm` },
+            { key: "fms", type: "yaml", label: "fms Block", placeholder:
+`priority: false
+title: '{FMS}'
+message: '{FMS}'
+vehicle: MTF` },
+            { key: "zvei", type: "yaml", label: "zvei Block", placeholder:
+`priority: false
+title: '{TONE}'
+message: '{TONE}'
+ric: Probealarm` },
+            { key: "msg", type: "yaml", label: "msg Block", placeholder:
+`priority: false
+title: '{MSG}'
+message: '{MSG}'` }
+          ]
+        },
+
+        "mysql": {
+          kind: "plugin",
+          title: "MySQL",
+          fields: [
+            { key: "host", type: "text", label: "host", required: true },
+            { key: "user", type: "text", label: "user", required: true },
+            { key: "password", type: "text", label: "password", required: true },
+            { key: "database", type: "text", label: "database", required: true }
+          ]
+        }
+      };
+
+      const RESOURCE_OPTIONS = Object.keys(RESOURCE_SCHEMAS).sort((a,b)=>a.localeCompare(b));
+
+      // ------------------------------
+      // Model
+      // ------------------------------
+      const STORAGE_KEY = "boswatch3.serverconfig.editor.v1";
+      function defaultConfig(){
+        return {
+          server: { port: 8080, name: "BOSWatch3-Server", useBroadcast: "no", logging: false },
+          alarmRouter: ["Default"],
+          router: [
+            {
+              name: "Default",
+              route: [
+                { type: "module", res: "filter.modeFilter", name: "Filter FMS/POC", config: { allowed: ["fms","pocsag"] } },
+                { type: "plugin", res: "telegram", name: "Telegram", config: { botToken: "BOT_TOKEN", chatIds: ["CHAT_ID"], parse_mode: "HTML", message_pocsag: "<b>POCSAG Alarm:</b>\nRIC: <b>{RIC}</b> ({SRIC})\n{MSG}" } }
+              ]
+            }
+          ]
+        };
+      }
+      let model = defaultConfig();
+
+      // ------------------------------
+      // Helpers
+      // ------------------------------
+      const $ = (sel, root=document) => root.querySelector(sel);
+
+      function clone(obj){ return JSON.parse(JSON.stringify(obj)); }
+      function setStatus(text){ const el = $("#statusPill"); if(el) el.textContent = text; }
+      function showMsg(kind, text){
+        const msg = $("#msg"); if(!msg) return;
+        msg.innerHTML = "";
+        const div = document.createElement("div");
+        div.className = kind === "ok" ? "ok" : "err";
+        div.textContent = text;
+        msg.appendChild(div);
+      }
+
+      function safeNumber(v, fallback){
+        const n = Number(v);
+        return Number.isFinite(n) ? n : fallback;
+      }
+      function normalizeYesNo(v, fallback){
+        if(v === true) return "yes";
+        if(v === false) return "no";
+        if(typeof v === "string"){
+          const s = v.trim().toLowerCase();
+          if(s === "yes" || s === "no") return s;
+        }
+        return fallback;
+      }
+      function ensureArray(x){
+        if(Array.isArray(x)) return x;
+        if(x == null) return [];
+        return [x];
+      }
+
+      // YAML helpers (jsyaml guaranteed now)
+      function yamlDump(obj){
+        return window.jsyaml.dump(obj, {
+          noRefs: true,
+          lineWidth: 120,
+          quotingType: '"',
+          forceQuotes: false
+        });
+      }
+      function yamlLoad(text){
+        return window.jsyaml.load(text);
+      }
+
+      // ------------------------------
+      // Validation (lightweight)
+      // ------------------------------
+      function validateServerConfig(cfg){
+        const errors = [];
+        if(!cfg || typeof cfg !== "object") errors.push("Konfiguration ist leer oder kein Objekt.");
+
+        if(!cfg.server || typeof cfg.server !== "object") errors.push("server: fehlt oder ist kein Objekt.");
+        else {
+          if(cfg.server.port == null) errors.push("server.port fehlt.");
+          if(cfg.server.name == null || String(cfg.server.name).trim()==="") errors.push("server.name fehlt.");
+          cfg.server.useBroadcast = normalizeYesNo(cfg.server.useBroadcast, "no");
+          cfg.server.logging = !!cfg.server.logging;
+        }
+
+        cfg.alarmRouter = ensureArray(cfg.alarmRouter).filter(Boolean).map(String);
+        cfg.router = ensureArray(cfg.router);
+
+        const names = new Set();
+        for(const r of cfg.router){
+          if(!r || typeof r !== "object") { errors.push("router enthält einen ungültigen Eintrag."); continue; }
+          if(!r.name) errors.push("Ein Router hat keinen name.");
+          else {
+            if(names.has(r.name)) errors.push(`Router-Name doppelt: ${r.name}`);
+            names.add(r.name);
+          }
+          r.route = ensureArray(r.route);
+          for(const [i, rp] of r.route.entries()){
+            if(!rp || typeof rp !== "object") { errors.push(`Router '${r.name}': route[${i}] ist ungültig.`); continue; }
+            if(!rp.type) errors.push(`Router '${r.name}': route[${i}].type fehlt.`);
+            if(rp.type !== "router" && !rp.res) errors.push(`Router '${r.name}': route[${i}].res fehlt (bei module/plugin).`);
+            if(rp.type === "router" && !rp.name && !rp.res) errors.push(`Router '${r.name}': route[${i}] router-Punkt braucht name (Zielrouter).`);
+
+            if((rp.type === "module" || rp.type === "plugin") && rp.res && RESOURCE_SCHEMAS[rp.res]){
+              const schema = RESOURCE_SCHEMAS[rp.res];
+              const cfgObj = rp.config ?? {};
+              for(const f of schema.fields){
+                if(f.required){
+                  const val = (schema.fromConfig ? schema.fromConfig(cfgObj)[f.key] : cfgObj[f.key]);
+                  if(val == null || (typeof val === "string" && val.trim()==="") || (Array.isArray(val) && val.length===0)){
+                    errors.push(`Router '${r.name}': ${rp.res} → Feld '${f.key}' ist erforderlich.`);
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        for(const ar of cfg.alarmRouter){
+          if(!names.has(ar)) errors.push(`alarmRouter enthält '${ar}', aber es gibt keinen Router mit diesem Namen.`);
+        }
+
+        return errors;
+      }
+
+      // ------------------------------
+      // UI Rendering
+      // ------------------------------
+      function render(){
+        const root = $("#editor");
+        root.innerHTML = "";
+
+        const server = model.server ?? (model.server = {});
+        const serverCard = document.createElement("div");
+        serverCard.innerHTML = `
+          <div class="row">
+            <div>
+              <label>server.port</label>
+              <input type="number" min="1" max="65535" id="server_port" />
+            </div>
+            <div>
+              <label>server.name</label>
+              <input type="text" id="server_name" placeholder="BOSWatch3-Server" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label>server.useBroadcast</label>
+              <select id="server_useBroadcast">
+                <option value="no">no</option>
+                <option value="yes">yes</option>
+              </select>
+            </div>
+            <div>
+              <label>server.logging</label>
+              <select id="server_logging">
+                <option value="false">false</option>
+                <option value="true">true</option>
+              </select>
+            </div>
+          </div>
+        `;
+        root.appendChild(serverCard);
+
+        $("#server_port").value = server.port ?? 8080;
+        $("#server_name").value = server.name ?? "";
+        $("#server_useBroadcast").value = normalizeYesNo(server.useBroadcast, "no");
+        $("#server_logging").value = server.logging ? "true" : "false";
+
+        $("#server_port").addEventListener("input", () => { model.server.port = safeNumber($("#server_port").value, 8080); syncYaml(false); });
+        $("#server_name").addEventListener("input", () => { model.server.name = $("#server_name").value; syncYaml(false); });
+        $("#server_useBroadcast").addEventListener("change", () => { model.server.useBroadcast = $("#server_useBroadcast").value; syncYaml(false); });
+        $("#server_logging").addEventListener("change", () => { model.server.logging = $("#server_logging").value === "true"; syncYaml(false); });
+
+        // alarmRouter
+        const alarmWrap = document.createElement("div");
+        alarmWrap.style.marginTop = "14px";
+        alarmWrap.innerHTML = `
+          <div class="row">
+            <div>
+              <label>alarmRouter (Liste der Router, die direkt gestartet werden)</label>
+              <input type="text" id="alarmRouter_csv" placeholder="Default, Router 2" />
+              <div class="small">Kommagetrennt. Router-Namen müssen in der router:-Liste existieren.</div>
+            </div>
+          </div>
+        `;
+        root.appendChild(alarmWrap);
+        $("#alarmRouter_csv").value = (model.alarmRouter ?? []).join(", ");
+        $("#alarmRouter_csv").addEventListener("input", () => {
+          model.alarmRouter = $("#alarmRouter_csv").value.split(",").map(s=>s.trim()).filter(Boolean);
+          syncYaml(false);
+        });
+
+        // routers header
+        const rTop = document.createElement("div");
+        rTop.style.marginTop = "14px";
+        rTop.innerHTML = `
+          <div class="row">
+            <div>
+              <label>router (Verarbeitungswege)</label>
+              <div class="btnbar">
+                <button id="btnAddRouter">+ Router hinzufügen</button>
+                <button class="ghost" id="btnSortRouters">Router alphabetisch</button>
+              </div>
+            </div>
+          </div>
+        `;
+        root.appendChild(rTop);
+
+        $("#btnAddRouter").addEventListener("click", () => {
+          model.router = ensureArray(model.router);
+          model.router.push({ name: `Router ${model.router.length+1}`, route: [] });
+          syncYaml(false);
+          render();
+        });
+        $("#btnSortRouters").addEventListener("click", () => {
+          model.router = ensureArray(model.router).sort((a,b)=>String(a.name||"").localeCompare(String(b.name||"")));
+          syncYaml(false);
+          render();
+        });
+
+        const routers = ensureArray(model.router);
+        routers.forEach((r, rIdx) => {
+          const box = document.createElement("div");
+          box.className = "router";
+
+          const rhd = document.createElement("div");
+          rhd.className = "rhd";
+          rhd.innerHTML = `
+            <div class="left">
+              <span class="pill">Router</span>
+              <input type="text" data-router-name="${rIdx}" value="${escapeHtml(r.name ?? "")}" style="min-width:260px" />
+              <span class="small">${(r.route?.length ?? 0)} Route-Punkte</span>
+            </div>
+            <div class="btnbar">
+              <button class="ghost" data-move-router-up="${rIdx}">↑</button>
+              <button class="ghost" data-move-router-down="${rIdx}">↓</button>
+              <button class="bad" data-del-router="${rIdx}">Router löschen</button>
+            </div>
+          `;
+
+          const rbd = document.createElement("div");
+          rbd.className = "rbd";
+          rbd.innerHTML = `
+            <div class="btnbar">
+              <button data-add-routepoint="${rIdx}">+ Route-Punkt</button>
+              <button class="ghost" data-duplicate-router="${rIdx}">Duplizieren</button>
+            </div>
+            <div data-routepoints="${rIdx}"></div>
+          `;
+
+          box.appendChild(rhd);
+          box.appendChild(rbd);
+          root.appendChild(box);
+
+          const nameInput = box.querySelector(`[data-router-name="${rIdx}"]`);
+          nameInput.addEventListener("input", () => {
+            model.router[rIdx].name = nameInput.value;
+            syncYaml(false);
+          });
+
+          box.querySelector(`[data-del-router="${rIdx}"]`).addEventListener("click", () => {
+            model.router.splice(rIdx, 1);
+            syncYaml(false);
+            render();
+          });
+          box.querySelector(`[data-duplicate-router="${rIdx}"]`).addEventListener("click", () => {
+            const copy = clone(model.router[rIdx]);
+            copy.name = `${copy.name || "Router"} (Copy)`;
+            model.router.push(copy);
+            syncYaml(false);
+            render();
+          });
+          box.querySelector(`[data-move-router-up="${rIdx}"]`).addEventListener("click", () => {
+            if(rIdx <= 0) return;
+            const tmp = model.router[rIdx-1];
+            model.router[rIdx-1] = model.router[rIdx];
+            model.router[rIdx] = tmp;
+            syncYaml(false);
+            render();
+          });
+          box.querySelector(`[data-move-router-down="${rIdx}"]`).addEventListener("click", () => {
+            if(rIdx >= model.router.length-1) return;
+            const tmp = model.router[rIdx+1];
+            model.router[rIdx+1] = model.router[rIdx];
+            model.router[rIdx] = tmp;
+            syncYaml(false);
+            render();
+          });
+
+          box.querySelector(`[data-add-routepoint="${rIdx}"]`).addEventListener("click", () => {
+            model.router[rIdx].route = ensureArray(model.router[rIdx].route);
+            model.router[rIdx].route.push({ type: "module", res: "filter.modeFilter", name: "", config: { allowed: ["fms"] } });
+            syncYaml(false);
+            render();
+          });
+
+          const rpWrap = box.querySelector(`[data-routepoints="${rIdx}"]`);
+          const route = ensureArray(r.route);
+          route.forEach((rp, rpIdx) => {
+            rpWrap.appendChild(renderRoutePoint(rIdx, rpIdx));
+          });
+        });
+
+        syncYaml(false);
+      }
+
+      function renderRoutePoint(rIdx, rpIdx){
+        const rp = model.router[rIdx].route[rpIdx] ?? (model.router[rIdx].route[rpIdx] = { type: "module", res: "filter.modeFilter", config: {} });
+
+        const el = document.createElement("div");
+        el.className = "routepoint";
+
+        const type = rp.type ?? "module";
+
+        el.innerHTML = `
+          <div class="top">
+            <div class="meta">
+              <span class="pill">Route</span>
+              <label style="margin:0">
+                <select data-rp-type>
+                  <option value="module">module</option>
+                  <option value="plugin">plugin</option>
+                  <option value="router">router</option>
+                </select>
+              </label>
+              <label style="margin:0; min-width: 240px" data-rp-res-wrap>
+                <select data-rp-res></select>
+              </label>
+              <label style="margin:0; min-width: 240px" data-rp-routername-wrap>
+                <select data-rp-routername></select>
+              </label>
+              <label style="margin:0; min-width: 240px">
+                <input type="text" data-rp-name placeholder="name (optional)" />
+              </label>
+            </div>
+            <div class="btnbar">
+              <button class="ghost" data-rp-up>↑</button>
+              <button class="ghost" data-rp-down>↓</button>
+              <button class="ghost" data-rp-dup>Duplizieren</button>
+              <button class="bad" data-rp-del>Löschen</button>
+            </div>
+          </div>
+          <div data-rp-config></div>
+        `;
+
+        const selType = el.querySelector("[data-rp-type]");
+        const selResWrap = el.querySelector("[data-rp-res-wrap]");
+        const selRes = el.querySelector("[data-rp-res]");
+        const selRouterWrap = el.querySelector("[data-rp-routername-wrap]");
+        const selRouter = el.querySelector("[data-rp-routername]");
+        const inName = el.querySelector("[data-rp-name]");
+        const cfgWrap = el.querySelector("[data-rp-config]");
+
+        selType.value = type;
+
+        selRes.innerHTML = RESOURCE_OPTIONS.map(r => `<option value="${escapeAttr(r)}">${escapeHtml(r)}</option>`).join("");
+        if(rp.res && RESOURCE_SCHEMAS[rp.res]) selRes.value = rp.res;
+        else selRes.value = (type === "plugin") ? "telegram" : "filter.modeFilter";
+
+        selRouter.innerHTML = ensureArray(model.router)
+          .map(r => r?.name)
+          .filter(Boolean)
+          .map(n => `<option value="${escapeAttr(n)}">${escapeHtml(n)}</option>`)
+          .join("");
+
+        // For router points we use rp.name as target. For others rp.name is optional label.
+        selRouter.value = rp.name || ensureArray(model.router)[0]?.name || "";
+
+        inName.value = rp.name ?? "";
+
+        function applyVisibility(){
+          const t = selType.value;
+          selResWrap.style.display = (t === "module" || t === "plugin") ? "block" : "none";
+          selRouterWrap.style.display = (t === "router") ? "block" : "none";
+        }
+        applyVisibility();
+
+        function rerenderConfig(){
+          cfgWrap.innerHTML = "";
+          const t = selType.value;
+
+          if(t === "router"){
+            cfgWrap.innerHTML = `<div class="small" style="margin-top:8px">Dieser Route-Punkt ruft einen anderen Router auf (type: router). Keine zusätzliche config.</div>`;
+            return;
+          }
+
+          const res = selRes.value;
+          const schema = RESOURCE_SCHEMAS[res];
+          if(!schema){
+            cfgWrap.innerHTML = `<div class="small" style="margin-top:8px">Für <b>${escapeHtml(res)}</b> ist kein Schema hinterlegt. Du kannst die config als YAML eingeben:</div>`;
+            const ta = document.createElement("textarea");
+            ta.value = yamlDump(rp.config ?? {});
+            ta.addEventListener("input", () => {
+              try { rp.config = yamlLoad(ta.value) ?? {}; syncYaml(false); }
+              catch(_e){ /* ignore until validate */ }
+            });
+            cfgWrap.appendChild(ta);
+            return;
+          }
+
+          let uiCfg = schema.fromConfig ? schema.fromConfig(rp.config ?? {}) : clone(rp.config ?? {});
+          if(uiCfg == null || typeof uiCfg !== "object") uiCfg = {};
+
+          for(const f of schema.fields){
+            if(uiCfg[f.key] == null && f.default != null) uiCfg[f.key] = clone(f.default);
+          }
+
+          schema.fields.forEach((f) => {
+            const fieldEl = renderField(f, uiCfg, () => {
+              rp.config = schema.toConfig ? schema.toConfig(uiCfg) : clone(uiCfg);
+              syncYaml(false);
+            });
+            cfgWrap.appendChild(fieldEl);
+          });
+        }
+
+        rerenderConfig();
+
+        selType.addEventListener("change", () => {
+          rp.type = selType.value;
+
+          if(rp.type === "router"){
+            delete rp.res;
+            delete rp.config;
+            // For router points, rp.name stores target router name
+            rp.name = selRouter.value || rp.name || "";
+            inName.value = rp.name || "";
+          } else {
+            rp.res = selRes.value;
+            rp.config = rp.config ?? {};
+            // For module/plugin points, rp.name is label (optional)
+          }
+
+          applyVisibility();
+          rerenderConfig();
+          syncYaml(false);
+        });
+
+        selRes.addEventListener("change", () => {
+          rp.res = selRes.value;
+          rp.config = {};
+          rerenderConfig();
+          syncYaml(false);
+        });
+
+        selRouter.addEventListener("change", () => {
+          if(selType.value === "router"){
+            rp.name = selRouter.value;
+            inName.value = rp.name;
+          }
+          syncYaml(false);
+        });
+
+        inName.addEventListener("input", () => {
+          rp.name = inName.value;
+          syncYaml(false);
+        });
+
+        el.querySelector("[data-rp-del]").addEventListener("click", () => {
+          model.router[rIdx].route.splice(rpIdx, 1);
+          syncYaml(false);
+          render();
+        });
+        el.querySelector("[data-rp-dup]").addEventListener("click", () => {
+          model.router[rIdx].route.splice(rpIdx+1, 0, clone(rp));
+          syncYaml(false);
+          render();
+        });
+        el.querySelector("[data-rp-up]").addEventListener("click", () => {
+          if(rpIdx <= 0) return;
+          const arr = model.router[rIdx].route;
+          const tmp = arr[rpIdx-1];
+          arr[rpIdx-1] = arr[rpIdx];
+          arr[rpIdx] = tmp;
+          syncYaml(false);
+          render();
+        });
+        el.querySelector("[data-rp-down]").addEventListener("click", () => {
+          const arr = model.router[rIdx].route;
+          if(rpIdx >= arr.length-1) return;
+          const tmp = arr[rpIdx+1];
+          arr[rpIdx+1] = arr[rpIdx];
+          arr[rpIdx] = tmp;
+          syncYaml(false);
+          render();
+        });
+
+        return el;
+      }
+
+      function renderField(def, obj, onChange){
+        const wrap = document.createElement("div");
+        wrap.style.marginTop = "10px";
+
+        const id = `f_${Math.random().toString(16).slice(2)}`;
+
+        const label = document.createElement("label");
+        label.setAttribute("for", id);
+        label.textContent = def.label + (def.required ? " *" : "");
+        wrap.appendChild(label);
+
+        const t = def.type;
+        const current = obj[def.key];
+
+        if(t === "text"){
+          const input = document.createElement("input");
+          input.type = "text";
+          input.id = id;
+          input.value = current ?? "";
+          if(def.placeholder) input.placeholder = def.placeholder;
+          input.addEventListener("input", () => { obj[def.key] = input.value; onChange(); });
+          wrap.appendChild(input);
+        }
+        else if(t === "number"){
+          const input = document.createElement("input");
+          input.type = "number";
+          input.id = id;
+          input.value = (current ?? def.default ?? "");
+          input.addEventListener("input", () => { obj[def.key] = safeNumber(input.value, def.default ?? 0); onChange(); });
+          wrap.appendChild(input);
+        }
+        else if(t === "bool"){
+          const sel = document.createElement("select");
+          sel.id = id;
+          sel.innerHTML = `<option value="false">false</option><option value="true">true</option>`;
+          sel.value = (current === true) ? "true" : "false";
+          sel.addEventListener("change", () => { obj[def.key] = sel.value === "true"; onChange(); });
+          wrap.appendChild(sel);
+        }
+        else if(t === "select"){
+          const sel = document.createElement("select");
+          sel.id = id;
+          sel.innerHTML = (def.options ?? []).map(o => `<option value="${escapeAttr(o)}">${escapeHtml(o || "(leer)")}</option>`).join("");
+          sel.value = current ?? def.default ?? "";
+          sel.addEventListener("change", () => { obj[def.key] = sel.value; onChange(); });
+          wrap.appendChild(sel);
+        }
+        else if(t === "list_text"){
+          const ta = document.createElement("textarea");
+          ta.id = id;
+          ta.placeholder = def.placeholder ?? "ein Eintrag pro Zeile";
+          ta.value = ensureArray(current).join("\n");
+          ta.addEventListener("input", () => {
+            obj[def.key] = ta.value.split("\n").map(s=>s.trim()).filter(Boolean);
+            onChange();
+          });
+          wrap.appendChild(ta);
+        }
+        else if(t === "list_select"){
+          const box = document.createElement("div");
+          box.style.display = "grid";
+          box.style.gridTemplateColumns = "repeat(auto-fit, minmax(160px, 1fr))";
+          box.style.gap = "8px";
+          box.style.padding = "8px";
+          box.style.border = "1px solid rgba(232,238,252,.14)";
+          box.style.borderRadius = "12px";
+          box.style.background = "var(--card2)";
+
+          const selected = new Set(ensureArray(current).map(String));
+          (def.options ?? []).forEach((opt) => {
+            const item = document.createElement("label");
+            item.style.display = "flex";
+            item.style.gap = "8px";
+            item.style.alignItems = "center";
+            item.style.margin = "0";
+            item.style.color = "var(--text)";
+            item.style.fontSize = "13px";
+
+            const cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.checked = selected.has(String(opt));
+            cb.addEventListener("change", () => {
+              if(cb.checked) selected.add(String(opt));
+              else selected.delete(String(opt));
+              obj[def.key] = [...selected];
+              onChange();
+            });
+
+            const span = document.createElement("span");
+            span.textContent = opt;
+
+            item.appendChild(cb);
+            item.appendChild(span);
+            box.appendChild(item);
+          });
+
+          wrap.appendChild(box);
+        }
+        else if(t === "yaml"){
+          const ta = document.createElement("textarea");
+          ta.id = id;
+          ta.placeholder = def.placeholder ?? "YAML…";
+          ta.value = (current == null) ? "" : yamlDump(current);
+          ta.addEventListener("input", () => {
+            try { obj[def.key] = yamlLoad(ta.value) ?? {}; onChange(); }
+            catch(_e){ /* ignore until validate */ }
+          });
+          wrap.appendChild(ta);
+        }
+        else if(t === "yaml_string"){
+          const ta = document.createElement("textarea");
+          ta.id = id;
+          ta.placeholder = def.placeholder ?? "Text (mehrzeilig)…";
+          ta.value = String(current ?? def.default ?? "");
+          ta.addEventListener("input", () => { obj[def.key] = ta.value; onChange(); });
+          wrap.appendChild(ta);
+
+          const help = document.createElement("div");
+          help.className = "small";
+          help.style.marginTop = "6px";
+          help.textContent = "Tipp: Mehrzeilige Texte kannst du hier frei schreiben. Beim Export wird das als YAML-String ausgegeben.";
+          wrap.appendChild(help);
+        }
+        else {
+          const ta = document.createElement("textarea");
+          ta.id = id;
+          ta.value = yamlDump(current ?? {});
+          ta.addEventListener("input", () => {
+            try { obj[def.key] = yamlLoad(ta.value) ?? {}; onChange(); }
+            catch(_e){ /* ignore until validate */ }
+          });
+          wrap.appendChild(ta);
+        }
+
+        return wrap;
+      }
+
+      // ------------------------------
+      // YAML sync + clean export
+      // ------------------------------
+      function cleanConfigForExport(cfg){
+        const out = clone(cfg);
+        out.server = out.server ?? {};
+        out.server.port = safeNumber(out.server.port, 8080);
+        out.server.name = out.server.name ?? "";
+        out.server.useBroadcast = normalizeYesNo(out.server.useBroadcast, "no");
+        out.server.logging = !!out.server.logging;
+
+        out.alarmRouter = ensureArray(out.alarmRouter).filter(Boolean).map(String);
+
+        out.router = ensureArray(out.router).map(r => {
+          const rr = clone(r ?? {});
+          rr.name = rr.name ?? "";
+          rr.route = ensureArray(rr.route).map(rp => {
+            const p = clone(rp ?? {});
+            p.type = p.type ?? "module";
+
+            if(p.type === "router"){
+              const target = p.name || p.res || "";
+              return { type: "router", name: target };
+            }
+
+            if(!p.name) delete p.name;
+            if(p.config == null) delete p.config;
+
+            return p;
+          }).filter(Boolean);
+          return rr;
+        });
+
+        return out;
+      }
+
+      function syncYaml(showOk){
+        const out = cleanConfigForExport(model);
+        $("#yaml").value = yamlDump(out);
+        if(showOk) showMsg("ok", "YAML wurde exportiert.");
+        setStatus("geändert");
+      }
+
+      // ------------------------------
+      // Import / Export / Storage
+      // ------------------------------
+      function importFromYaml(text){
+        const cfg = yamlLoad(text);
+        if(!cfg || typeof cfg !== "object") throw new Error("YAML ist leer oder kein Objekt.");
+
+        const next = clone(cfg);
+        next.server = next.server ?? {};
+        next.server.port = safeNumber(next.server.port, 8080);
+        next.server.useBroadcast = normalizeYesNo(next.server.useBroadcast, "no");
+        next.server.logging = !!next.server.logging;
+        next.alarmRouter = ensureArray(next.alarmRouter).filter(Boolean).map(String);
+
+        next.router = ensureArray(next.router).map(r => {
+          const rr = r ?? {};
+          rr.route = ensureArray(rr.route).map(rp => {
+            const p = rp ?? {};
+            if(p.type === "router"){
+              const target = p.name || p.res || "";
+              return { type: "router", name: target };
+            }
+            p.config = p.config ?? {};
+            return p;
+          });
+          return rr;
+        });
+
+        return next;
+      }
+
+      function saveToLocalStorage(){
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(model));
+        setStatus("gespeichert");
+        showMsg("ok", "In LocalStorage gespeichert.");
+      }
+
+      function loadFromLocalStorage(){
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) throw new Error("Keine gespeicherte Konfiguration gefunden.");
+        const parsed = JSON.parse(raw);
+        if(!parsed || typeof parsed !== "object") throw new Error("Gespeicherte Daten sind ungültig.");
+        model = parsed;
+        setStatus("geladen");
+        render();
+        showMsg("ok", "Aus LocalStorage geladen.");
+      }
+
+      function downloadYaml(){
+        const blob = new Blob([$("#yaml").value], { type: "text/yaml;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "serverconfig.yaml";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      // ------------------------------
+      // Escape helpers
+      // ------------------------------
+      function escapeHtml(s){
+        return String(s ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#39;");
+      }
+      function escapeAttr(s){ return escapeHtml(s).replaceAll("`", "&#96;"); }
+
+      // ------------------------------
+      // Wire buttons
+      // ------------------------------
+      $("#btnNew").addEventListener("click", () => {
+        model = defaultConfig();
+        render();
+        showMsg("ok", "Neue Beispiel-Konfiguration geladen.");
+      });
+
+      $("#btnSave").addEventListener("click", () => {
+        try { saveToLocalStorage(); }
+        catch(e){ showMsg("err", String(e?.message || e)); }
+      });
+
+      $("#btnLoad").addEventListener("click", () => {
+        try { loadFromLocalStorage(); }
+        catch(e){ showMsg("err", String(e?.message || e)); }
+      });
+
+      $("#btnExport").addEventListener("click", () => {
+        syncYaml(true);
+      });
+
+      $("#btnImport").addEventListener("click", () => {
+        try {
+          const next = importFromYaml($("#yaml").value);
+          model = next;
+          render();
+          showMsg("ok", "YAML importiert.");
+        } catch(e){
+          showMsg("err", `Import fehlgeschlagen:\n${String(e?.message || e)}`);
+        }
+      });
+
+      $("#btnValidate").addEventListener("click", () => {
+        try {
+          const fromYaml = importFromYaml($("#yaml").value);
+          const errors = validateServerConfig(fromYaml);
+          if(errors.length) showMsg("err", `Validierung fehlgeschlagen (${errors.length}):\n- ${errors.join("\n- ")}`);
+          else showMsg("ok", "Validierung OK.");
+        } catch(e){
+          showMsg("err", `YAML konnte nicht geparsed werden:\n${String(e?.message || e)}`);
+        }
+      });
+
+      $("#btnDownload").addEventListener("click", () => {
+        try { downloadYaml(); }
+        catch(e){ showMsg("err", String(e?.message || e)); }
+      });
+
+      // ------------------------------
+      // Self-tests (no external test runner)
+      // ------------------------------
+      function runTests(){
+        const logs = [];
+        function assert(cond, msg){
+          if(!cond) throw new Error("Test failed: " + msg);
+        }
+
+        // Test 1: YAML roundtrip basic
+        const cfg1 = defaultConfig();
+        const y1 = yamlDump(cfg1);
+        const p1 = importFromYaml(y1);
+        assert(p1.server && p1.server.port === 8080, "server.port roundtrip");
+        assert(Array.isArray(p1.router) && p1.router.length === 1, "router roundtrip");
+
+        // Test 2: Router-point normalization
+        const cfg2 = defaultConfig();
+        cfg2.router[0].route.push({ type: "router", name: "Default" });
+        const y2 = yamlDump(cfg2);
+        const p2 = importFromYaml(y2);
+        assert(p2.router[0].route.some(rp => rp.type === "router" && rp.name === "Default"), "router routepoint preserved");
+
+        // Test 3: Validation catches missing server.name
+        const cfg3 = defaultConfig();
+        cfg3.server.name = "";
+        const errs = validateServerConfig(cfg3);
+        assert(errs.some(e => e.includes("server.name")), "validation missing name");
+
+        logs.push("OK: YAML roundtrip");
+        logs.push("OK: router routepoint");
+        logs.push("OK: validation");
+        return logs.join("\n");
+      }
+
+      try {
+        const out = runTests();
+        setDot('ok');
+        setTest('OK – Self-Tests bestanden', out);
+      } catch(e){
+        setDot('err');
+        setTest('Fehler – Self-Tests fehlgeschlagen', String(e?.stack || e));
+      }
+
+      // initial UI
+      render();
+      syncYaml(false);
+    }
+  </script>
+</body>
+</html>
