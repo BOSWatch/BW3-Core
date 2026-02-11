@@ -28,6 +28,7 @@
       background: radial-gradient(1200px 700px at 15% 10%, rgba(122,162,255,.22), transparent 60%),
                   radial-gradient(900px 600px at 80% 35%, rgba(95,225,176,.16), transparent 55%),
                   var(--bg);
+      background-repeat: no-repeat;
       color: var(--text);
     }
 
@@ -175,6 +176,93 @@
     .dot { width:10px; height:10px; border-radius:999px; background: rgba(232,238,252,.2); border: 1px solid rgba(232,238,252,.18); }
     .dot.ok { background: rgba(95,225,176,.55); border-color: rgba(95,225,176,.75); }
     .dot.err { background: rgba(255,122,139,.55); border-color: rgba(255,122,139,.75); }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      z-index: 9999;
+    }
+    .modal.open { display: block; }
+    .modal__backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(4px);
+    }
+    .modal__panel {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: min(920px, calc(100vw - 28px));
+      max-height: min(82vh, 900px);
+      overflow: auto;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0)), var(--card);
+      box-shadow: var(--shadow);
+    }
+    .modal__hd {
+      position: sticky;
+      top: 0;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 14px 10px 14px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(16,24,42,.88);
+      backdrop-filter: blur(10px);
+    }
+    .modal__hd h2 {
+      margin: 0;
+      font-size: 14px;
+      letter-spacing: .35px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .modal__close {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      border: 1px solid rgba(232,238,252,.16);
+      background: transparent;
+      color: var(--text);
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .modal__bd { padding: 14px; }
+    .modal__bd h3 { margin: 14px 0 8px; font-size: 14px; }
+    .modal__bd ul { margin: 8px 0 0 18px; color: var(--text); }
+    .modal__bd li { margin: 6px 0; color: var(--text); }
+    .modal__bd code, .modal__bd pre {
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+    .modal__bd pre {
+      white-space: pre-wrap;
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(232,238,252,.12);
+      border-radius: 12px;
+      padding: 10px;
+      overflow: auto;
+    }
+    .creator-tag{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(232,238,252,.14);
+      background: rgba(0,0,0,.12);
+      color: var(--muted);
+      font-size: 12px;
+      margin: 10px 0 6px;
+    }
+
   </style>
 </head>
 <body>
@@ -191,6 +279,7 @@
         <button class="ghost" id="btnSave" style="display: none">In LocalStorage speichern</button>
         <button class="warn" id="btnImport">YAML importieren</button>
         <button class="good" id="btnExport">YAML exportieren</button>
+        <button class="ghost" id="btnHelp" title="Hilfe & Entwickler-Infos">Hilfe</button>
       </div>
     </header>
 
@@ -273,7 +362,59 @@ router:
     </div>
   </div>
 
-  <script>
+
+  <!-- Help Modal -->
+  <div class="modal" id="helpModal" aria-hidden="true">
+    <div class="modal__backdrop" data-help-close></div>
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+      <div class="modal__hd">
+        <h2 id="helpTitle">Hilfe</h2>
+        <button class="modal__close" id="helpClose" aria-label="Schließen">×</button>
+      </div>
+      <div class="modal__bd">
+        <h3>Verwendung</h3>
+        <ul>
+          <li><b>Neu</b> lädt eine Beispiel-Konfiguration.</li>
+          <li>Unter <b>router</b> legst du Verarbeitungswege an. Jeder Router hat eine <b>route</b> mit Punkten.</li>
+          <li>Ein Route-Punkt kann <b>module</b> (verändert/filtern), <b>plugin</b> (sendet/ausgibt), oder <b>router</b> (springt zu einem anderen Router) sein.</li>
+          <li><b>YAML importieren</b> übernimmt YAML aus dem rechten Feld in den Editor.</li>
+          <li><b>YAML exportieren</b> erzeugt YAML aus dem aktuellen Editor-Stand.</li>
+          <li><b>Validieren</b> prüft grob Pflichtfelder und Referenzen (z.B. alarmRouter → Router existiert).</li>
+          <li><b>YAML herunterladen</b> speichert die Datei lokal.</li>
+        </ul>
+
+        <h3>Tipps</h3>
+        <ul>
+          <li>Wenn du <b>module</b> oder <b>plugin</b> auswählst, zeigt das nächste Dropdown nur passende Einträge.</li>
+          <li>Für <b>filter.regexFilter</b> gibt es einen Untereditor (ohne YAML tippen).</li>
+          <li>Viele Felder unterstützen Platzhalter/Wildcards aus BOSWatch (z.B. <code>{MSG}</code>, <code>{RIC}</code>).</li>
+        </ul>
+
+        <h3>Für Entwickler: neue Module/Plugins hinzufügen</h3>
+        <div class="small">Die UI wird über <code>RESOURCE_SCHEMAS</code> gesteuert. Du kannst neue Einträge hinzufügen oder bestehende erweitern. <code>Zeile ~500</code></div>
+        <pre><code>// Beispiel: neues Modul
+"my.module": {
+  kind: "module",           // oder "plugin"
+  title: "Mein Modul",
+  creator: "Dein Name/Team", // optional: wird im Editor angezeigt
+  fields: [
+    { key: "apiKey", type: "text", label: "apiKey", required: true },
+    { key: "enabled", type: "bool", label: "enabled", default: true },
+    { key: "modes", type: "list_select", label: "modes", options: ["fms","pocsag"] },
+    { key: "advanced", type: "yaml", label: "advanced" } // für komplexe Strukturen
+  ]
+}</code></pre>
+        <ul>
+          <li><b>kind</b>: entscheidet, ob es bei Auswahl „module“ oder „plugin“ angeboten wird.</li>
+          <li><b>fields</b>: bestimmt die Form-Felder. Unterstützte Types: <code>text</code>, <code>number</code>, <code>bool</code>, <code>select</code>, <code>list_text</code>, <code>list_select</code>, <code>yaml</code>, <code>yaml_string</code>.</li>
+          <li><b>creator</b> (optional): wird in der Modul/Plugin-Box links angezeigt.</li>
+          <li>Für Sonderfälle kannst du <code>toConfig(ui)</code> / <code>fromConfig(cfg)</code> nutzen, z.B. um Listen-Configs in einen komfortablen Untereditor zu mappen.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+<script>
     // ------------------------------
     // Robust js-yaml loader
     // ------------------------------
@@ -359,6 +500,7 @@ router:
         "descriptor": {
           kind: "module",
           title: "Descriptor",
+          creator: "BW3 Dev Team",
           fields: [
             { key: "_items", type: "yaml", label: "Konfiguration (Liste) – scanField/descrField/descriptions/csvPath", placeholder:
 `- scanField: tone
@@ -378,6 +520,7 @@ router:
         "geocoding": {
           kind: "module",
           title: "Geocoding",
+          creator: "BW3 Dev Team",
           fields: [
             { key: "apiProvider", type: "select", label: "apiProvider", options: ["mapbox", "google"], required: true },
             { key: "apiToken", type: "text", label: "apiToken", required: true },
@@ -388,6 +531,7 @@ router:
         "filter.modeFilter": {
           kind: "module",
           title: "Mode Filter",
+          creator: "BW3 Dev Team",
           fields: [
             { key: "allowed", type: "list_select", label: "allowed", options: ["fms", "zvei", "pocsag", "msg"], required: true }
           ]
@@ -396,8 +540,9 @@ router:
         "filter.regexFilter": {
           kind: "module",
           title: "Regex Filter",
+          creator: "BW3 Dev Team",
           fields: [
-            { key: "_filters", type: "yaml", label: "Konfiguration (Liste) – Filter mit checks", placeholder:
+            { key: "_filters", type: "regex_filter_editor", label: "Filter/Checks (Editor)", placeholder:
 `- name: 'Allowed RICs'
   checks:
     - field: ric
@@ -416,6 +561,7 @@ router:
         "filter.doubleFilter": {
           kind: "module",
           title: "Double Filter",
+          creator: "BW3 Dev Team",
           fields: [
             { key: "ignoreTime", type: "number", label: "ignoreTime (Sek.)", default: 10 },
             { key: "maxEntry", type: "number", label: "maxEntry", default: 20 },
@@ -427,6 +573,7 @@ router:
         "http": {
           kind: "plugin",
           title: "Http",
+          creator: "BW3 Dev Team",
           fields: [
             { key: "pocsag", type: "list_text", label: "pocsag URLs", placeholder: "http://example?q={MSG}" },
             { key: "fms", type: "list_text", label: "fms URLs" },
@@ -438,6 +585,7 @@ router:
         "telegram": {
           kind: "plugin",
           title: "Telegram",
+          creator: "BW3 Dev Team",
           fields: [
             { key: "botToken", type: "text", label: "botToken", required: true },
             { key: "chatIds", type: "list_text", label: "chatIds", required: true },
@@ -456,6 +604,7 @@ router:
         "divera": {
           kind: "plugin",
           title: "Divera 24/7",
+          creator: "BW3 Dev Team",
           fields: [
             { key: "accesskey", type: "text", label: "accesskey", required: true },
             { key: "pocsag", type: "yaml", label: "pocsag Block (priority/title/message/ric/vehicle)", placeholder:
@@ -483,6 +632,7 @@ message: '{MSG}'` }
         "mysql": {
           kind: "plugin",
           title: "MySQL",
+          creator: "BW3 Dev Team",
           fields: [
             { key: "host", type: "text", label: "host", required: true },
             { key: "user", type: "text", label: "user", required: true },
@@ -493,6 +643,22 @@ message: '{MSG}'` }
       };
 
       const RESOURCE_OPTIONS = Object.keys(RESOURCE_SCHEMAS).sort((a,b)=>a.localeCompare(b));
+
+      function getResourcesForType(routeType){
+        if(routeType === 'module'){
+          return Object.entries(RESOURCE_SCHEMAS)
+            .filter(([,s]) => s?.kind === 'module')
+            .map(([k]) => k)
+            .sort((a,b)=>a.localeCompare(b));
+        }
+        if(routeType === 'plugin'){
+          return Object.entries(RESOURCE_SCHEMAS)
+            .filter(([,s]) => s?.kind === 'plugin')
+            .map(([k]) => k)
+            .sort((a,b)=>a.localeCompare(b));
+        }
+        return RESOURCE_OPTIONS;
+      }
 
       // ------------------------------
       // Model
@@ -849,9 +1015,21 @@ message: '{MSG}'` }
 
         selType.value = type;
 
-        selRes.innerHTML = RESOURCE_OPTIONS.map(r => `<option value="${escapeAttr(r)}">${escapeHtml(r)}</option>`).join("");
-        if(rp.res && RESOURCE_SCHEMAS[rp.res]) selRes.value = rp.res;
-        else selRes.value = (type === "plugin") ? "telegram" : "filter.modeFilter";
+        function refreshResOptions(){
+          const opts = getResourcesForType(selType.value);
+          selRes.innerHTML = opts.map(r => `<option value="${escapeAttr(r)}">${escapeHtml(r)}</option>`).join("");
+
+          // keep current selection if still valid, otherwise pick a sensible default
+          if(rp.res && RESOURCE_SCHEMAS[rp.res] && opts.includes(rp.res)){
+            selRes.value = rp.res;
+          } else {
+            const fallback = (selType.value === "plugin") ? "telegram" : "filter.modeFilter";
+            selRes.value = opts.includes(fallback) ? fallback : (opts[0] ?? "");
+            rp.res = selRes.value || rp.res;
+          }
+        }
+
+        refreshResOptions();
 
         selRouter.innerHTML = ensureArray(model.router)
           .map(r => r?.name)
@@ -882,6 +1060,15 @@ message: '{MSG}'` }
 
           const res = selRes.value;
           const schema = RESOURCE_SCHEMAS[res];
+
+          // Show creator (optional)
+          if(schema && schema.creator){
+            const tag = document.createElement("div");
+            tag.className = "creator-tag";
+            tag.textContent = `Creator: ${schema.creator}`;
+            cfgWrap.appendChild(tag);
+          }
+
           if(!schema){
             cfgWrap.innerHTML = `<div class="small" style="margin-top:8px">Für <b>${escapeHtml(res)}</b> ist kein Schema hinterlegt. Du kannst die config als YAML eingeben:</div>`;
             const ta = document.createElement("textarea");
@@ -922,6 +1109,7 @@ message: '{MSG}'` }
             rp.name = selRouter.value || rp.name || "";
             inName.value = rp.name || "";
           } else {
+            refreshResOptions();
             rp.res = selRes.value;
             rp.config = rp.config ?? {};
             // For module/plugin points, rp.name is label (optional)
@@ -1082,6 +1270,166 @@ message: '{MSG}'` }
 
           wrap.appendChild(box);
         }
+        else if(t === "regex_filter_editor"){
+          // Expected structure: array of filters: [{ name: string, checks: [{ field: string, regex: string }, ...] }, ...]
+          const container = document.createElement("div");
+          container.style.border = "1px solid rgba(232,238,252,.14)";
+          container.style.borderRadius = "12px";
+          container.style.background = "var(--card2)";
+          container.style.padding = "10px";
+
+          const filters = Array.isArray(current) ? current : (Array.isArray(def.default) ? clone(def.default) : []);
+          obj[def.key] = filters;
+
+          const btnRow = document.createElement("div");
+          btnRow.className = "btnbar";
+          btnRow.style.marginBottom = "10px";
+          const addFilter = document.createElement("button");
+          addFilter.textContent = "+ Filter";
+          addFilter.addEventListener("click", () => {
+            filters.push({ name: `Filter ${filters.length+1}`, checks: [{ field: "", regex: "" }] });
+            onChange();
+            renderFilters();
+          });
+          const importYaml = document.createElement("button");
+          importYaml.className = "ghost";
+          importYaml.textContent = "Aus YAML einfügen";
+          importYaml.addEventListener("click", () => {
+            const txt = prompt("YAML-Liste für regexFilter einfügen (wird als Array geparsed):", "- name: 'Allowed RICs'\n  checks:\n    - field: ric\n      regex: '(0000001|0000002)'");
+            if(txt == null) return;
+            try {
+              const parsed = yamlLoad(txt);
+              if(!Array.isArray(parsed)) throw new Error("Kein YAML-Array.");
+              obj[def.key] = parsed;
+              onChange();
+              renderFilters();
+            } catch(e){
+              alert("Konnte YAML nicht importieren: " + String(e?.message || e));
+            }
+          });
+          btnRow.appendChild(addFilter);
+          btnRow.appendChild(importYaml);
+          container.appendChild(btnRow);
+
+          const list = document.createElement("div");
+          container.appendChild(list);
+
+          function renderFilters(){
+            list.innerHTML = "";
+            const arr = obj[def.key];
+            if(!Array.isArray(arr) || arr.length === 0){
+              const empty = document.createElement("div");
+              empty.className = "small";
+              empty.textContent = "Noch keine Filter. Klicke '+ Filter'.";
+              list.appendChild(empty);
+              return;
+            }
+
+            arr.forEach((f, fIdx) => {
+              if(!f || typeof f !== "object") f = (arr[fIdx] = { name: "", checks: [] });
+              f.checks = Array.isArray(f.checks) ? f.checks : [];
+
+              const card = document.createElement("div");
+              card.style.border = "1px solid rgba(232,238,252,.12)";
+              card.style.borderRadius = "12px";
+              card.style.padding = "10px";
+              card.style.marginBottom = "10px";
+              card.style.background = "rgba(0,0,0,.10)";
+
+              const head = document.createElement("div");
+              head.className = "row";
+              head.innerHTML = `
+                <div>
+                  <label style="margin-top:0">Filter name</label>
+                  <input type="text" data-rf-name value="${escapeAttr(f.name ?? "")}" placeholder="z.B. Allowed RICs" />
+                </div>
+                <div style="display:flex;gap:10px;align-items:end;justify-content:flex-end;flex:0 0 auto;">
+                  <button class="ghost" data-rf-addcheck>+ Check</button>
+                  <button class="bad" data-rf-delfilter>Filter löschen</button>
+                </div>
+              `;
+              card.appendChild(head);
+
+              const nameInput = head.querySelector("[data-rf-name]");
+              nameInput.addEventListener("input", () => { f.name = nameInput.value; onChange(); });
+              head.querySelector("[data-rf-addcheck]").addEventListener("click", () => {
+                f.checks.push({ field: "", regex: "" });
+                onChange();
+                renderFilters();
+              });
+              head.querySelector("[data-rf-delfilter]").addEventListener("click", () => {
+                arr.splice(fIdx, 1);
+                onChange();
+                renderFilters();
+              });
+
+              // checks table
+              const checksWrap = document.createElement("div");
+              checksWrap.style.marginTop = "8px";
+
+              if(f.checks.length === 0){
+                const small = document.createElement("div");
+                small.className = "small";
+                small.textContent = "Keine Checks. Klicke '+ Check'.";
+                checksWrap.appendChild(small);
+              }
+
+              f.checks.forEach((c, cIdx) => {
+                if(!c || typeof c !== "object") c = (f.checks[cIdx] = { field: "", regex: "" });
+                const row = document.createElement("div");
+                row.className = "row";
+                row.style.marginTop = "6px";
+                row.innerHTML = `
+                  <div>
+                    <label style="margin-top:0">field</label>
+                    <input type="text" data-rf-field value="${escapeAttr(c.field ?? "")}" placeholder="ric / mode / status / message ..." />
+                  </div>
+                  <div>
+                    <label style="margin-top:0">regex</label>
+                    <input type="text" data-rf-regex value="${escapeAttr(c.regex ?? "")}" placeholder="(0000001|0000002)" />
+                  </div>
+                  <div style="display:flex;gap:10px;align-items:end;justify-content:flex-end;flex:0 0 auto;">
+                    <button class="ghost" data-rf-up title="hoch">↑</button>
+                    <button class="ghost" data-rf-down title="runter">↓</button>
+                    <button class="bad" data-rf-del title="löschen">✕</button>
+                  </div>
+                `;
+                const inField = row.querySelector("[data-rf-field]");
+                const inRegex = row.querySelector("[data-rf-regex]");
+                inField.addEventListener("input", () => { c.field = inField.value; onChange(); });
+                inRegex.addEventListener("input", () => { c.regex = inRegex.value; onChange(); });
+                row.querySelector("[data-rf-del]").addEventListener("click", () => {
+                  f.checks.splice(cIdx, 1);
+                  onChange();
+                  renderFilters();
+                });
+                row.querySelector("[data-rf-up]").addEventListener("click", () => {
+                  if(cIdx <= 0) return;
+                  const tmp = f.checks[cIdx-1];
+                  f.checks[cIdx-1] = f.checks[cIdx];
+                  f.checks[cIdx] = tmp;
+                  onChange();
+                  renderFilters();
+                });
+                row.querySelector("[data-rf-down]").addEventListener("click", () => {
+                  if(cIdx >= f.checks.length-1) return;
+                  const tmp = f.checks[cIdx+1];
+                  f.checks[cIdx+1] = f.checks[cIdx];
+                  f.checks[cIdx] = tmp;
+                  onChange();
+                  renderFilters();
+                });
+                checksWrap.appendChild(row);
+              });
+
+              card.appendChild(checksWrap);
+              list.appendChild(card);
+            });
+          }
+
+          renderFilters();
+          wrap.appendChild(container);
+        }
         else if(t === "yaml"){
           const ta = document.createElement("textarea");
           ta.id = id;
@@ -1143,7 +1491,7 @@ message: '{MSG}'` }
 
             if(p.type === "router"){
               const target = p.name || p.res || "";
-              return { type: "router", name: target };
+              return { type: "router", res: target };
             }
 
             if(!p.name) delete p.name;
@@ -1287,6 +1635,38 @@ message: '{MSG}'` }
         catch(e){ showMsg("err", String(e?.message || e)); }
       });
 
+
+      // Help modal
+      const helpModal = document.getElementById("helpModal");
+      const openHelp = () => {
+        if(!helpModal) return;
+        helpModal.classList.add("open");
+        helpModal.setAttribute("aria-hidden", "false");
+      };
+      const closeHelp = () => {
+        if(!helpModal) return;
+        helpModal.classList.remove("open");
+        helpModal.setAttribute("aria-hidden", "true");
+      };
+
+      const btnHelp = document.getElementById("btnHelp");
+      if(btnHelp) btnHelp.addEventListener("click", openHelp);
+
+      const helpClose = document.getElementById("helpClose");
+      if(helpClose) helpClose.addEventListener("click", closeHelp);
+
+      if(helpModal){
+        helpModal.addEventListener("click", (e) => {
+          const t = e.target;
+          if(t && t.matches && t.matches("[data-help-close]")) closeHelp();
+        });
+      }
+
+      window.addEventListener("keydown", (e) => {
+        if(e.key === "Escape" && helpModal && helpModal.classList.contains("open")) closeHelp();
+      });
+
+
       // ------------------------------
       // Self-tests (no external test runner)
       // ------------------------------
@@ -1295,6 +1675,14 @@ message: '{MSG}'` }
         function assert(cond, msg){
           if(!cond) throw new Error("Test failed: " + msg);
         }
+
+        // Test 0: Resource filtering for type dropdowns
+        const modOpts = getResourcesForType('module');
+        const plugOpts = getResourcesForType('plugin');
+        assert(modOpts.includes('filter.modeFilter'), "module options contain filter.modeFilter");
+        assert(!modOpts.includes('telegram'), "module options do not contain telegram");
+        assert(plugOpts.includes('telegram'), "plugin options contain telegram");
+        assert(!plugOpts.includes('filter.modeFilter'), "plugin options do not contain filter.modeFilter");
 
         // Test 1: YAML roundtrip basic
         const cfg1 = defaultConfig();
@@ -1319,6 +1707,7 @@ message: '{MSG}'` }
         logs.push("OK: YAML roundtrip");
         logs.push("OK: router routepoint");
         logs.push("OK: validation");
+        logs.push("OK: resource type filtering");
         return logs.join("\n");
       }
 
