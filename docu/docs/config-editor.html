@@ -569,6 +569,21 @@ router:
           ]
         },
 
+        "multicast": {
+          kind: "module",
+          title: "Multicast",
+          creator: "BW3 Dev Team",
+          fields: [
+            { key: "autoClearTimeout", type: "number", label: "autoClearTimeout", default: 10, required: false },
+            { key: "delimiterRics", type: "text", label: "delimiterRics", required: false },
+            { key: "textRics", type: "text", label: "textRics", required: false },
+            { key: "netIdentRics", type: "text", label: "netIdentRics", required: false },
+            { key: "triggerRic", type: "text", label: "triggerRic", required: false },
+            { key: "triggerHost", type: "text", label: "triggerHost", default: "127.0.0.1", required: false },
+            { key: "triggerPort", type: "number", label: "triggerPort", default: 8080, required: false },
+          ]
+        },
+
         // Plugins
         "http": {
           kind: "plugin",
