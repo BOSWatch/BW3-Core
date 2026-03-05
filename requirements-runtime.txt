@@ -5,3 +5,4 @@ requests # Telegram
 aiohttp # HTTP, Divera
 mysql-connector-python # MySQL
 geocoder # Geocoding
+colorama #Install_service

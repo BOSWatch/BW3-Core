@@ -22,6 +22,7 @@ import logging
 import argparse
 import yaml
 from pathlib import Path
+from colorama import init as colorama_init, Fore, Style
 
 #  === constants for directories and files ===
 BASE_DIR = Path(__file__).resolve().parent
@@ -31,6 +32,8 @@ CONFIG_DIR = (BASE_DIR / 'config').resolve()
 LOG_FILE = (BASE_DIR / 'log' / 'install' / 'service_install.log').resolve()
 os.makedirs(LOG_FILE.parent, exist_ok=True)
 
+# === initialize colorama ===
+colorama_init(autoreset=True)
 
 #  === language management (default german)===
 _lang = 'de'
@@ -90,10 +93,6 @@ TEXT = {
         "unhandled_error": "Unbehandelter Fehler: {}",
         "max_retries_skip": "Maximale Anzahl Eingabeversuche überschritten. Überspringe Service.",
         "max_retries_exit": "Maximale Anzahl Eingabeversuche überschritten. Beende Programm.",
-        "colorama_missing": "⚠️ Colorama nicht installiert – versuche automatische Installation...",
-        "colorama_install": "➡️ Installiere Colorama...",
-        "colorama_install_ok": "✅ Colorama erfolgreich installiert.",
-        "colorama_install_fail": "❌ Colorama konnte nicht automatisch installiert werden.",
         "verify_timeout": "⚠ Timeout bei systemd-analyze verify für: {}",
         "status_timeout": "⚠ Timeout beim Prüfen des Service-Status: {}"
 
@@ -141,67 +140,10 @@ TEXT = {
         "unhandled_error": "Unhandled error: {}",
         "max_retries_skip": "Maximum input attempts exceeded. Skipping service.",
         "max_retries_exit": "Maximum input attempts exceeded. Exiting program.",
-        "colorama_missing": "⚠️ Colorama not installed – attempting automatic installation...",
-        "colorama_install": "➡️ Installing Colorama...",
-        "colorama_install_ok": "✅ Colorama installed successfully.",
-        "colorama_install_fail": "❌ Colorama could not be installed automatically.",
         "verify_timeout": "⚠ Timeout during systemd-analyze verify for: {}",
         "status_timeout": "⚠ Timeout while checking service status: {}"
     }
 }
-
-
-# === COLORAMA AUTO-INSTALL ===
-def colorama_auto_install():
-    r"""
-    Auto-installs colorama if missing using pip in the current venv.
-    """
-    # recognize language early (before colorama installation)
-    early_parser = argparse.ArgumentParser(add_help=False)
-    early_parser.add_argument('--lang', '-l', choices=['de', 'en'], default='de')
-    early_args, _ = early_parser.parse_known_args()
-    lang = early_args.lang
-
-    # use text from global TEXT dictionary
-    txt = TEXT[lang]
-
-    try:
-        from colorama import init as colorama_init, Fore, Style
-        colorama_init(autoreset=True)
-        return True, Fore, Style
-    except ImportError:
-        print(txt["colorama_missing"])
-
-        # install Colorama
-        print(txt["colorama_install"])
-        python_exe = sys.executable
-        subprocess.run([python_exe, "-m", "pip", "install", "colorama"], check=False)
-
-        # retry importing Colorama
-        try:
-            from colorama import init as colorama_init, Fore, Style
-            colorama_init(autoreset=True)
-            print(txt["colorama_install_ok"])
-            return True, Fore, Style
-        except ImportError:
-            print(txt["colorama_install_fail"])
-            return False, None, None
-
-
-# === import / install colorama ===
-colorama_available, Fore, Style = colorama_auto_install()
-
-if not colorama_available:
-    # provides dummy classes if colorama is not available (no crash)
-    class DummyStyle:
-        RESET_ALL = ""
-        BRIGHT = ""
-
-    class DummyFore:
-        RED = GREEN = YELLOW = BLUE = CYAN = MAGENTA = WHITE = RESET = ""
-
-    Fore = DummyFore()
-    Style = DummyStyle()
 
 
 # === logging Setup ===
@@ -410,22 +352,6 @@ WantedBy=multi-user.target
             logging.warning(t("status_timeout").format(service_name))
     else:
         logging.info(t("dryrun_status_check").format(service_name))
-
-
-# === import / install colorama ===
-colorama_available, Fore, Style = colorama_auto_install()
-
-if not colorama_available:
-    # provides dummy classes if colorama is not available (no crash)
-    class DummyStyle:
-        RESET_ALL = ""
-        BRIGHT = ""
-
-    class DummyFore:
-        RED = GREEN = YELLOW = BLUE = CYAN = MAGENTA = WHITE = RESET = ""
-
-    Fore = DummyFore()
-    Style = DummyStyle()
 
 
 def remove_service(service_name, dry_run=False):
