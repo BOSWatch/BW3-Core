@@ -70,8 +70,7 @@ class BoswatchModule(ModuleBase):
         @param None
         @return None"""
         self._my_frequencies = set()
-        self.instance_id = hex(id(self))[-4:]
-        self.name = f"MCAST_{self.instance_id}"
+        self.name = "Multicast"
 
         self._auto_clear_timeout = int(self.config.get("autoClearTimeout", default=10))
         self._hard_timeout = self._auto_clear_timeout * 3
@@ -89,10 +88,8 @@ class BoswatchModule(ModuleBase):
         trigger_ric_cfg = self.config.get("triggerRic")
         if trigger_ric_cfg:
             self._trigger_ric = str(trigger_ric_cfg).strip()
-            self._trigger_ric_mode = "explicit"
         else:
             self._trigger_ric = None
-            self._trigger_ric_mode = "dynamic"
 
         self._trigger_host = self.config.get("triggerHost", default=self._TRIGGER_HOST)
         self._trigger_port = int(self.config.get("triggerPort", default=self._TRIGGER_PORT))
@@ -121,21 +118,8 @@ class BoswatchModule(ModuleBase):
     def doWork(self, bwPacket):
         r"""!Process an incoming packet and handle multicast logic.
 
-        @param bwPacket: A BOSWatch packet instance or list of packets
+        @param bwPacket: A BOSWatch packet instance
         @return bwPacket, a list of packets, or False if blocked"""
-        if isinstance(bwPacket, list):
-            result_packets = []
-            for single_packet in bwPacket:
-                processed = self.doWork(single_packet)
-                if processed is None:
-                    result_packets.append(single_packet)
-                elif processed is not False:
-                    if isinstance(processed, list):
-                        result_packets.extend(processed)
-                    else:
-                        result_packets.append(processed)
-            return result_packets if result_packets else None
-
         packet_dict = self._get_packet_data(bwPacket)
         msg = packet_dict.get("message")
         ric = packet_dict.get("ric")
@@ -341,7 +325,7 @@ class BoswatchModule(ModuleBase):
                     dt = datetime.datetime.strptime(str(v), '%d.%m.%Y %H:%M:%S')
                     dt_shifted = dt + datetime.timedelta(milliseconds=index - 1)
                     packet.set(k, dt_shifted.strftime('%d.%m.%Y %H:%M:%S'))
-                except:
+                except (ValueError, TypeError):
                     packet.set(k, str(v))
             else:
                 packet.set(k, str(v))
@@ -403,7 +387,7 @@ class BoswatchModule(ModuleBase):
         self._copy_packet_dict_to_packet(packet_dict, bwPacket, index=1)
         self._apply_list_tags(bwPacket, [packet_dict])
         self._set_mcast_metadata(bwPacket, "single", "single", packet_dict.get("ric", ""), "1", "1")
-        logging.debug(f"Erstelle Single-Alarm für RIC {packet_dict.get('ric')}")
+        logging.debug("Erstelle Single-Alarm für RIC %s", packet_dict.get('ric'))
         return [bwPacket]
 
     def _handle_delimiter(self, freq, ric, bwPacket=None):
@@ -443,7 +427,7 @@ class BoswatchModule(ModuleBase):
         @param count: Total number of recipients
         @param index: Current recipient index
         @return None"""
-        logging.debug(f"Setze Metadata - Mode: {mode}, Role: {role} für RIC: {source}")
+        logging.debug("Setze Metadata - Mode: %s, Role: %s für RIC: %s", mode, role, source)
         mapping = {
             "multicastMode": (mode, "{MCAST_MODE}"),
             "multicastRole": (role, "{MCAST_ROLE}"),
@@ -506,6 +490,9 @@ class BoswatchModule(ModuleBase):
 
     def _perform_instance_tick(self):
         r"""!Tick-entry point for this specific instance.
+
+        Acts as an extension hook for future per-instance tick logic
+        (e.g. statistics, heartbeat, watchdog). Do not call directly.
 
         @param None
         @return None"""
