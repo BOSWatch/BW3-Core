@@ -18,12 +18,12 @@ r"""!
 import logging
 import time
 import threading
-import socket
 import json
 import datetime
 from collections import defaultdict
 from module.moduleBase import ModuleBase
 from boswatch.packet import Packet
+from boswatch.network.client import TCPClient
 
 logging.debug("- %s loaded", __name__)
 
@@ -593,11 +593,7 @@ class BoswatchModule(ModuleBase):
 # ============================================================
 
     def _send_wakeup_trigger(self, freq, fallback_ric):
-        r"""!Send a loopback trigger via socket to wake up the system.
-
-        @param freq: Frequency identifier
-        @param fallback_ric: RIC to use if no explicit trigger RIC is configured
-        @return None"""
+        r"""!Send a loopback trigger using the standard TCPClient class."""
         try:
             trigger_ric = self._trigger_ric if self._trigger_ric else fallback_ric
             payload = {
@@ -613,13 +609,21 @@ class BoswatchModule(ModuleBase):
                 "frequency": freq
             }
             json_str = json.dumps(payload)
-            header = f"{len(json_str):<10}"
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-                sock.settimeout(1.0)
-                sock.connect((self._trigger_host, self._trigger_port))
-                sock.sendall(header.encode('utf-8'))
-                sock.sendall(json_str.encode('utf-8'))
-                logging.debug("[%s] Wakeup trigger sent for freq %s (RIC=%s)", self.name, freq, trigger_ric)
+
+            # using BOSWatch-Architecture
+            client = TCPClient(timeout=2)
+            if client.connect(self._trigger_host, self._trigger_port):
+                # 1. Send
+                client.transmit(json_str)
+
+                # 2. Recieve (getting [ack] and prevents connection reset)
+                client.receive(timeout=1)
+
+                client.disconnect()
+                logging.debug("[%s] Wakeup trigger sent and acknowledged (RIC=%s)", self.name, trigger_ric)
+            else:
+                logging.error("[%s] Could not connect to local server for wakeup", self.name)
+
         except Exception as e:
             logging.error("[%s] Failed to send wakeup trigger: %s", self.name, e)
 
