@@ -155,7 +155,7 @@ class BoswatchPlugin(PluginBase):
             bwPacket.get("inputSource"),
             bwPacket.get("frequency")
         )
-        self.cursor.execute(self.sqlInserts.get("pocsag"), val)
+        self.cursor.execute(self.sqlInserts.get("zvei"), val)
 
     def msg(self, bwPacket):
         r"""!Called on MSG packet
