@@ -31,14 +31,14 @@ Das Modul unterstützt:
 
 - Mehrere Startmarker (Delimiter)
 - Mehrere Text-RICs
-- Netzident-RIC zur Paketfilterung
+- Netzident-RIC zur Paketmarkierung
 - Automatische Bereinigung alter Tone-RICs (Fehlerfall: Auto-Clear)
 - Active Trigger System zur verlustfreien Paketauslieferung
 - Wildcards für spätere Weiterverarbeitung
 - Frequenz-basierte Trennung
 - Multi-Instanz-Betrieb mit geteiltem Zustand
 
-Hinweis: Der Delimiter-RIC (0123456) wird automatisch gefiltert und nicht ausgegeben.
+Hinweis: Der Delimiter-RIC (0123456) wird mit multicastRole: delimiter markiert und durchgereicht. Downstream-Filter (z.B. filter.regexFilter) können ihn bei Bedarf ausfiltern.
 
 **Wichtig:** Die Text-RIC (Message-RIC) wird **nicht als separates Paket ausgegeben**. Sie dient nur als Nachrichtenträger, der seinen Text an alle gesammelten Tone-RICs verteilt. Falls keine Tone-RICs vorhanden sind, wird die Text-RIC als `multicastMode: single` ausgegeben.
 
@@ -53,9 +53,9 @@ Hinweis: Der Delimiter-RIC (0123456) wird automatisch gefiltert und nicht ausgeg
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |autoClearTimeout|Auto-Clear Timeout in Sekunden - Nicht zugestellte Empfänger werden nach dieser Zeit als incomplete ausgegeben|10|
-|delimiterRics|Komma-getrennte Liste von Startmarkern, die einen Multicast-Block beginnen (leert sofort vorherige Empfänger und werden automatisch gefiltert wenn konfiguriert)|leer|
+|delimiterRics|Komma-getrennte Liste von Startmarkern, die einen Multicast-Block beginnen (leert sofort vorherige Empfänger und werden mit multicastRole: delimiter markiert)|leer|
 |textRics|Komma-getrennte Liste von RICs, die den Alarmtext tragen|leer|
-|netIdentRics|Komma-getrennte Liste von Netzwerk-Identifikations-RICs (werden automatisch gefiltert wenn konfiguriert)|leer|
+|netIdentRics|Komma-getrennte Liste von Netzwerk-Identifikations-RICs (werden mit multicastRole: netident markiert)|leer|
 |triggerRic|RIC für das Wakeup-Trigger-Paket (optional, bei leer: dynamisch = erste Tone-RIC)|leer|
 |triggerHost|IP-Adresse für Loopback-Trigger|127.0.0.1|
 |triggerPort|Port für Loopback-Trigger|8080|
@@ -110,7 +110,7 @@ Verwendet eine feste RIC (9999999) für das interne Wakeup-Trigger-Paket.
     textRics: '0299001,0310001'
     netIdentRics: '0000001'
 ```
-Filtert Netzident-Pakete (RIC 0000001) automatisch aus der Weiterverarbeitung.
+Markiert Netzident-Pakete (RIC 0000001) mit multicastRole: netident. Downstream-Filter können sie gezielt ausfiltern (z.B. RegEx-Filter).
 
 ## Integration in Router-Konfiguration
 
@@ -241,10 +241,10 @@ router:
 
 - `multicastRole` (string): Beschreibt die Rolle dieses Pakets innerhalb des Multicast-Ablaufs, besitzt einen der Werte:
 
-    - `delimiter`: Startmarker-Paket (wird automatisch gefiltert wenn delimiterRics konfiguriert)
+    - `delimiter`: Startmarker-Paket
     - `recipient`: tatsächlicher Empfänger
     - `single`: Einzelner, "normaler" Alarm (Tone-RIC = Text-RIC)
-    - `netident`: Netzwerk-Identifikations-Paket (wird automatisch gefiltert wenn netIdentRics konfiguriert)
+    - `netident`: Netzwerk-Identifikations-Paket
 
 - `multicastSourceRic` (string): RIC des ursprünglichen Message-RICs
 - `multicastRecipientCount` (string): Anzahl der Empfänger insgesamt
@@ -262,7 +262,7 @@ router:
 - `message`: Bei incomplete-Modus leer, sonst Text von Text-RIC
 
 ### Rückgabewerte:
-- **False**: Paket wurde blockiert (z.B. Delimiter/Netident-Filterung), Router stoppt Verarbeitung
+- **False**: Paket wurde intern konsumiert (z.B. Tone-RIC wurde in den Buffer aufgenommen), Router stoppt Verarbeitung für dieses Paket
 - **Liste von Paketen**: Multicast-Verteilung, Router verarbeitet jedes Paket einzeln
 - **None**: Normaler Alarm, Router fährt mit unveränderten Paket fort
 
@@ -378,11 +378,34 @@ Ausgegebene Multicast-Pakete:
 → RIC: 0345678 SubRIC: 3 Message: "B3 WOHNHAUS"  (behält SubRIC 3!)
 ```
 
-### Automatische Filterung
+### Paketmarkierung statt interner Filterung
 
-- **Delimiter-Pakete**: Werden automatisch gefiltert (nicht weitergegeben), wenn `delimiterRics` konfiguriert ist
-- **Netzident-Pakete**: Werden automatisch gefiltert (nicht weitergegeben), wenn `netIdentRics` konfiguriert ist
-- **Filterung nach multicastRole**: Ermöglicht saubere nachgelagerte Verarbeitung ohne manuelle Filter
+Das Modul filtert keine inhaltlich relevanten Pakete. 
+Alle Pakete mit Alarminhalt werden mit `multicastRole` markiert und 
+weitergereicht. Die Filterung nach Bedarf erfolgt nachgelagert, 
+z.B. mit `filter.regexFilter`.
+
+Eine Ausnahme bilden **Tone-RICs** (leere Nachrichten): Diese werden 
+intern im Buffer gesammelt und bei einem complete-Alarm in die 
+Listenfelder aggregiert. Sie erscheinen nie als eigenständige Pakete 
+im Router.
+
+Pakete und ihre Rollen:
+- **Delimiter-Pakete**: Erhalten `multicastRole: delimiter`
+- **Netzident-Pakete**: Erhalten `multicastRole: netident`  
+- **Empfänger-Pakete**: Erhalten `multicastRole: recipient`
+- **Einzelalarme**: Erhalten `multicastRole: single`
+
+Beispiel-Filter um Delimiter und Netident auszublenden:
+```yaml
+- type: module
+  res: filter.regexFilter
+  config:
+    - name: "Nur echte Alarme"
+      checks:
+        - field: multicastRole
+          regex: ^(recipient|single)$
+```
 
 ### Multi-Instanz-Betrieb
 

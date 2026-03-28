@@ -10,7 +10,7 @@ r"""!
                     by Bastian Schroll
 
 @file:        multicast.py
-@date:        26.01.2025
+@date:        28.03.2026
 @author:      Claus Schichl
 @description: multicast module
 """
@@ -70,7 +70,8 @@ class BoswatchModule(ModuleBase):
         @param None
         @return None"""
         self._my_frequencies = set()
-        self.name = "Multicast"
+        self.instance_id = hex(id(self))[-4:]
+        self.name = f"MCAST_{self.instance_id}"
 
         self._auto_clear_timeout = int(self.config.get("autoClearTimeout", default=10))
         self._hard_timeout = self._auto_clear_timeout * 3
@@ -94,9 +95,6 @@ class BoswatchModule(ModuleBase):
         self._trigger_host = self.config.get("triggerHost", default=self._TRIGGER_HOST)
         self._trigger_port = int(self.config.get("triggerPort", default=self._TRIGGER_PORT))
 
-        self._block_delimiter = bool(self._delimiter_rics)
-        self._block_netident = bool(self._netident_rics)
-
         logging.info("[%s] Multicast module loaded", self.name)
 
         with BoswatchModule._lock:
@@ -118,28 +116,44 @@ class BoswatchModule(ModuleBase):
     def doWork(self, bwPacket):
         r"""!Process an incoming packet and handle multicast logic.
 
-        @param bwPacket: A BOSWatch packet instance
-        @return bwPacket, a list of packets, or False if blocked"""
+        Enriches packets with multicast metadata (mode, role, source).
+        Does NOT filter - all packets pass through, downstream modules handle filtering.
+
+        @param bwPacket: A BOSWatch packet instance or list of packets
+        @return bwPacket, a list of packets, or None if no processing"""
+        if isinstance(bwPacket, list):
+            result_packets = []
+            for single_packet in bwPacket:
+                processed = self.doWork(single_packet)
+                if processed is not None and processed is not False:
+                    if isinstance(processed, list):
+                        result_packets.extend(processed)
+                    else:
+                        result_packets.append(processed)
+            return result_packets if result_packets else None
+
         packet_dict = self._get_packet_data(bwPacket)
         msg = packet_dict.get("message")
         ric = packet_dict.get("ric")
         freq = packet_dict.get("frequency", "default")
         mode = packet_dict.get("mode")
 
+        # Handle wakeup triggers
         if msg == BoswatchModule._MAGIC_WAKEUP_MSG:
             if self._trigger_ric and ric != self._trigger_ric:
-                pass
-            else:
-                logging.debug("[%s] Wakeup trigger received (RIC=%s)", self.name, ric)
-                queued = self._get_queued_packets()
-                return queued if queued else False
+                return None
+            logging.debug("[%s] Wakeup trigger received (RIC=%s)", self.name, ric)
+            queued = self._get_queued_packets()
+            return queued if queued else None
 
+        # Only process POCSAG
         if mode != "pocsag":
             queued = self._get_queued_packets()
             return queued if queued else None
 
         self._my_frequencies.add(freq)
 
+        # Determine if this is a text-RIC
         is_text_ric = False
         if self._text_rics:
             is_text_ric = ric in self._text_rics and msg and msg.strip()
@@ -155,21 +169,23 @@ class BoswatchModule(ModuleBase):
         queued_packets = self._get_queued_packets()
         incomplete_packets = None if is_text_ric else self._check_instance_auto_clear(freq)
 
+        # === CONTROL PACKETS (netident, delimiter) ===
+        # Mark and pass through - no filtering!
+
         if self._netident_rics and ric in self._netident_rics:
             self._set_mcast_metadata(bwPacket, "control", "netident", ric)
-            result = self._combine_results(incomplete_packets, queued_packets, [bwPacket])
-            return self._filter_output(result)
+            return self._combine_results(incomplete_packets, queued_packets, [bwPacket])
 
         if self._delimiter_rics and ric in self._delimiter_rics:
             delimiter_incomplete = self._handle_delimiter(freq, ric, bwPacket)
-            result = self._combine_results(delimiter_incomplete, incomplete_packets, queued_packets)
-            return self._filter_output(result)
+            return self._combine_results(delimiter_incomplete, incomplete_packets, queued_packets)
 
+        # === TONE-RICs (no message) ===
         if not msg or not msg.strip():
             self._add_tone_ric_packet(freq, packet_dict)
-            result = self._combine_results(incomplete_packets, queued_packets, False)
-            return self._filter_output(result)
+            return self._combine_results(incomplete_packets, queued_packets, False)
 
+        # === TEXT-RICs (with message) ===
         if is_text_ric and msg:
             logging.info("[%s] Text-RIC received: RIC=%s", self.name, ric)
             alarm_packets = self._distribute_complete(freq, packet_dict)
@@ -180,18 +196,16 @@ class BoswatchModule(ModuleBase):
             if not alarm_packets:
                 logging.warning("[%s] No tone-RICs for text-RIC=%s", self.name, ric)
                 normal = self._enrich_normal_alarm(bwPacket, packet_dict)
-                result = self._combine_results(normal, incomplete_packets, queued_packets)
+                return self._combine_results(normal, incomplete_packets, queued_packets)
             else:
-                result = self._combine_results(alarm_packets, incomplete_packets, queued_packets)
-            return self._filter_output(result)
+                return self._combine_results(alarm_packets, incomplete_packets, queued_packets)
 
+        # === SINGLE ALARM (message but no text-RICs configured) ===
         if msg:
             normal = self._enrich_normal_alarm(bwPacket, packet_dict)
-            result = self._combine_results(normal, incomplete_packets, queued_packets)
-            return self._filter_output(result)
+            return self._combine_results(normal, incomplete_packets, queued_packets)
 
-        result = self._combine_results(incomplete_packets, queued_packets)
-        return self._filter_output(result)
+        return self._combine_results(incomplete_packets, queued_packets)
 
 # ============================================================
 # PACKET PROCESSING HELPERS (called by doWork)
@@ -220,31 +234,6 @@ class BoswatchModule(ModuleBase):
             logging.warning("[%s] Error: %s", self.name, e)
             return {}
 
-    def _filter_output(self, result):
-        r"""!Apply multicastRole filtering before output.
-
-        @param result: Single packet, list of packets, None or False
-        @return Final packet(s) or False if blocked"""
-        if result is None or result is False:
-            return result
-
-        def get_role(packet):
-            """Helper to extract multicastRole from Packet object"""
-            packet_dict = self._get_packet_data(packet)
-            return packet_dict.get("multicastRole")
-
-        if isinstance(result, list):
-            filtered = [p for p in result if self._should_output_packet(get_role(p))]
-            if not filtered:
-                logging.debug("All packets filtered out by multicastRole")
-                return False
-            return filtered if len(filtered) > 1 else filtered[0]
-        else:
-            if self._should_output_packet(get_role(result)):
-                return result
-            logging.debug("Packet filtered out: multicastRole=%s", get_role(result))
-            return False
-
     def _combine_results(self, *results):
         r"""!Combine multiple result sources into a single list or status.
 
@@ -265,17 +254,6 @@ class BoswatchModule(ModuleBase):
         if combined:
             return combined
         return False if has_false else None
-
-    def _should_output_packet(self, multicast_role):
-        r"""!Check if packet should be output based on role.
-
-        @param multicast_role: The role string to check
-        @return bool: True if allowed"""
-        if self._block_delimiter and multicast_role == "delimiter":
-            return False
-        if self._block_netident and multicast_role == "netident":
-            return False
-        return True
 
 # ============================================================
 # TONE-RIC BUFFER MANAGEMENT
