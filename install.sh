@@ -9,7 +9,7 @@
                 German BOS Information Script
                      by Bastian Schroll
 @file:        install.sh
-@date:        14.04.2020
+@date:        21.11.2025
 @author:      Bastian Schroll, Smeti
 @description: Installation File for BOSWatch3
 """
@@ -37,17 +37,17 @@ function exitcodefunction {
   module=$3
 
   if [ $errorcode -ne "0" ]; then
-    echo "Action: $action on $module failed." >> $boswatchpath/install/setup_log.txt
-    echo "Exitcode: $errorcode" >> $boswatchpath/install/setup_log.txt
+    echo "Action: ${action} on ${module} failed." >> ${boswatch_install_path}/setup_log.txt
+    echo "Exitcode: ${errorcode}" >> ${boswatch_install_path}/setup_log.txt
     echo ""
-    echo "Action: $action on $module failed."
-    echo "Exitcode: $errorcode"
+    echo "Action: ${action} on ${module} failed."
+    echo "Exitcode: ${errorcode}"
     echo ""
     echo " -> If you want to open an issue at https://github.com/BOSWatch/BW3-Core/issues"
-    echo "    please post the logfile, located at $boswatchpath/install/setup_log.txt"
+    echo "    please post the logfile, located at ${boswatch_install_path}/setup_log.txt"
     exit 1
   else
-    echo "Action: $action on $module ok." >> $boswatchpath/install/setup_log.txt
+    echo "Action: ${action} on ${module} ok." >> ${boswatch_install_path}/setup_log.txt
   fi
  }
 
@@ -70,12 +70,17 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+# check actual user and group (for right assignment venv)
+ACTUAL_USER=${SUDO_USER:-$USER}
+ACTUAL_GROUP=$(id -gn $ACTUAL_USER)
+
 echo "This may take several minutes... Don't panic!"
 echo ""
 echo "Caution, script does not install a webserver with PHP and MySQL"
 echo "So you have to make up manually if you want to use MySQL support"
 
 boswatchpath=/opt/boswatch3
+boswatch_install_path=/opt/boswatch3_install
 reboot=false
 
 for (( i=1; i<=$#; i=$i+2 )); do
@@ -83,11 +88,11 @@ for (( i=1; i<=$#; i=$i+2 )); do
     eval arg=\$$i
     eval arg2=\$$t
 
-    case $arg in
+    case ${arg} in
       -r|--reboot) reboot=true ;;
 
       -b|--branch)
-      case $arg2 in
+      case ${arg2} in
         dev|develop)  echo "       !!! WARNING: you are using the DEV BRANCH !!!       "; branch=dev ;;
         *) branch=master ;;
       esac ;;
@@ -98,128 +103,162 @@ for (( i=1; i<=$#; i=$i+2 )); do
     esac
 done
 
-mkdir -p $boswatchpath
-mkdir -p $boswatchpath/install
+mkdir -p ${boswatch_install_path}
+
+# Set path for VENV
+VENV_PATH=${boswatchpath}/venv
 
 echo ""
 
 tput cup 13 15
-echo "[ 1/9] [#--------]"
+echo "[ 1/10] [#---------]"
 tput cup 15 5
 echo "-> make an apt-get update................"
-apt-get update -y > $boswatchpath/install/setup_log.txt 2>&1
+apt-get update -y > ${boswatch_install_path}/setup_log.txt 2>&1
 
 tput cup 13 15
-echo "[ 2/9] [##-------]"
+echo "[ 2/10] [##--------]"
 tput cup 15 5
 echo "-> download GIT and other stuff.........."
-apt-get -y install git cmake build-essential libusb-1.0 qt4-qmake qt4-default libpulse-dev libx11-dev sox >> $boswatchpath/install/setup_log.txt 2>&1
+apt-get -y install git cmake build-essential libusb-1.0 qmake6 qt6-base-dev libpulse-dev libx11-dev sox >> ${boswatch_install_path}/setup_log.txt 2>&1
 exitcodefunction $? download stuff
 
 tput cup 13 15
-echo "[ 3/9] [###------]"
+echo "[ 3/10] [###-------]"
 tput cup 15 5
-echo "-> download Python, Yaml and other stuff.."
-sudo apt-get -y install python3 python3-yaml >> $boswatchpath/install/setup_log.txt 2>&1
+echo "-> download Python, venv, and other stuff.."
+# 'python3-venv' und 'python3-pip' must be installed for venv creation and management
+apt-get -y install python3 python3-pip python3-venv alsa-utils >> ${boswatch_install_path}/setup_log.txt 2>&1
 exitcodefunction $? download python
 
 tput cup 13 15
-echo "[ 4/9] [####-----]"
+echo "[ 4/10] [####------]"
 tput cup 15 5
 echo "-> download rtl_fm........................."
-cd $boswatchpath/install
-git clone --branch v0.5.4 https://github.com/osmocom/rtl-sdr.git rtl-sdr >> $boswatchpath/install/setup_log.txt 2>&1
+cd ${boswatch_install_path}
+git clone --branch master https://github.com/osmocom/rtl-sdr.git rtl-sdr >> ${boswatch_install_path}/setup_log.txt 2>&1
+cd ${boswatch_install_path}/rtl-sdr/
+git checkout 2659e2df31e592d74d6dd264a4f5ce242c6369c8
 exitcodefunction $? git-clone rtl-sdr
-cd $boswatchpath/install/rtl-sdr/
 
 tput cup 13 15
-echo "[ 5/9] [#####----]"
+echo "[ 5/10] [#####-----]"
 tput cup 15 5
 echo "-> compile rtl_fm......................"
 mkdir -p build && cd build
-cmake ../ -DINSTALL_UDEV_RULES=ON >> $boswatchpath/install/setup_log.txt 2>&1
+cmake ../ -DINSTALL_UDEV_RULES=ON >> ${boswatch_install_path}/setup_log.txt 2>&1
 exitcodefunction $? cmake rtl-sdr
 
-make >> $boswatchpath/install/setup_log.txt 2>&1
+make >> ${boswatch_install_path}/setup_log.txt 2>&1
 exitcodefunction $? make rtl-sdr
 
-make install >> $boswatchpath/install/setup_log.txt 2>&1
+make install >> ${boswatch_install_path}/setup_log.txt 2>&1
 exitcodefunction $? make-install rtl-sdr
 
-ldconfig >> $boswatchpath/install/setup_log.txt 2>&1
+ldconfig >> ${boswatch_install_path}/setup_log.txt 2>&1
 exitcodefunction $? ldconfig rtl-sdr
 
 tput cup 13 15
-echo "[ 6/9] [######---]"
+echo "[ 6/10] [######----]"
 tput cup 15 5
 echo "-> download multimon-ng................"
-cd $boswatchpath/install
-git clone --branch 1.1.8 https://github.com/EliasOenal/multimon-ng.git multimonNG >> $boswatchpath/install/setup_log.txt 2>&1
+cd ${boswatch_install_path}
+git clone --branch 1.1.8 https://github.com/EliasOenal/multimon-ng.git multimonNG >> ${boswatch_install_path}/setup_log.txt 2>&1
 exitcodefunction $? git-clone multimonNG
 
-cd $boswatchpath/install/multimonNG/
+cd ${boswatch_install_path}/multimonNG/
 
 tput cup 13 15
-echo "[ 7/9] [#######--]"
+echo "[ 7/10] [#######---]"
 tput cup 15 5
 echo "-> compile multimon-ng................."
 mkdir -p build
 cd build
-qmake ../multimon-ng.pro >> $boswatchpath/install/setup_log.txt 2>&1
+qmake6 ../multimon-ng.pro >> ${boswatch_install_path}/setup_log.txt 2>&1
 exitcodefunction $? qmake multimonNG
 
-make >> $boswatchpath/install/setup_log.txt 2>&1
+make >> ${boswatch_install_path}/setup_log.txt 2>&1
 exitcodefunction $? make multimonNG
 
-make install >> $boswatchpath/install/setup_log.txt 2>&1
+make install >> ${boswatch_install_path}/setup_log.txt 2>&1
 exitcodefunction $? qmakeinstall multimonNG
 
 tput cup 13 15
-echo "[ 8/9] [########-]"
+echo "[ 8/10] [########--]"
 tput cup 15 5
-echo "-> download BOSWatch3.................."
-cd $boswatchpath/
+echo "-> download BOSWatch3 and install dependencies..."
 
-case $branch in
-  "dev") git clone -b develop https://github.com/BOSWatch/BW3-Core >> $boswatchpath/install/setup_log.txt 2>&1 && \
+case ${branch} in
+  "dev") git clone -b develop https://github.com/BOSWatch/BW3-Core ${boswatchpath} >> ${boswatch_install_path}/setup_log.txt 2>&1 && \
     exitcodefunction $? git-clone BW3-Core-develop ;;
-  *) git clone -b master https://github.com/BOSWatch/BW3-Core >> $boswatchpath/install/setup_log.txt 2>&1 && \
+  *) git clone -b master https://github.com/BOSWatch/BW3-Core ${boswatchpath} >> ${boswatch_install_path}/setup_log.txt 2>&1 && \
     exitcodefunction $? git-clone BW3-Core ;;
 esac
 
 tput cup 13 15
-echo "[9/9] [#########]"
+echo "[ 9/10] [#########-]"
+tput cup 15 5
+echo "-> create and configure Python venv........"
+# generate the venv
+python3 -m venv ${VENV_PATH} >> ${boswatch_install_path}/setup_log.txt 2>&1
+exitcodefunction $? create-venv
+
+cd ${boswatchpath}/
+# install only the necessary runtime dependencies in the virtual environment
+${VENV_PATH}/bin/pip install -r requirements-runtime.txt >> ${boswatch_install_path}/setup_log.txt 2>&1
+exitcodefunction $? pip-install-runtime
+
+tput cup 13 15
+echo "[10/10] [##########]"
 tput cup 15 5
 echo "-> configure..........................."
-cd $boswatchpath/
-chmod +x *
+cd ${boswatchpath}/
 echo $'# BOSWatch3 - blacklist the DVB drivers to avoid conflicts with the SDR driver\n blacklist dvb_usb_rtl28xxu \n blacklist rtl2830\n blacklist dvb_usb_v2\n blacklist dvb_core' >> /etc/modprobe.d/boswatch_blacklist_sdr.conf
+exitcodefunction $? configure blacklist
+
+tput cup 15 5
+echo "-> set permissions......................"
+# set ownership of boswatch directory to actual user (for venv usage)
+chown -R ${ACTUAL_USER}:${ACTUAL_GROUP} ${boswatchpath}
+exitcodefunction $? chown boswatch-directory
+# executable rights for python scripts
+chmod +x ${boswatchpath}/*.py
+exitcodefunction $? chmod python-scripts
+# Log directory with setgid bit (2775) - new files inherit group ownership
+# This ensures that log files created by root (when running with sudo) 
+# still belong to the user's group and can be deleted/modified by the user
+mkdir -p ${boswatchpath}/log
+chown ${ACTUAL_USER}:${ACTUAL_GROUP} ${boswatchpath}/log
+chmod 2775 ${boswatchpath}/log
+exitcodefunction $? chmod log-directory
+# Config files readable and writable for owner
+chmod 664 ${boswatchpath}/config/*.yaml 2>/dev/null || true
 
 tput cup 17 1
-tput rev # Schrift zur besseren lesbarkeit Revers
-echo "BOSWatch is now installed in $boswatchpath/   Installation ready!"
-tput sgr0 # Schrift wieder Normal
+tput rev # letters for better readability inverted
+echo "BOSWatch is now installed in ${boswatchpath}/ and the venv in ${VENV_PATH}/. Installation ready!"
+tput sgr0 # letters back to normal
 tput cup 19 3
 echo "Watch out: to run BOSWatch3 you have to modify the server.yaml and client.yaml!"
 echo "Do the following step to do so:"
-echo "sudo nano $boswatchpath/config/client.yaml   eg. server.yaml"
+echo "sudo nano ${boswatchpath}/config/client.yaml   eg. server.yaml"
 echo "and modify the config as you need. This step is optional if you are upgrading an old version of BOSWatch3."
 echo "You can read the instructions on https://docs.boswatch.de/"
-tput setaf 1 # Rote Schrift
-echo "Please REBOOT bevor the first start"
-tput setaf 9 # Schrift zurücksetzen
-echo "start Boswatch3 with"
+tput setaf 1 # red letters
+echo "Please REBOOT before the first start"
+tput setaf 9 # reset letters
+echo "start Boswatch3 with (mind activation of venv!:"
+echo "source ${VENV_PATH}/bin/activate"
 echo "sudo python3 bw_client.py -c client.yaml   and    sudo python3 bw_server.py -c server.yaml"
+echo "or directly without activation:"
+echo "sudo ${VENV_PATH}/bin/python3 bw_client.py -c client.yaml   and    sudo ${VENV_PATH}/bin/python3 bw_server.py -c server.yaml"
 
 tput cnorm
 
 # cleanup
-mkdir $boswatchpath/log/install -p
-mv $boswatchpath/install/setup_log.txt $boswatchpath/log/install/
-rm $boswatchpath/install/ -R
-
-mv $boswatchpath/BW3-Core/* $boswatchpath/
-rm $boswatchpath/BW3-Core -R
+mkdir ${boswatchpath}/log/install -p
+mv ${boswatch_install_path}/setup_log.txt ${boswatchpath}/log/install/
+rm -rf ${boswatch_install_path} # rf ist safer, as ${boswatch_install_path} is known
 
 if [ $reboot = "true" ]; then
   /sbin/reboot

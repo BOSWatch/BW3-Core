@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -27,18 +27,21 @@ logging.debug("- %s loaded", __name__)
 
 
 class RouterManager:
-    """!Class to manage all routers"""
+    r"""!Class to manage all routers"""
+
     def __init__(self):
         """!Create new router"""
+        self.config = None
         self._routerDict = {}
         self._startTime = int(time.time())
 
     # if there is an error, router list would be empty (see tmp variable)
     def buildRouters(self, config):
-        """!Initialize Routers from given config file
+        r"""!Initialize Routers from given config file
 
         @param config: instance of ConfigYaml class
         @return True or False"""
+        self.config = config
         self._routerDict = {}  # all routers and instances of modules/plugins would be destroyed
         routerDict_tmp = {}
         logging.debug("build routers")
@@ -92,9 +95,8 @@ class RouterManager:
                         logging.error("unknown type '%s' in %s", routeType, route)
                         return False
 
-                # except ModuleNotFoundError:  # only since Py3.6
-                except ImportError:
-                    logging.error("%s not found: %s", route.get("type"), route.get("res"))
+                except ModuleNotFoundError:
+                    logging.exception("%s not found: %s", route.get("type"), route.get("res"))
                     return False
 
         logging.debug("finished building routers")
@@ -103,7 +105,7 @@ class RouterManager:
         return True
 
     def runRouters(self, routerRunList, bwPacket):
-        """!Run given Routers
+        r"""!Run given Routers
 
         @param routerRunList: string or list of router names in string form
         @param bwPacket: instance of Packet class"""
@@ -116,10 +118,11 @@ class RouterManager:
             else:
                 logging.warning("unknown router: %s", routerName)
 
-        self._saveStats()  # write stats to stats file
+        if self.config.get("server", "logging", default=False):
+            self._saveStats()  # write stats to stats file
 
     def cleanup(self):
-        """!Run cleanup routines for all loaded route points"""
+        r"""!Run cleanup routines for all loaded route points"""
         for name, routerObject in self._routerDict.items():
             logging.debug("Start cleanup for %s", name)
             for routePoint in routerObject.routeList:
@@ -127,7 +130,7 @@ class RouterManager:
                     routePoint.cleanup()
 
     def _showRouterRoute(self):
-        """!Show the routes of all routers"""
+        r"""!Show the routes of all routers"""
         for name, routerObject in self._routerDict.items():
             logging.debug("Route for %s", name)
             counter = 0
@@ -136,7 +139,7 @@ class RouterManager:
                 logging.debug(" %d. %s", counter, routePoint.name)
 
     def _saveStats(self):
-        """!Save current statistics to file"""
+        r"""!Save current statistics to file"""
         lines = []
         for name, routerObject in self._routerDict.items():
             lines.append("[" + name + "]")

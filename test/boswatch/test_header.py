@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -26,10 +26,10 @@ def setup_function(function):
 
 
 def test_logoToLog():
-    """!Test logo to log"""
+    r"""!Test logo to log"""
     assert header.logoToLog()
 
 
 def test_infoToLog():
-    """!Test info to log"""
+    r"""!Test info to log"""
     assert header.infoToLog()

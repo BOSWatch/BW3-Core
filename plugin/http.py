@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -27,44 +27,44 @@ logging.debug("- %s loaded", __name__)
 
 
 class BoswatchPlugin(PluginBase):
-    """!Description of the Plugin"""
+    r"""!Description of the Plugin"""
     def __init__(self, config):
-        """!Do not change anything here!"""
+        r"""!Do not change anything here!"""
         super().__init__(__name__, config)  # you can access the config class on 'self.config'
 
     def fms(self, bwPacket):
-        """!Called on FMS alarm
+        r"""!Called on FMS alarm
 
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
         urls = self.config.get("fms")
-        self.makeRequests(urls)
+        self._makeRequests(urls)
 
     def pocsag(self, bwPacket):
-        """!Called on POCSAG alarm
+        r"""!Called on POCSAG alarm
 
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
         urls = self.config.get("pocsag")
-        self.makeRequests(urls)
+        self._makeRequests(urls)
 
     def zvei(self, bwPacket):
-        """!Called on ZVEI alarm
+        r"""!Called on ZVEI alarm
 
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
         urls = self.config.get("zvei")
-        self.makeRequests(urls)
+        self._makeRequests(urls)
 
     def msg(self, bwPacket):
-        """!Called on MSG packet
+        r"""!Called on MSG packet
 
         @param bwPacket: bwPacket instance
         Remove if not implemented"""
         urls = self.config.get("msg")
-        self.makeRequests(urls)
+        self._makeRequests(urls)
 
-    def makeRequests(self, urls):
+    def _makeRequests(self, urls):
         """Parses wildcard urls and handles asynchronus requests
 
         @param urls: array of urls"""
@@ -72,10 +72,10 @@ class BoswatchPlugin(PluginBase):
 
         loop = asyncio.get_event_loop()
 
-        future = asyncio.ensure_future(self.asyncRequests(urls))
+        future = asyncio.ensure_future(self._asyncRequests(urls))
         loop.run_until_complete(future)
 
-    async def asyncRequests(self, urls):
+    async def _asyncRequests(self, urls):
         """Handles asynchronus requests
 
         @param urls: array of urls to send requests to"""
@@ -83,13 +83,13 @@ class BoswatchPlugin(PluginBase):
 
         async with ClientSession() as session:
             for url in urls:
-                task = asyncio.ensure_future(self.fetch(url, session))
+                task = asyncio.ensure_future(self._fetch(url, session))
                 tasks.append(task)
 
             responses = asyncio.gather(*tasks)
             await responses
 
-    async def fetch(self, url, session):
+    async def _fetch(self, url, session):
         """Fetches requests
 
         @param url: url

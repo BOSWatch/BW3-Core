@@ -7,12 +7,13 @@ edit_uri: edit/develop/docu/docs/
 nav:
   # - BW3: index.md
   - Quick Start:
-      - Installation: tbd.md
+      - Installation: install.md
       - Konfiguration: config.md
-#      - BOSWatch benutzen: tbd.md
-#      - Als Service einrichten: tbd.md
+      - BOSWatch benutzen: usage.md
+      - Als Service einrichten: service.md
+      - Konfigurations Editor: config-editor.html
   - Informationen:
-       - Server/Cient Prinzip: information/serverclient.md
+       - Server/Client Prinzip: information/serverclient.md
        - Broadcast Service: information/broadcast.md
 #      - Modul/Plugin Konzept: tbd.md
        - Routing Mechanismus: information/router.md
@@ -22,9 +23,12 @@ nav:
       - Geocoding: modul/geocoding.md
       - Mode Filter: modul/mode_filter.md
       - Regex Filter: modul/regex_filter.md
+      - Double Filter: modul/double_filter.md
   - Plugins:
       - Http: plugin/http.md
       - Telegram: plugin/telegram.md
+      - Divera: plugin/divera.md
+      - MySQL: plugin/mysql.md
   - Entwickler:
     - Eigenes Modul/Plugin schreiben: develop/ModulPlugin.md
     - BOSWatch Alarmpaket Format: develop/packet.md
@@ -38,4 +42,8 @@ theme:
   highlightjs: true
   hljs_style: github
 
+extra_css:
+  - stylesheets/extra.css
 
+markdown_extensions:
+  - attr_list

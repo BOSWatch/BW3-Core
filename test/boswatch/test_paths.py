@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -27,23 +27,23 @@ def setup_function(function):
 
 
 def test_fileExists():
-    """!load a local config file"""
+    r"""!load a local config file"""
     assert paths.fileExist("README.md")
 
 
 def test_fileNotExists():
-    """!load a local config file"""
+    r"""!load a local config file"""
     assert not paths.fileExist("notFound.txt")
 
 
 def test_makeDirNotExisting():
-    """!load a local config file"""
+    r"""!load a local config file"""
     assert paths.makeDirIfNotExist("UnItTeSt")
     os.removedirs("UnItTeSt")
 
 
 def test_makeDirExisting():
-    """!load a local config file"""
+    r"""!load a local config file"""
     paths.makeDirIfNotExist("UnItTeSt")
     assert paths.makeDirIfNotExist("UnItTeSt")
     os.removedirs("UnItTeSt")

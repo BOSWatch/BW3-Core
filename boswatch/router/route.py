@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -21,9 +21,9 @@ logging.debug("- %s loaded", __name__)
 
 
 class Route:
-    """!Class for single routing points"""
+    r"""!Class for single routing points"""
     def __init__(self, name, callback, statsCallback=None, cleanupCallback=None):
-        """!Create a instance of an route point
+        r"""!Create a instance of an route point
 
         @param name: name of the route point
         @param callback: instance of the callback function

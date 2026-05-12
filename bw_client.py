@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -10,7 +10,7 @@
                      by Bastian Schroll
 
 @file:        bw_client.py
-@date:        09.12.2017
+@date:        16.07.2025
 @author:      Bastian Schroll
 @description: BOSWatch client application
 """
@@ -27,8 +27,31 @@ if not paths.makeDirIfNotExist(paths.LOG_PATH):
     print("cannot find/create log directory: %s", paths.LOG_PATH)
     exit(1)
 
+import logging
 import logging.config
-logging.config.fileConfig(paths.CONFIG_PATH + "logger_client.ini")
+import logging.handlers
+import argparse
+import os
+import builtins
+
+# parsing arguments first - this is needed to load the logging config file with the correct log filename
+parser = argparse.ArgumentParser(prog="bw_client.py",
+                                 description="""BOSWatch is a Python Script to receive and
+                                 decode german BOS information with rtl_fm and multimon-NG""",
+                                 epilog="""More options you can find in the extern client.ini
+                                 file in the folder /config""")
+# With -h or --help you get the Args help
+parser.add_argument("-c", "--config", help="Name to configuration File", required=True)
+parser.add_argument("-t", "--test", help="Start Client with testdata-set", action="store_true")
+args = parser.parse_args()
+
+# set the log filename in the global namespace (mandatory for fileConfig)
+basename = os.path.splitext(args.config)[0]
+log_filename = f"{paths.LOG_PATH}{basename}.log"
+builtins.log_filename = log_filename
+
+logging.config.fileConfig(paths.CONFIG_PATH + "logger_client.ini", disable_existing_loggers=False)
+
 logging.debug("")
 logging.debug("######################## NEW LOG ############################")
 logging.debug("BOSWatch client has started ...")
@@ -46,24 +69,16 @@ logging.debug("Import BOSWatch modules")
 from boswatch.configYaml import ConfigYAML
 from boswatch.network.client import TCPClient
 from boswatch.network.broadcast import BroadcastClient
-from boswatch.decoder.decoder import Decoder
 from boswatch.utils import header
 from boswatch.utils import misc
 from boswatch.inputSource.sdrInput import SdrInput
 from boswatch.inputSource.lineInInput import LineInInput
+from boswatch.inputSource.pulseaudioInput import PulseAudioInput
+from boswatch.decoder.decoder import Decoder  # for test mode
 
 header.logoToLog()
 header.infoToLog()
 
-# With -h or --help you get the Args help
-parser = argparse.ArgumentParser(prog="bw_client.py",
-                                 description="""BOSWatch is a Python Script to receive and
-                                 decode german BOS information with rtl_fm and multimon-NG""",
-                                 epilog="""More options you can find in the extern client.ini
-                                 file in the folder /config""")
-parser.add_argument("-c", "--config", help="Name to configuration File", required=True)
-parser.add_argument("-t", "--test", help="Start Client with testdata-set", action="store_true")
-args = parser.parse_args()
 
 bwConfig = ConfigYAML()
 if not bwConfig.loadConfigFile(paths.CONFIG_PATH + args.config):
@@ -91,6 +106,8 @@ try:
             inputSource = SdrInput(inputQueue, bwConfig.get("inputSource", "sdr"), bwConfig.get("decoder"))
         elif bwConfig.get("client", "inputSource") == "lineIn":
             inputSource = LineInInput(inputQueue, bwConfig.get("inputSource", "lineIn"), bwConfig.get("decoder"))
+        elif bwConfig.get("client", "inputSource") == "PulseAudio":
+            inputSource = PulseAudioInput(inputQueue, bwConfig.get("inputSource", "PulseAudio"), bwConfig.get("decoder"))
         else:
             logging.fatal("Invalid input source: %s", bwConfig.get("client", "inputSource"))
             exit(1)
@@ -103,7 +120,8 @@ try:
         for testData in testFile:
             if (len(testData.rstrip(' \t\n\r')) > 1) and ("#" not in testData[0]):
                 logging.info("Testdata: %s", testData.rstrip(' \t\n\r'))
-                inputQueue.put_nowait((testData.rstrip(' \t\n\r'), time.time()))
+                bwPacket = Decoder.decode(testData.rstrip(' \t\n\r'))
+                inputQueue.put_nowait((bwPacket, time.time()))
         logging.debug("finished reading testdata")
 
     bwClient = TCPClient()
@@ -120,12 +138,8 @@ try:
             data = inputQueue.get()
             logging.info("get data from queue (waited %0.3f sec.)", time.time() - data[1])
             logging.debug("%s packet(s) still waiting in queue", inputQueue.qsize())
-
-            bwPacket = Decoder.decode(data[0])
+            bwPacket = data[0]
             inputQueue.task_done()
-
-            if bwPacket is None:
-                continue
 
             bwPacket.printInfo()
             misc.addClientDataToPacket(bwPacket, bwConfig)

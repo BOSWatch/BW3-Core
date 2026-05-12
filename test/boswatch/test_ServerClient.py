@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -32,13 +32,13 @@ def setup_function(function):
 
 @pytest.fixture
 def getClient():
-    """!Build and serve a TCPCLient"""
+    r"""!Build and serve a TCPCLient"""
     return TCPClient()
 
 
 @pytest.fixture
 def getServer():
-    """!Build and serve a TCPServer"""
+    r"""!Build and serve a TCPServer"""
     dataQueue = queue.Queue()
     testServer = TCPServer(dataQueue)
     return testServer
@@ -46,7 +46,7 @@ def getServer():
 
 @pytest.fixture
 def getRunningServer(getServer):
-    """!Build and serve a still running TCPServer"""
+    r"""!Build and serve a still running TCPServer"""
     logging.debug("start server")
     assert getServer.start()
     while not getServer.isRunning:
@@ -58,40 +58,40 @@ def getRunningServer(getServer):
 
 
 def test_clientConnectFailed(getClient):
-    """!Connect to a non available server"""
+    r"""!Connect to a non available server"""
     assert not getClient.connect()
 
 
 def test_clientDisconnectFailed(getClient):
-    """!Disconnect while no connection is established"""
+    r"""!Disconnect while no connection is established"""
     assert getClient.disconnect()
 
 
 def test_clientTransmitFailed(getClient):
-    """!Transmit while no connection is established"""
+    r"""!Transmit while no connection is established"""
     assert not getClient.transmit("test")
 
 
 def test_clientReceiveFailed(getClient):
-    """!Receive while no connection is established"""
+    r"""!Receive while no connection is established"""
     assert not getClient.receive()
 
 
 def test_clientConnect(getClient, getRunningServer):
-    """!Connect to a server"""
+    r"""!Connect to a server"""
     assert getClient.connect()
     assert getClient.disconnect()
 
 
 def test_doubleConnect(getClient, getRunningServer):
-    """!Connect to a server twice"""
+    r"""!Connect to a server twice"""
     assert getClient.connect()
     assert getClient.connect()
     assert getClient.disconnect()
 
 
 def test_clientReconnect(getClient, getRunningServer):
-    """!Try a reconnect after a established connection"""
+    r"""!Try a reconnect after a established connection"""
     assert getClient.connect()
     assert getClient.disconnect()
     assert getClient.connect()
@@ -99,7 +99,7 @@ def test_clientReconnect(getClient, getRunningServer):
 
 
 def test_clientMultiConnect(getClient, getRunningServer):
-    """!Connect with 2 clients to the server"""
+    r"""!Connect with 2 clients to the server"""
     assert getClient.connect()
     testClient2 = TCPClient()
     assert testClient2.connect()
@@ -112,7 +112,7 @@ def test_clientMultiConnect(getClient, getRunningServer):
 
 
 def test_clientCommunicate(getClient, getRunningServer):
-    """!Try to send data to the server and check on '[ack]'"""
+    r"""!Try to send data to the server and check on '[ack]'"""
     assert getClient.connect()
     assert getClient.transmit("test")
     assert getClient.receive() == "[ack]"
@@ -121,7 +121,7 @@ def test_clientCommunicate(getClient, getRunningServer):
 
 @pytest.mark.skip("needs fixture for more than one client")
 def test_clientMultiCommunicate(getServer):
-    """!Try to send data to the server with 3 clients and check on '[ack]'"""
+    r"""!Try to send data to the server with 3 clients and check on '[ack]'"""
     # connect all
     testClient1 = TCPClient()
     assert testClient1.connect()
@@ -146,26 +146,26 @@ def test_clientMultiCommunicate(getServer):
 
 
 def test_serverRestart(getRunningServer):
-    """!Test a stop and restart of the server"""
+    r"""!Test a stop and restart of the server"""
     assert getRunningServer.stop()
     assert getRunningServer.start()
     assert getRunningServer.stop()
 
 
 def test_serverStopFailed(getServer):
-    """!Test to stop a stopped server"""
+    r"""!Test to stop a stopped server"""
     assert getServer.stop()
 
 
 def test_serverDoubleStart(getServer):
-    """!Test to start the server twice"""
+    r"""!Test to start the server twice"""
     assert getServer.start()
     assert getServer.start()
     assert getServer.stop()
 
 
 def test_serverStartTwoInstances():
-    """!Test to start two server different server instances"""
+    r"""!Test to start two server different server instances"""
     dataQueue = queue.Queue()
     testServer1 = TCPServer(dataQueue)
     testServer2 = TCPServer(dataQueue)
@@ -179,7 +179,7 @@ def test_serverStartTwoInstances():
 
 
 def test_serverStopsWhileConnected(getRunningServer, getClient):
-    """!Shutdown server while client is connected"""
+    r"""!Shutdown server while client is connected"""
     getClient.connect()
     getRunningServer.stop()
     timeout = 5
@@ -193,7 +193,7 @@ def test_serverStopsWhileConnected(getRunningServer, getClient):
 
 @pytest.mark.skip("needs fixture for more than one client")
 def test_serverGetOutput(getRunningServer):
-    """!Send data to server with 2 clients, check '[ack]' and data on server queue"""
+    r"""!Send data to server with 2 clients, check '[ack]' and data on server queue"""
     # connect all
     testClient1 = TCPClient()
     assert testClient1.connect()
@@ -217,7 +217,7 @@ def test_serverGetOutput(getRunningServer):
 
 
 def test_serverHighLoad(getRunningServer):
-    """!High load server test with 10 send threads each will send 100 msg with 324 bytes size"""
+    r"""!High load server test with 10 send threads each will send 100 msg with 324 bytes size"""
     logging.debug("start sendThreads")
     threads = []
     for thr_id in range(10):

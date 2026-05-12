@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -86,7 +86,7 @@ try:
 
     incomingQueue = queue.Queue()
     bwServer = TCPServer(incomingQueue)
-    if bwServer.start():
+    if bwServer.start(port=bwConfig.get('server', 'port', default=8080)):
 
         while 1:
             if incomingQueue.empty():  # pause only when no data

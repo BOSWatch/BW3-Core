@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""!
+r"""!
     ____  ____  ______       __      __       __       _____
    / __ )/ __ \/ ___/ |     / /___ _/ /______/ /_     |__  /
   / __  / / / /\__ \| | /| / / __ `/ __/ ___/ __ \     /_ <
@@ -23,7 +23,7 @@ logging.debug("- %s loaded", __name__)
 
 
 class LineInInput(InputBase):
-    """!Class for the line-in input source"""
+    r"""!Class for the line-in input source"""
 
     def _runThread(self, dataQueue, lineInConfig, decoderConfig):
         lineInProc = None
@@ -40,21 +40,7 @@ class LineInInput(InputBase):
             lineInProc.setStderr(open(paths.LOG_PATH + "asla.log", "a"))
             lineInProc.start()
 
-            mmProc = ProcessManager(str(lineInConfig.get("mmPath", default="multimon-ng")), textMode=True)
-            if decoderConfig.get("fms", default=0):
-                mmProc.addArgument("-a FMSFSK")
-            if decoderConfig.get("zvei", default=0):
-                mmProc.addArgument("-a ZVEI1")
-            if decoderConfig.get("poc512", default=0):
-                mmProc.addArgument("-a POCSAG512")
-            if decoderConfig.get("poc1200", default=0):
-                mmProc.addArgument("-a POCSAG1200")
-            if decoderConfig.get("poc2400", default=0):
-                mmProc.addArgument("-a POCSAG2400")
-            mmProc.addArgument("-f alpha")
-            mmProc.addArgument("-t raw -")
-            mmProc.setStdin(lineInProc.stdout)
-            mmProc.setStderr(open(paths.LOG_PATH + "multimon-ng.log", "a"))
+            mmProc = self.getDecoderInstance(decoderConfig, lineInProc.stdout)
             mmProc.start()
 
             logging.info("start decoding")
@@ -62,6 +48,11 @@ class LineInInput(InputBase):
                 if not lineInProc.isRunning:
                     logging.warning("asla was down - try to restart")
                     lineInProc.start()
+
+                    if lineInProc.isRunning:
+                        logging.info("rtl_fm is back up - restarting multimon...")
+                        mmProc.setStdin(lineInProc.stdout)
+                        mmProc.start()
                 elif not mmProc.isRunning:
                     logging.warning("multimon was down - try to restart")
                     mmProc.start()

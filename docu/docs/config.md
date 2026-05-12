@@ -11,7 +11,7 @@ zwingend in die Konfiguration eingetragen werden.
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |name|Name zur Identifizierung der Client Instanz||
-|inputSource|Art der zu nutzenden Input Quelle (`sdr` oder `lineIn`)||
+|inputSource|Art der zu nutzenden Input Quelle (`sdr`, `lineIn` oder `PulseAudio`)||
 |useBroadcast|Verbindungsdaten per [Broadcast](information/broadcast.md) beziehen|no|
 |reconnectDelay|Verzögerung für erneuten Verbindungsversuch zum Server|3|
 |sendTries|Anzahl der Sendeversuche eines Pakets|3|
@@ -36,7 +36,10 @@ server:
 
 ---
 ### `inputSource:`
-Es gibt die Auswahl zwischen `sdr` oder `lineIn` als Input Quelle
+Es gibt die Auswahl zwischen `sdr`, `lineIn` oder `PulseAudio` als Input Quelle.  
+Mit `sdr` wird direkt per **rtl_sdr** die zu empfangende Frequenz an Multimon-NG weitergereicht.  
+Mit `lineIn` wird eine Quelle die (per **ALSA**) direkt an die Soundkarte angeschlossen ist an Multimon-NG weitergereicht.  
+Mit `PulseAudio` wird ein PulseAudio-Sink an Multimon-NG weitergereicht, z.B. in Kombination mit [RTLSDR-Airband](https://github.com/szpajder/RTLSDR-Airband) und/oder Docker.
 
 #### `sdr:`
 |Feld|Beschreibung|Default|
@@ -46,8 +49,8 @@ Es gibt die Auswahl zwischen `sdr` oder `lineIn` als Input Quelle
 |error|Frequenz Abweichung in ppm|0|
 |squelch|Einstellung der Rauschsperre|1|
 |gain|Verstärkung des Eingangssignals|100|
+|fir_size| niedrig leckagearmen Filter|None|
 |rtlPath|Pfad zur rtl_fm Binary|rtl_fm|
-|mmPath|Pfad zur multimon-ng Binary|multimon-ng|
 
 **Beispiel:**
 ```yaml
@@ -59,14 +62,12 @@ inputSource:
     squelch: 1
     gain: 100
     rtlPath: /usr/bin/rtl-fm
-    mmPath: /opt/multimon/multimon-ng
 ```
 
 #### `lineIn:`
 |Feld|Beschreibung|Default|
 |----|------------|-------|
 |device|die device Id der Soundkarte|1|
-|mmPath|Pfad zur multimon-ng Binary|multimon-ng|
 
 **Device herausfinden**
 Durch eingabe des Befehls `aplay -l` werden alle Soundkarten ausgegeben. Das schaut ungefähr so aus:
@@ -107,9 +108,30 @@ inputSource:
   lineIn:
     card: 1
     device: 0
-    mmPath: /opt/multimon/multimon-ng
 ```
 
+#### `PulseAudio:`
+|Feld|Beschreibung|Default|
+|----|------------|-------|
+|device|Der Sinks-Name der Quelle|boswatch|
+
+
+**Device herausfinden**
+Durch eingabe des Befehls  `pacmd list-sinks | grep name:` werden alle Sinks ausgegeben. Beispiel:
+```console
+bash-5.0# pacmd list-sinks | grep name:
+	name: <boswatch>
+```
+
+In der Konfiguration wird das Feld `device` nun auf den den Namen des gewünschten Sinks gesetzt (ohne spitze Klammern, <>).
+
+**Beispiel:**
+```yaml
+inputSource:
+  ...
+  PulseAudio:
+    device: boswatch
+```
 ---
 ### `decoder:`
 |Feld|Beschreibung|Default|
@@ -119,17 +141,32 @@ inputSource:
 |poc512|POCSAG Decoder (Bitrate 512)|no|
 |poc1200|POCSAG Decoder (Bitrate 1200)|no|
 |poc2400|POCSAG Decoder (Bitrate 2400)|no|
+|path|Pfad zur multimon-ng Binary|multimon-ng|
+|char|multimon-ng char-Set|not set|
+
+**Beispiel:**
+```yaml
+decoder:
+  fms: yes
+  zvei: yes
+  poc512: no
+  poc1200: no
+  poc2400: yes
+  path: /opt/multimon/multimon-ng
+  char: DE
+```
 
 ---
-## Server
-Nachfolgend alle Paramater der Server Konfiguration
+<h2 id="server-configuration">Server</h2>
+Nachfolgend alle Parameter der Server Konfiguration
 
 ### `server:`
 |Feld|Beschreibung|Default|
 |----|------------|-------|
-|port|Port auf dem der Server lauscht|8080
+|port|Port auf dem der Server lauscht| 8080  
 |name|Name zur Identifizierung der Server Instanz||
 |useBroadcast|Verbindungsdaten per Broadcast Server bereitstellen|no|
+|logging|Aktivieren / Deaktivieren des Schreibens von Statistik-Dateien|False|
 
 ---
 ### `alarmRouter:`
@@ -179,3 +216,16 @@ router:
 ## Module/Plugins
 
 Die möglichen Einstellungen der einzelnen Module und Plugins sind im jeweiligen Kapitel aufgelistet.
+
+---
+## Logging
+
+Um den Datenträger, auf dem Boswatch läuft, zu schützen ist das Logging in
+Dateien standartmäßig auf Fehlermeldungen begrenzt.
+In den Dateien `logger_client.ini` bzw `logger_server.ini` kann dies
+entsprechend im Bereich `handler_file` unter `level=` angepasst werden.
+
+Das Schreiben einer Statistik-Datei, welche die Durchläufe aller Module
+und Plugins dokumentiert, kann in der Server-Konfiguration über den Parameter
+`logging` aktiviert werden.
+(siehe [Server-Konfiguration](#server-configuration))
