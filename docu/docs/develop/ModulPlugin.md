@@ -79,7 +79,8 @@ Eine Auflistung der bereitgestellten Informationen findet sich im entsprechenden
 **Bitte beachten:**
 
 - Selbst vom Modul hinzugefügte Felder **müssen** in der Modul Dokumentation unter `Paket Modifikation` aufgeführt werden.
-- Sollte ein Modul oder Plugin Felder benutzen, welche in einem anderen Modul erstellt werden, **muss** dies im Punkt `Abhänigkeiten` des jeweiligen Moduls oder Plugins dokumentiert werden.
+- Sollte ein Modul oder Plugin Felder benutzen, welche in einem anderen Modul erstellt werden, **muss** dies im Punkt `Abhängigkeiten` des jeweiligen Moduls oder Plugins dokumentiert werden.
+- Benötigt das Modul Bibliotheken, welche **nicht** standardmäßig in Python geliefert werden, **muss** dies unter `Externe Abhängigkeiten` vermerkt sein. ZUSÄTZLICH **muss** die Bibliothek in die `requirements-runtime.txt` eingetragen werden.
 
 ### Rückgabewert bei Modulen
 Module können Pakete beliebig verändern. Diese Änderungen werden im Router entsprechend weitergeleitet.
