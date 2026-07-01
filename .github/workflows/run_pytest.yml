@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     strategy:
       matrix:
         os: [ubuntu-latest]
@@ -16,10 +15,10 @@ jobs:
     runs-on: ${{matrix.os}}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up Python ${{matrix.python-version}} at ${{matrix.os}}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -28,6 +27,16 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         mkdir -p log/
+
+    - name: Run Flake8
+      run: |
+        flake8 . --extend-ignore=E402,E501,E722,W504,W605
+        # E402 # import not at top
+        # E501 # line too long
+        # E722 # do not use bare 'except'
+        # W504 # line break after binary operator
+        # W605 # invalid escape sequence
+        # flake8-max-line-length = 99
 
     - name: Test with pytest
       run: |
