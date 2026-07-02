@@ -6,33 +6,10 @@
 #                German BOS Information Script
 #                     by Bastian Schroll
 
-# virtual environment
-venv/
-.venv/
-
-# generated files
-stats_*
-log/
-docu/docs/api/html
-docu/site/
-
-# Logo Photoshop file
-*.psd
-
-# Coverage Report
-.coverage
-
-# Python precompiled
-*.pyc
-
-# Visual Studio Code
-.pytest_cache/
-
-# PyCharm IDE
-.cache/
-.idea/
-
-# Eclipse IDE (PyDev)
-.settings/
-.project
-.pydevproject
+[flake8]
+extend-ignore = E402, E501, E722, W504, W605
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    venv
