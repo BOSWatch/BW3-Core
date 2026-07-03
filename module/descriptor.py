@@ -10,7 +10,7 @@ r"""!
                      by Bastian Schroll
 
 @file:        descriptor.py
-@date:        03.12.2025
+@date:        01.07.2026
 @author:      Bastian Schroll
 @description: Module to add descriptions to bwPackets with CSV and Regex support
 """
@@ -207,7 +207,7 @@ class BoswatchModule(ModuleBase):
             # Search for matching description in unified cache
             description = self._find_description(descriptor_key, scan_value, bwPacket)
 
-            if description:
+            if description is not None:
                 bwPacket.set(descr_field, description)
                 logging.info("Description set: '%s' -> '%s'", scan_value, description)
             else:
