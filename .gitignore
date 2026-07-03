@@ -7,7 +7,8 @@
 #                     by Bastian Schroll
 
 # virtual environment
-\venv/
+venv/
+.venv/
 
 # generated files
 stats_*
@@ -19,20 +20,19 @@ docu/site/
 *.psd
 
 # Coverage Report
-\.coverage
+.coverage
 
 # Python precompiled
 *.pyc
 
 # Visual Studio Code
-\.vscode/
-\.pytest_cache/
+.pytest_cache/
 
 # PyCharm IDE
-\.cache/
-\.idea/
+.cache/
+.idea/
 
 # Eclipse IDE (PyDev)
-\.settings/
-\.project
-\.pydevproject
+.settings/
+.project
+.pydevproject

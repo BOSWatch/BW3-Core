@@ -16,7 +16,7 @@ cd /opt/boswatch3
 
 Das Installationsskript `install_service.py` wird anschließend mit Root-Rechten ausgeführt:
 ```bash
-sudo python3 install_service.py
+sudo /opt/boswatch3/venv/bin/python3 install_service.py
 ```
 Es folgt ein interaktiver Ablauf, bei dem du gefragt wirst, welche YAML-Dateien installiert oder entfernt werden sollen.
 
@@ -99,7 +99,7 @@ cd /opt/boswatch3
 After that, run the install script `install_service.py` with root permissions:
 
 ```bash
-sudo python3 install_service.py -l en 
+sudo /opt/boswatch3/venv/bin/python3 install_service.py -l en 
 ```
 
 You will be guided through an interactive selection to install or remove desired services.

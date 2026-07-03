@@ -1,0 +1,12 @@
+# requirements-runtime.txt (dependencies needed at runtime)
+# for venv all needed dependencies
+
+# if >=x.xx.x in comment, last known stable version
+# after that, purpose of library
+
+pyyaml #>=6.0.3 overall
+requests #>=2.32.5 Telegram
+aiohttp # HTTP, Divera
+mysql-connector-python # MySQL
+geocoder # Geocoding
+colorama #>=0.4.6 Install_service.py

@@ -3,8 +3,8 @@ Nach dem Neustart kannst du BOSWatch3 wie folgt starten:
 
 ```bash
 cd /opt/boswatch3
-sudo python3 bw_client.py -c config/client.yaml
-sudo python3 bw_server.py -c config/server.yaml
+sudo /opt/boswatch3/venv/bin/python3 bw_client.py -c client.yaml
+sudo /opt/boswatch3/venv/bin/python3 bw_server.py -c server.yaml
 ```
 
 ## Optional: Als Dienst einrichten
@@ -17,8 +17,8 @@ After reboot, you can start BOSWatch3 as follows:
 
 ```bash
 cd /opt/boswatch3
-sudo python3 bw_client.py -c config/client.yaml
-sudo python3 bw_server.py -c config/server.yaml
+sudo /opt/boswatch3/venv/bin/python3 bw_client.py -c client.yaml
+sudo /opt/boswatch3/venv/bin/python3 bw_server.py -c server.yaml
 ```
 
 ## Optional: Setup as a Service

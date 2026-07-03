@@ -10,7 +10,7 @@ r"""!
                      by Bastian Schroll
 
 @file:        install_service.py
-@date:        15.11.2025
+@date:        21.11.2025
 @author:      Claus Schichl
 @description: Install Service File with argparse CLI
 """
@@ -22,6 +22,7 @@ import logging
 import argparse
 import yaml
 from pathlib import Path
+from colorama import init as colorama_init, Fore, Style
 
 #  === constants for directories and files ===
 BASE_DIR = Path(__file__).resolve().parent
@@ -31,6 +32,8 @@ CONFIG_DIR = (BASE_DIR / 'config').resolve()
 LOG_FILE = (BASE_DIR / 'log' / 'install' / 'service_install.log').resolve()
 os.makedirs(LOG_FILE.parent, exist_ok=True)
 
+# === initialize colorama ===
+colorama_init(autoreset=True)
 
 #  === language management (default german)===
 _lang = 'de'
@@ -90,10 +93,6 @@ TEXT = {
         "unhandled_error": "Unbehandelter Fehler: {}",
         "max_retries_skip": "Maximale Anzahl Eingabeversuche überschritten. Überspringe Service.",
         "max_retries_exit": "Maximale Anzahl Eingabeversuche überschritten. Beende Programm.",
-        "colorama_missing": "⚠️ Colorama nicht installiert – versuche automatische Installation...",
-        "colorama_install": "➡️ Installiere Colorama...",
-        "colorama_install_ok": "✅ Colorama erfolgreich installiert.",
-        "colorama_install_fail": "❌ Colorama konnte nicht automatisch installiert werden.",
         "verify_timeout": "⚠ Timeout bei systemd-analyze verify für: {}",
         "status_timeout": "⚠ Timeout beim Prüfen des Service-Status: {}"
 
@@ -141,68 +140,10 @@ TEXT = {
         "unhandled_error": "Unhandled error: {}",
         "max_retries_skip": "Maximum input attempts exceeded. Skipping service.",
         "max_retries_exit": "Maximum input attempts exceeded. Exiting program.",
-        "colorama_missing": "⚠️ Colorama not installed – attempting automatic installation...",
-        "colorama_install": "➡️ Installing Colorama...",
-        "colorama_install_ok": "✅ Colorama installed successfully.",
-        "colorama_install_fail": "❌ Colorama could not be installed automatically.",
         "verify_timeout": "⚠ Timeout during systemd-analyze verify for: {}",
         "status_timeout": "⚠ Timeout while checking service status: {}"
     }
 }
-
-
-# === COLORAMA AUTO-INSTALL (dual language) ===
-def colorama_auto_install():
-    r"""
-    Auto-installs colorama if missing.
-    Note: Language detection happens before colorama is available.
-    """
-    # recognize language early (before colorama installation)
-    import argparse
-    early_parser = argparse.ArgumentParser(add_help=False)
-    early_parser.add_argument('--lang', '-l', choices=['de', 'en'], default='de')
-    early_args, _ = early_parser.parse_known_args()
-    lang = early_args.lang
-
-    # use text from global TEXT dictionary
-    txt = TEXT[lang]
-
-    try:
-        from colorama import init as colorama_init, Fore, Style
-        colorama_init(autoreset=True)
-        return True, Fore, Style
-    except ImportError:
-        print(txt["colorama_missing"])
-
-        # install Colorama
-        print(txt["colorama_install"])
-        subprocess.run(["sudo", "apt", "install", "-y", "python3-colorama"], check=False)
-
-        # retry importing Colorama
-        try:
-            from colorama import init as colorama_init, Fore, Style
-            colorama_init(autoreset=True)
-            print(txt["colorama_install_ok"])
-            return True, Fore, Style
-        except ImportError:
-            print(txt["colorama_install_fail"])
-            return False, None, None
-
-
-# === import / install colorama ===
-colorama_available, Fore, Style = colorama_auto_install()
-
-if not colorama_available:
-    # provides dummy classes if colorama is not available (no crash)
-    class DummyStyle:
-        RESET_ALL = ""
-        BRIGHT = ""
-
-    class DummyFore:
-        RED = GREEN = YELLOW = BLUE = CYAN = MAGENTA = WHITE = RESET = ""
-
-    Fore = DummyFore()
-    Style = DummyStyle()
 
 
 # === logging Setup ===
@@ -248,6 +189,7 @@ def setup_logging(verbose=False, quiet=False):
     return logger
 
 
+# === Helpers ===
 def t(key):
     r"""
     Translation helper: returns the localized string for the given key.
@@ -358,12 +300,12 @@ def install_service(yaml_file, dry_run=False):
     service_path = SERVICE_DIR / service_name
 
     if is_server:
-        exec_line = f"/usr/bin/python3 {BW_DIR}/bw_server.py -c {yaml_file}"
+        exec_line = f"{BW_DIR}/venv/bin/python3 {BW_DIR}/bw_server.py -c {yaml_file}"
         description = "BOSWatch Server"
         after = "network-online.target"
         wants = "Wants=network-online.target"
     else:
-        exec_line = f"/usr/bin/python3 {BW_DIR}/bw_client.py -c {yaml_file}"
+        exec_line = f"{BW_DIR}/venv/bin/python3 {BW_DIR}/bw_client.py -c {yaml_file}"
         description = "BOSWatch Client"
         after = "network.target"
         wants = ""
@@ -382,17 +324,15 @@ Restart=on-abort
 [Install]
 WantedBy=multi-user.target
 """
-
     logging.info(t("creating_service_file").format(yaml_file, service_name))
 
     if not dry_run:
         try:
-            with open(service_path, 'w', encoding='utf-8') as f:
-                f.write(service_content)
+            service_path.write_text(service_content, encoding='utf-8')
+            verify_service(service_path)
         except IOError as e:
             logging.error(t("file_write_error").format(service_path, e))
             return
-        verify_service(service_path)
 
     execute("systemctl daemon-reload", dry_run=dry_run)
     execute(f"systemctl enable {service_name}", dry_run=dry_run)

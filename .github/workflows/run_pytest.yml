@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     strategy:
       matrix:
         os: [ubuntu-latest]
@@ -16,10 +15,10 @@ jobs:
     runs-on: ${{matrix.os}}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up Python ${{matrix.python-version}} at ${{matrix.os}}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -29,7 +28,13 @@ jobs:
         pip install -r requirements.txt
         mkdir -p log/
 
+    - name: Run Flake8
+      run: |
+        flake8 .
+
     - name: Test with pytest
+      env:
+        RUN_NETWORK_TESTS: "true"
       run: |
         pytest -c 'test/pytest.ini'
 

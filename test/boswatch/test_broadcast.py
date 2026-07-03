@@ -16,6 +16,7 @@ r"""!
 """
 # problem of the pytest fixtures
 # pylint: disable=redefined-outer-name
+import os
 import logging
 import pytest
 
@@ -68,6 +69,7 @@ def test_clientWithoutServer(broadcastClient):
     assert not broadcastClient.getConnInfo(1)
 
 
+@pytest.mark.skipif(os.environ.get("RUN_NETWORK_TESTS") != "true", reason="Skip in local environment")
 def test_serverClientFetchConnInfo(broadcastClient, broadcastServer):
     r"""!Fetch connection info from BroadcastServer"""
     assert broadcastServer.start()
