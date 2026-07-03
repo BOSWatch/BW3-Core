@@ -1,0 +1,27 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Full Check (Lint & Test)",
+      "type": "shell",
+      "command": "make check",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Run Flake8 (Linter)",
+      "type": "shell",
+      "command": "make lint",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Pytest (Tests)",
+      "type": "shell",
+      "command": "make test",
+      "problemMatcher": []
+    }
+  ]
+}
