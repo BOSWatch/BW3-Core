@@ -10,7 +10,7 @@ r"""!
                     by Bastian Schroll
 
 @file:        multicast.py
-@date:        13.04.2026
+@date:        05.07.2026
 @author:      Claus Schichl
 @description: multicast module
 """
@@ -19,7 +19,6 @@ import logging
 import time
 import threading
 import json
-import datetime
 from collections import defaultdict
 from module.moduleBase import ModuleBase
 from boswatch.packet import Packet
@@ -289,13 +288,21 @@ class BoswatchModule(ModuleBase):
         for k, v in recipient_dict.items():
             if k.startswith('_'):
                 continue
-            if k == 'timestamp' and index > 1:
+
+            if k == 'timestamp':
                 try:
-                    dt = datetime.datetime.strptime(str(v), '%d.%m.%Y %H:%M:%S')
-                    dt_shifted = dt + datetime.timedelta(milliseconds=index - 1)
-                    packet.set(k, dt_shifted.strftime('%d.%m.%Y %H:%M:%S'))
+                    # use native float (UNIX-timestamp)
+                    ts_float = float(v)
+
+                    # shifting for database-unique-keys (only for index >=2)
+                    if index > 1:
+                        ts_float += 0.001 * (index - 1)
+
+                    # back to paket - float (UNIX-timestamp)
+                    packet.set(k, ts_float)
                 except (ValueError, TypeError):
-                    packet.set(k, str(v))
+                    # failsafe, if no float
+                    packet.set(k, v)
             else:
                 packet.set(k, str(v))
 
