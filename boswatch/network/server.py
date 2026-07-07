@@ -50,7 +50,12 @@ class _ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
                 if not len(header):
                     break  # empty data -> socked closed
 
-                length = int(header.strip())
+                try:
+                    length = int(header.strip())
+                except ValueError:
+                    logging.error("%s sent an invalid packet header (expected an integer length, got %r) - closing connection", req_name, header)
+                    break
+
                 data = self.request.recv(length).decode("utf-8")
 
                 if data == "<keep-alive>":

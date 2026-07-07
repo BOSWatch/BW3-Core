@@ -17,6 +17,7 @@ r"""!
 # problem of the pytest fixtures
 # pylint: disable=redefined-outer-name
 import logging
+import socket
 import time
 import queue
 import pytest
@@ -117,6 +118,30 @@ def test_clientCommunicate(getClient, getRunningServer):
     assert getClient.transmit("test")
     assert getClient.receive() == "[ack]"
     assert getClient.disconnect()
+
+
+def test_serverInvalidHeaderClosesConnectionOnly(getRunningServer, caplog):
+    r"""!Send a non-integer length header - server must log a clear error and
+    drop just that connection, without crashing or affecting other clients"""
+    rawSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    rawSock.settimeout(3)
+    rawSock.connect(("localhost", 8080))
+    with caplog.at_level(logging.ERROR):
+        rawSock.sendall(b"bad_head!!")  # 10 bytes (HEADERSIZE), not a valid int
+        time.sleep(0.2)  # let the server thread process and close
+
+    assert any("invalid packet header" in record.message for record in caplog.records)
+
+    # the malformed connection must be closed, not left hanging
+    assert rawSock.recv(1) == b""
+    rawSock.close()
+
+    # the server itself (and other clients) must be unaffected
+    normalClient = TCPClient()
+    assert normalClient.connect()
+    assert normalClient.transmit("test")
+    assert normalClient.receive() == "[ack]"
+    assert normalClient.disconnect()
 
 
 @pytest.mark.skip("needs fixture for more than one client")
