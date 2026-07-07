@@ -5,7 +5,7 @@
 # for documentation generating
 mkdocs
 
-# for develope only
+# for develop only
 pytest
 pytest-cov
 flake8==6.1.0

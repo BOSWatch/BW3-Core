@@ -1,0 +1,13 @@
+version: '3'
+services:
+  client:
+    image: ghcr.io/janspeller/bw3-core/client:latest
+    volumes:
+      - ./config:/opt/boswatch/config
+      - ./log:/opt/boswatch/log
+    devices:
+      - "/dev/bus/usb"
+  server:
+    image: ghcr.io/janspeller/bw3-core/server:latest
+    volumes:
+      - ./config:/opt/boswatch/config
