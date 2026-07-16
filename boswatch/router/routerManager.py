@@ -10,7 +10,7 @@ r"""!
                      by Bastian Schroll
 
 @file:        routerManager.py
-@date:        04.03.2019
+@date:        30.08.2026
 @author:      Bastian Schroll
 @description: Class for the BOSWatch packet router manager class
 """
@@ -89,7 +89,7 @@ class RouterManager:
                                                                   loadedClass._cleanup))
 
                     elif routeType == "router":
-                        routerDict_tmp[routerName].addRoute(Route(routeName, routerDict_tmp[routeRes].runRouter))
+                        routerDict_tmp[routerName].addRoute(Route(routeName, routerDict_tmp[routeRes].runRouter, isRouter=True))
 
                     else:
                         logging.error("unknown type '%s' in %s", routeType, route)

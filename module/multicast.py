@@ -10,7 +10,7 @@ r"""!
                     by Bastian Schroll
 
 @file:        multicast.py
-@date:        05.07.2026
+@date:        08.10.2026
 @author:      Claus Schichl
 @description: multicast module
 """
@@ -22,7 +22,7 @@ import json
 from collections import defaultdict
 from module.moduleBase import ModuleBase
 from boswatch.packet import Packet
-from boswatch.network.client import TCPClient
+import socket
 
 logging.debug("- %s loaded", __name__)
 
@@ -496,7 +496,8 @@ class BoswatchModule(ModuleBase):
             with self._queue_lock:
                 self._packet_queue.extend(incomplete_packets)
             for freq, safe_ric in trigger_data:
-                self._send_wakeup_trigger(freq, safe_ric)
+                threading.Thread(
+                    target=self._send_wakeup_trigger, args=(freq, safe_ric), daemon=True).start()
 
     def _check_instance_auto_clear(self, freq):
         r"""!Check if frequency has exceeded timeout (called from doWork).
@@ -533,7 +534,15 @@ class BoswatchModule(ModuleBase):
 # ============================================================
 
     def _send_wakeup_trigger(self, freq, fallback_ric):
-        r"""!Send a loopback trigger using the standard TCPClient class."""
+        r"""!Send a loopback trigger using a direct socket.
+
+        Uses a raw socket instead of TCPClient to avoid polluting the
+        process-wide default timeout via socket.setdefaulttimeout(),
+        which would stall the server's router main loop.
+
+        @param freq: Frequency identifier
+        @param fallback_ric: RIC to use if no explicit triggerRic is configured
+        @return None"""
         try:
             trigger_ric = self._trigger_ric if self._trigger_ric else fallback_ric
             payload = {
@@ -549,20 +558,21 @@ class BoswatchModule(ModuleBase):
                 "frequency": freq
             }
             json_str = json.dumps(payload)
+            data = json_str.encode("utf-8")
+            header = str(len(data)).ljust(10).encode("utf-8")
 
-            # using BOSWatch-Architecture
-            client = TCPClient(timeout=2)
-            if client.connect(self._trigger_host, self._trigger_port):
-                # 1. Send
-                client.transmit(json_str)
-
-                # 2. Recieve (getting [ack] and prevents connection reset)
-                client.receive(timeout=1)
-
-                client.disconnect()
+            # Direct socket with scoped timeout - does NOT affect socket.getdefaulttimeout()
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(2)
+            try:
+                sock.connect((self._trigger_host, self._trigger_port))
+                sock.sendall(header + data)
+                sock.recv(1024)  # drain ACK to prevent connection reset by peer
                 logging.debug("[%s] Wakeup trigger sent and acknowledged (RIC=%s)", self.name, trigger_ric)
-            else:
-                logging.error("[%s] Could not connect to local server for wakeup", self.name)
+            except Exception as e:
+                logging.error("[%s] Could not connect to local server for wakeup: %s", self.name, e)
+            finally:
+                sock.close()
 
         except Exception as e:
             logging.error("[%s] Failed to send wakeup trigger: %s", self.name, e)

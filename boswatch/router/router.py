@@ -10,7 +10,7 @@ r"""!
                      by Bastian Schroll
 
 @file:        router.py
-@date:        03.07.2026
+@date:        30.08.2026
 @author:      Bastian Schroll, Claus Schichl
 @description: Class for the BOSWatch packet router
 """
@@ -75,6 +75,20 @@ class Router:
         @param start_index: index of the routeList to start from
         @return processed bwPacket, list of packets, or False
         """
+        # Catch incoming lists (e.g. from cascaded routers passing a list via runRouter)
+        if isinstance(bwPacket, list):
+            logging.debug("[%s] Received a list of %d packets. Branching immediately.", self.name, len(bwPacket))
+            results = []
+            for single_packet in bwPacket:
+                res = self._process_route_recursive(single_packet, start_index)
+                if res is not False:
+                    if isinstance(res, list):
+                        results.extend(res)
+                    else:
+                        results.append(res)
+            return results if results else None
+
+        # Normal path for a single packet starts here
         current_packet = bwPacket
 
         for i in range(start_index, len(self.routeList)):
@@ -89,6 +103,12 @@ class Router:
                 continue
 
             if bwPacket_tmp is False:
+                if routeObject.isRouter:
+                    # A nested router filtered/stopped internally for this packet.
+                    # That's just an empty branch - the parent router continues normally.
+                    logging.debug("[%s] sub-router '%s' returned False - continuing with next route point", self.name, routeObject.name)
+                    continue
+
                 # returning False stops the route immediately for this specific packet branch
                 logging.debug("[%s] stopped at route %s", self.name, routeObject.name)
                 return False
@@ -103,7 +123,7 @@ class Router:
                     res = self._process_route_recursive(single_packet, i + 1)
 
                     # Aggregate results
-                    if res is not False and res is not None:
+                    if res is not False:
                         if isinstance(res, list):
                             results.extend(res)
                         else:
@@ -111,7 +131,7 @@ class Router:
 
                 # The recursive calls already finished the rest of the route for all branches.
                 # We return the aggregated results immediately to break out of this current loop level.
-                return results if results else False
+                return results if results else None
 
             # Normal single packet path: update the packet for the next iteration
             current_packet = bwPacket_tmp
