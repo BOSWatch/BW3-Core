@@ -89,7 +89,8 @@ Mögliche Rückgabewerte eines Moduls:
 
 - `return bwPacket` Gibt das modifizierte bwPacket an den Router zurück (Paket Modifikation)
 - `return None` Der Router fährt mit dem unveränderten bwPacket fort (Input = Output)
-- `return False` Der Router stopt sofort die Ausführung (zB. in Filtern verwendet)
+- `return False` Der Router stoppt sofort die Ausführung für dieses Paket (z. B. in Filtern verwendet).
+- `return [bwPacket1, bwPacket2, ...]` (Liste von Paketen) Der Router startet eine automatische Verzweigung ("Fan-out" bzw. "Auffächerung"). Für jedes Paket in der Liste wird der nachfolgende Rest der Route unabhängig und isoliert durchlaufen.
 
 ### Rückgabewert bei Plugins
 Plugins geben keine Pakete mehr zurück. Sie fungieren ausschließlich als Endpunkt.  
