@@ -10,7 +10,7 @@ r"""!
                          by Bastian Schroll
 
 @file:       wildcard.py
-@date:       23.07.2025
+@date:       05.07.2026
 @author:     Bastian Schroll
 @description: Functions to replace wildcards in stings
 """
@@ -48,7 +48,7 @@ def replaceWildcards(message, bwPacket):
         "{BR}": "\r\n",
         "{LPAR}": "(",
         "{RPAR}": ")",
-        "{TIME}": time.strftime("%d.%m.%Y %H:%M:%S"),
+        "{TIME}": time.strftime("%d.%m.%Y %H:%M:%S", time.localtime(float(bwPacket.get("timestamp")))),
 
         # info wildcards
         # server
