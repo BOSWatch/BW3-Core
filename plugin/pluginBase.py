@@ -151,7 +151,7 @@ class PluginBase(ABC):
         can be inherited
 
         @param bwPacket: bwPacket instance"""
-        logging.warning("ZVEI not implemented in %s", self._pluginName)
+        logging.warning("FMS not implemented in %s", self._pluginName)
 
     def pocsag(self, bwPacket):
         r"""!Called on POCSAG alarm
