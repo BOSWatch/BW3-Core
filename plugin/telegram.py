@@ -10,7 +10,7 @@ r"""!
                      by Bastian Schroll
 
 @file:        telegram.py
-@date:        17.01.2026
+@date:        12.10.2026
 @author:      Claus Schichl
 @description: Telegram-Plugin
 """
@@ -100,7 +100,26 @@ class TelegramSender:
             # See: https://core.telegram.org/bots/api#markdownv2-style
             escape_chars = r'_*[]()~`>#+-=|{}.!'
             text = "".join(['\\' + char if char in escape_chars else char for char in text])
-        return text[:4090] + "[...]" if len(text) > 4096 else text
+        return TelegramSender._shorten_text(text, parse_mode)
+
+    @staticmethod
+    def _shorten_text(text, parse_mode):
+        r"""!Shorten an escaped text to the telegram limit of 4096 characters
+        without cutting an escape sequence or an HTML entity"""
+        if len(text) <= 4096:
+            return text
+        suffix = "\\[\\.\\.\\.\\]" if parse_mode == "MarkdownV2" else "[...]"
+        text = text[:4096 - len(suffix)]
+        if parse_mode == "MarkdownV2":
+            # an odd number of backslashes at the end would escape the suffix
+            if (len(text) - len(text.rstrip("\\"))) % 2:
+                text = text[:-1]
+        elif parse_mode == "HTML":
+            # remove a cut HTML entity at the end
+            lastAmp = text.rfind("&")
+            if lastAmp != -1 and ";" not in text[lastAmp:]:
+                text = text[:lastAmp]
+        return text + suffix
 
     def _worker_loop(self):
         delay = self.initial_delay
@@ -154,10 +173,11 @@ class TelegramSender:
     def shutdown(self):
         r"""Graceful shutdown with queue draining"""
         logger.info("Shutting down Telegram sender...")
-        self._stop_event.set()
+        # let the worker send the remaining messages before it is stopped
         timeout = time.time() + 5
         while not self.msg_queue.empty() and time.time() < timeout:
             time.sleep(0.1)
+        self._stop_event.set()
         remaining = self.msg_queue.qsize()
         if remaining > 0:
             logger.warning(f"{remaining} messages in queue discarded during shutdown")
