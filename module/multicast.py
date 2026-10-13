@@ -10,7 +10,7 @@ r"""!
                     by Bastian Schroll
 
 @file:        multicast.py
-@date:        08.10.2026
+@date:        14.10.2026
 @author:      Claus Schichl
 @description: multicast module
 """
@@ -20,9 +20,10 @@ import time
 import threading
 import json
 from collections import defaultdict
+import socket
 from module.moduleBase import ModuleBase
 from boswatch.packet import Packet
-import socket
+from boswatch import wildcard
 
 logging.debug("- %s loaded", __name__)
 
@@ -49,7 +50,7 @@ class BoswatchModule(ModuleBase):
         super().__init__(__name__, config)
 
     def onLoad(self):
-        r"""!Initialize module configuration and start the global cleanup thread.
+        r"""!Initialize module configuration and start the cleanup thread of this instance.
 
         @param None
         @return None"""
@@ -109,19 +110,8 @@ class BoswatchModule(ModuleBase):
         Enriches packets with multicast metadata (mode, role, source).
         Does NOT filter - all packets pass through, downstream modules handle filtering.
 
-        @param bwPacket: A BOSWatch packet instance or list of packets
-        @return bwPacket, a list of packets, or None if no processing"""
-        if isinstance(bwPacket, list):
-            result_packets = []
-            for single_packet in bwPacket:
-                processed = self.doWork(single_packet)
-                if processed is not None and processed is not False:
-                    if isinstance(processed, list):
-                        result_packets.extend(processed)
-                    else:
-                        result_packets.append(processed)
-            return result_packets if result_packets else None
-
+        @param bwPacket: A BOSWatch packet instance
+        @return a list of packets, False to stop the route, or None if unchanged"""
         packet_dict = self._get_packet_data(bwPacket)
         msg = packet_dict.get("message")
         ric = packet_dict.get("ric")
@@ -131,15 +121,15 @@ class BoswatchModule(ModuleBase):
         # Handle wakeup triggers
         if msg == BoswatchModule._MAGIC_WAKEUP_MSG:
             if self._trigger_ric and ric != self._trigger_ric:
-                return None
+                return False  # wrong RIC - stop
             logging.debug("[%s] Wakeup trigger received (RIC=%s)", self.name, ric)
             queued = self._get_queued_packets()
-            return queued if queued else None
+            return queued if queued else False  # no queued packets - stop
 
-        # Only process POCSAG
+        # Only process POCSAG - other packets (ZVEI, FMS, MSG) pass unchanged, together with waiting packets
         if mode != "pocsag":
             queued = self._get_queued_packets()
-            return queued if queued else None
+            return self._combine_results(queued, [bwPacket]) if queued else None
 
         self._my_frequencies.add(freq)
 
@@ -163,7 +153,7 @@ class BoswatchModule(ModuleBase):
         # Mark and pass through - no filtering!
 
         if self._netident_rics and ric in self._netident_rics:
-            self._set_mcast_metadata(bwPacket, "control", "netident", ric)
+            self._set_mcast_metadata(bwPacket, "control", "netident", ric, "0", "0")
             return self._combine_results(incomplete_packets, queued_packets, [bwPacket])
 
         if self._delimiter_rics and ric in self._delimiter_rics:
@@ -190,7 +180,7 @@ class BoswatchModule(ModuleBase):
             else:
                 return self._combine_results(alarm_packets, incomplete_packets, queued_packets)
 
-        # === SINGLE ALARM (message but no text-RICs configured) ===
+        # === SINGLE ALARM (text but no configured text-RICs) ===
         if msg:
             normal = self._enrich_normal_alarm(bwPacket, packet_dict)
             return self._combine_results(normal, incomplete_packets, queued_packets)
@@ -209,15 +199,14 @@ class BoswatchModule(ModuleBase):
 
         @param bwPacket: Packet instance or dict
         @return dict: Complete dictionary of all packet fields"""
-        # 1. Fall: Es ist bereits ein Dictionary
         if isinstance(bwPacket, dict):
             return bwPacket.copy()
 
-        # 2. Fall: Es ist ein Packet-Objekt (Daten liegen in _packet)
+        # Packet instance - the fields are stored in _packet
         if hasattr(bwPacket, '_packet'):
             return bwPacket._packet.copy()
 
-        # 3. Fallback: Falls es ein anderes Objekt ist, versuche __dict__ ohne '_' Filter für 'packet'
+        # fallback for other objects
         try:
             return {k: v for k, v in bwPacket.__dict__.items() if not k.startswith('_')}
         except Exception as e:
@@ -250,7 +239,7 @@ class BoswatchModule(ModuleBase):
 # ============================================================
 
     def _add_tone_ric_packet(self, freq, packet_dict):
-        r"""!Add a tone-RIC to the shared buffer.
+        r"""!Add a tone-RIC to the buffer of this instance.
 
         @param freq: Frequency identifier
         @param packet_dict: Dictionary containing packet data
@@ -263,7 +252,7 @@ class BoswatchModule(ModuleBase):
             logging.debug("[%s] Tone-RIC added: RIC=%s (total: %d on %s)", self.name, stored_packet.get('ric'), len(self._tone_ric_packets[freq]), freq)
 
     def _get_queued_packets(self):
-        r"""!Pop and return all packets currently in the static queue.
+        r"""!Pop and return all packets currently waiting in the queue.
 
         @param None
         @return list: List of packets or None"""
@@ -289,22 +278,13 @@ class BoswatchModule(ModuleBase):
             if k.startswith('_'):
                 continue
 
-            if k == 'timestamp':
+            if k == 'timestamp' and index > 1:
                 try:
-                    # use native float (UNIX-timestamp)
-                    ts_float = float(v)
-
-                    # shifting for database-unique-keys (only for index >=2)
-                    if index > 1:
-                        ts_float += 0.001 * (index - 1)
-
-                    # back to paket - float (UNIX-timestamp)
-                    packet.set(k, ts_float)
+                    # UNIX timestamp: shift by 1 ms per recipient for unique database entries
+                    v = float(v) + 0.001 * (index - 1)
                 except (ValueError, TypeError):
-                    # failsafe, if no float
-                    packet.set(k, v)
-            else:
-                packet.set(k, str(v))
+                    pass  # keep the original value
+            packet.set(k, v)
 
     def _distribute_complete(self, freq, text_packet_dict):
         r"""!Create full multicast packets with message content.
@@ -383,7 +363,11 @@ class BoswatchModule(ModuleBase):
             age_seconds = time.time() - orphaned[0].get('_multicast_timestamp', time.time())
 
             logging.debug("[%s] Delimiter RIC=%s cleared %d orphaned tone-RICs on freq %s: RICs=[%s], age=%.1fs → Creating INCOMPLETE multicast packets for forwarding", self.name, ric, len(orphaned), freq, ', '.join([packet.get('ric', 'unknown') for packet in orphaned]), age_seconds)
-            return self._create_incomplete_multicast(freq, orphaned)
+            incomplete = self._create_incomplete_multicast(freq, orphaned)
+            if bwPacket is not None:
+                self._set_mcast_metadata(bwPacket, "control", "delimiter", ric, "0", "0")
+                return incomplete + [bwPacket]  # pass incomplete packets AND the delimiter itself
+            return incomplete
         if bwPacket is not None:
             self._set_mcast_metadata(bwPacket, "control", "delimiter", ric, "0", "0")
             return [bwPacket]
@@ -398,10 +382,10 @@ class BoswatchModule(ModuleBase):
 
         @param packet: The Packet instance to modify
         @param mode: multicastMode (complete, incomplete, single, control)
-        @param role: multicastRole (recipient, single, delimiter, netident)
+        @param role: multicastRole (recipient, single, delimiter, netident, trigger)
         @param source: The originating RIC
-        @param count: Total number of recipients
-        @param index: Current recipient index
+        @param count: Total number of recipients (0 for control packets)
+        @param index: Current recipient index (1-based, 0 for control packets)
         @return None"""
         logging.debug("setting Metadata - Mode: %s, Role: %s, Index: %s of %s for RIC: %s", mode, role, index, count, source)
         mapping = {
@@ -411,9 +395,9 @@ class BoswatchModule(ModuleBase):
             "multicastRecipientCount": (str(count), "{MCAST_COUNT}"),
             "multicastRecipientIndex": (str(index), "{MCAST_INDEX}")
         }
-        for key, (val, wildcard) in mapping.items():
+        for key, (val, newWildcard) in mapping.items():
             packet.set(key, val)
-            self._register_wildcard_safe(wildcard, key)
+            self._register_wildcard_safe(newWildcard, key)
 
     def _apply_list_tags(self, packet, recipient_dicts):
         r"""!Helper to aggregate fields from all recipients into comma-separated lists.
@@ -431,15 +415,16 @@ class BoswatchModule(ModuleBase):
             packet.set(list_key, list_val)
             self._register_wildcard_safe("{" + f.upper() + "_LIST}", list_key)
 
-    def _register_wildcard_safe(self, wildcard, field):
-        r"""!Register wildcard if not already globally registered.
+    def _register_wildcard_safe(self, newWildcard, bwPacketField):
+        r"""!Register a wildcard only once - also if another multicast instance registered it already.
 
-        @param wildcard: The wildcard string (e.g. {MCAST_MODE})
-        @param field: The packet field name
+        @param newWildcard: The wildcard string (e.g. {MCAST_MODE})
+        @param bwPacketField: The packet field name
         @return None"""
-        if wildcard not in self._wildcards_registered:
-            self.registerWildcard(wildcard, field)
-            self._wildcards_registered.add(wildcard)
+        if newWildcard not in self._wildcards_registered:
+            if newWildcard not in wildcard._additionalWildcards:
+                self.registerWildcard(newWildcard, bwPacketField)
+            self._wildcards_registered.add(newWildcard)
 
 # ============================================================
 # CLEANUP & TIMEOUT MANAGEMENT
@@ -555,7 +540,13 @@ class BoswatchModule(ModuleBase):
                 "message": self._MAGIC_WAKEUP_MSG,
                 "clientName": "MulticastTrigger",
                 "inputSource": "loopback",
-                "frequency": freq
+                "frequency": freq,
+                # marked like the other control packets, so it can be filtered in routers without multicast module
+                "multicastMode": "control",
+                "multicastRole": "trigger",
+                "multicastSourceRic": trigger_ric,
+                "multicastRecipientCount": "0",
+                "multicastRecipientIndex": "0"
             }
             json_str = json.dumps(payload)
             data = json_str.encode("utf-8")
@@ -582,7 +573,7 @@ class BoswatchModule(ModuleBase):
 # ============================================================
 
     def onUnload(self):
-        r"""!Unregister instance from the global cleanup process.
+        r"""!Stop the cleanup thread of this instance.
 
         @param None
         @return None"""

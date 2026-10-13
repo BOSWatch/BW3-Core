@@ -18,7 +18,7 @@ Das Modul unterstützt:
 Multicast-Alarme funktionieren in zwei bis vier Phasen:
 **Wichtig:** Das Modul arbeitet verzögert bei der Ausgabe der Text-RICs, um die Pakete anzureichern.
 
-1. **Delimiter-Phase (Optional)**: Ein spezieller Delimiter-RIC markiert den Start eines neuen Multicast-Blocks. Er wird als technisches Paket (`multicastRole: delimiter`) **sofort** durchgereicht, leert aber intern den RAM-Puffer für neue Empfänger. Diese Phase ist optional - ohne Delimiter werden alle leeren Nachrichten als Tone-RICs behandelt. Downstream-Filter (z.B. filter.regexFilter) können ihn bei Bedarf ausfiltern.
+1. **Delimiter-Phase (Optional)**: Ein spezieller Delimiter-RIC markiert den Start eines neuen Multicast-Blocks. Er wird als technisches Paket (`multicastRole: delimiter`) **immer sofort** durchgereicht und leert intern den RAM-Puffer für neue Empfänger. Liegen dort noch Tone-RICs eines unvollständigen Blocks, werden zuerst diese als `incomplete` ausgegeben, danach der Delimiter. Diese Phase ist optional - ohne Delimiter werden alle leeren Nachrichten als Tone-RICs behandelt. Downstream-Filter (z.B. filter.regexFilter) können ihn bei Bedarf ausfiltern.
 
 2. **Tone-RIC-Phase**: Eingehende leere Nachrichten werden **nicht direkt als Pakete ausgegeben**, sondern im RAM zwischengespeichert. Das Modul gibt hier `False` zurück, wodurch der Router die Verarbeitung für dieses spezifische Paket vorerst pausiert.
 
@@ -29,6 +29,8 @@ Multicast-Alarme funktionieren in zwei bis vier Phasen:
 
 ## Unterstützte Alarmtypen
 - POCSAG
+
+Pakete anderer Modi (z.B. FMS, ZVEI) werden unverändert durchgereicht.
 
 ## Resource
 `multicast`
@@ -113,16 +115,18 @@ Markiert Netzident-Pakete (RIC 0000001) mit multicastRole: netident. Downstream-
     - `complete`: Vollständiges Multicast-Packet
     - `incomplete`: Unvollständiges Multicast-Packet (meist fehlt die Text-RIC) (Timeout)
     - `single`: Einzelner, "normaler" Alarm (Tone-RIC = Text-RIC)
-    - `control`: Netzwerk-Ident-RIC oder andere Verwaltung-RICs (Technik)
+    - `control`: Technisches Paket (Delimiter, Netzident oder Trigger)
 - `multicastRole`: 
     - `delimiter`
     - `netident`
     - `recipient` (Empfänger)
     - `single`
-- `multicastRecipientIndex` (string): Index dieses Empfängers (1-N), folgende Logik:
+    - `trigger` (Wakeup-Trigger, siehe [Active Trigger System](#das-active-trigger-system-verlustfreie-paketauslieferung))
+- `multicastRecipientIndex` (string): Der Index zählt nur Alarm-Empfänger:
     - Bei **recipient**: Zählt hoch (z.B. 1 von 5, 2 von 5...)
-    - Bei **delimiter / netident / single**: Immer **1**, da sie als eigenständige technische Pakete zählen
-- `multicastRecipientCount` (string): Gesamtanzahl der Empfänger des Multicasts
+    - Bei **single**: Immer **1**
+    - Bei **delimiter / netident / trigger**: Immer **0**, da sie keine Alarm-Empfänger sind
+- `multicastRecipientCount` (string): Gesamtanzahl der Empfänger des Multicasts (**0** bei technischen Paketen)
 - `<FELD>_list` (string): Liste von Werten aus allen Empfänger-RICs für jedes Originalfeld (z.B. `ric_list`, `subric_list`)
 
 ### Ergänzte Felder (von Text-RIC an Tone-RIC):
@@ -150,9 +154,9 @@ Folgende Wildcards stehen in allen nachfolgenden Plugins zur Verfügung:
 |--------|------------|--------|
 |{MCAST_SOURCE}|RIC des ursprünglichen Message-RICs|0299001|
 |{MCAST_COUNT}|Gesamtanzahl der Empfänger dieses Multicasts.|3|
-|{MCAST_INDEX}|Index des Empfängers (1-basiert für Recipients, 0 für Control-Pakete)|0, 1, 2, 3, ...|
+|{MCAST_INDEX}|Index des Empfängers (1-basiert für Recipients, 1 für Single, 0 für Control-Pakete)|0, 1, 2, 3, ...|
 |{MCAST_MODE}|Art der Multicast-Verarbeitung durch das Modul|complete, incomplete, single, control|
-|{MCAST_ROLE}|Rolle des Pakets im Multicast-Ablauf|recipient, single, delimiter, netident|
+|{MCAST_ROLE}|Rolle des Pakets im Multicast-Ablauf|recipient, single, delimiter, netident, trigger|
 
 ### Erweiterung der Listen-Wildcards
 Das Modul generiert Wildcards für alle gesammelten Felder (RICs, SubRICs, etc.) in Listenform. Diese sind besonders nützlich, um eine kombinierte Ausgabe (z.B. in Telegram) zu erstellen. Im Folgenden ein paar Beispiele:
@@ -206,10 +210,10 @@ Um die Logik der Felder multicastMode, multicastRole, etc. zu verstehen, hilft e
 
 |Paket-Typ|RIC|multicastMode|multicastRole|sourceRic|Index|Count|
 |--------|-------|-------|---------|------|--|--|
-|Delimiter|0288088|control|delimiter|0288088|1|1|
-|Netzident|0000001|control|netident|0000001|1|1|
+|Delimiter|0288088|control|delimiter|0288088|0|0|
+|Netzident|0000001|control|netident|0000001|0|0|
 
-Hinweis: Diese Pakete dienen der Systemsteuerung. Der Index ist immer 1, da sie "Einzelereignisse" im technischen Ablauf sind.
+Hinweis: Diese Pakete dienen der Systemsteuerung. Index und Count sind immer 0, da sie keine Alarm-Empfänger sind. Dadurch fallen sie bei einer Filterung auf `multicastRecipientIndex: ^1$` (ein Paket pro Alarm) automatisch heraus.
 Beide RIC werden unmittelbar nach der Verarbeitung weitergereicht, d.h. es wird nicht auf die Netzident-RIC gewartet, um die Delmitier-RIC weiterzureichen.
 
 **2) Szenario Echter Multicast-Alarm (Vollständig)**
@@ -222,7 +226,7 @@ Hier sieht man den Ablauf:
 
 |Phase|Paket-Typ|RIC|multicastMode|multicastRole|sourceRic|Index|Count|
 |-----|---------|---|-------------|-------------|---------|-----|-----|
-|Start|Delimiter|0288088|control|delimiter|0288088|1|1|
+|Start|Delimiter|0288088|control|delimiter|0288088|0|0|
 |Sammler|Tone-RIC 1|0234567|-|(interner Buffer)|-|-|-|
 |Sammler|Tone-RIC 2|0345678|-|(interner Buffer)|-|-|-|
 |Auslöser|Text-RIC|0456789|(wird verteilt - keine Ausgabe)|(Nachrichtenträger)|-|-|-|
@@ -234,7 +238,7 @@ In diesem Fall fehlt die Text-RIC. Das System wartet bis zum Timeout und schickt
 
 |Phase|Paket-Typ|RIC|multicastMode|multicastRole|sourceRic|Index|Count|
 |-----|---------|---|-------------|-------------|---------|-----|-----|
-|Start|Delimiter|0288088|control|delimiter|0288088|1|1|
+|Start|Delimiter|0288088|control|delimiter|0288088|0|0|
 |Sammler|Tone-RIC 1|0234567|-|(interner Buffer)|-|-|-|
 |Sammler|Tone-RIC 2|0345678|-|(interner Buffer)|-|-|-|
 |Event|Timeout|Kein Text|Auto-Clear nach standardmäßig 10s|-|-|-|-|
@@ -310,7 +314,7 @@ router:
     config:
       [...]
   - type: router
-     res: RouterMySQL
+    res: RouterMySQL
   - type: router
     res: RouterTelegram
 
@@ -363,6 +367,25 @@ Das Modul verwendet ein aktives Trigger-System, um sicherzustellen, dass **keine
 **Ausführung**
 Das Modul sendet über via TCP (Loopback) ein minimales Trigger-Paket an den eigenen BOSWatch-Server. Dieser empfängt es wie einen normalen Funk-Alarm, weckt den Router auf und das Modul kann die wartenden Alarme (`incomplete`) sicher ausliefern.
 
+Das Trigger-Paket wird wie die anderen technischen Pakete gekennzeichnet (`multicastMode: control`, `multicastRole: trigger`, Index und Count `0`) und trägt den festen Client-Namen `MulticastTrigger`. Im Router mit dem Multicast-Modul wird es vom Modul verbraucht und nie an nachfolgende Module oder Plugins weitergereicht.
+
+**Wichtig - Router ohne Multicast-Modul:** Der BOSWatch-Server schickt das Trigger-Paket wie jedes andere Paket durch **alle** Router aus `alarmRouter`. Gibt es dort Router ohne Multicast-Modul, erreicht das Trigger-Paket deren Plugins. In diesen Routern sollte es ausgefiltert werden:
+```yaml
+- type: module
+  res: filter.regexFilter
+  name: Multicast-Trigger ausfiltern
+  config:
+    - name: "Kein Trigger"
+      checks:
+        - field: clientName
+          regex: ^(?!MulticastTrigger$)
+```
+Gefiltert wird auf `clientName`, weil jedes Paket dieses Feld besitzt. Ein Filter auf `multicastRole` würde in Routern ohne Multicast-Modul **alle** Pakete verwerfen, da der RegEx-Filter Pakete ohne das geprüfte Feld nicht durchlässt.
+
+Router, die bereits auf `multicastRecipientIndex: ^1$` oder `multicastMode: ^(complete|single)$` filtern, schließen das Trigger-Paket automatisch aus.
+
+**Reihenfolge im Router:** Das Multicast-Modul sollte **vor** einem `filter.doubleFilter` stehen. Sonst kann der doubleFilter das Trigger-Paket als Duplikat verwerfen, und die wartenden Pakete werden erst mit dem nächsten Funk-Paket ausgeliefert.
+
 **Trigger-RIC Auswahl** (3-stufige Fallback-Kette):
 - **Explizit**: Wenn `triggerRic` konfiguriert ist, wird diese RIC verwendet
 - **Dynamisch**: Wenn nicht konfiguriert, wird die erste Tone-RIC der aktuellen Gruppe verwendet
@@ -389,7 +412,7 @@ Das Modul sendet über via TCP (Loopback) ein minimales Trigger-Paket an den eig
 1. **Tone-RIC-Sammlung**: Tone-RICs (meist leere Nachrichten) werden empfangen und gespeichert
 2. **Text-RIC-Verteilung**: Sobald ein Text-RIC empfangen wird, erfolgt die sofortige Verteilung an alle gesammelten Tone-RICs
 3. **Auto-Clear**: Nach `autoClearTimeout` Sekunden ohne Text-RIC werden die Tone-RICs als incomplete ausgegeben (via Trigger-System)
-4. **Hard-Timeout-Cleanup**: Nach 3x `autoClearTimeout` (oder max. 120s) werden veraltete Pakete aus dem Speicher gelöscht (Failsafe)
+4. **Hard-Timeout-Cleanup**: Nach 3x `autoClearTimeout` werden veraltete Pakete aus dem Speicher gelöscht (Failsafe)
 
 ### Frequenz-Trennung
 
@@ -415,6 +438,7 @@ Pakete und ihre Rollen:
 - **Netzident-Pakete**: Erhalten `multicastRole: netident`  
 - **Empfänger-Pakete**: Erhalten `multicastRole: recipient`
 - **Einzelalarme**: Erhalten `multicastRole: single`
+- **Trigger-Pakete**: Erhalten `multicastRole: trigger`
 
 Beispiel-Filter um Delimiter und Netident auszublenden:
 ```yaml
@@ -424,7 +448,7 @@ Beispiel-Filter um Delimiter und Netident auszublenden:
     - name: "Nur echte Alarme"
       checks:
         - field: multicastRole
-          regex: ^(recipient|single)$multicastIndex
+          regex: ^(recipient|single)$
 ```
 
 
@@ -432,7 +456,7 @@ Beispiel-Filter um Delimiter und Netident auszublenden:
 
 ## Zusammenfassung: Was passiert mit den Daten?
 
-- Der Delimiter: Wird sofort markiert und als technisches Paket weitergereicht. Er sorgt dafür, dass keine "Leichen" von alten, abgebrochenen Alarmen im Speicher liegen.
+- Der Delimiter: Wird immer sofort markiert und als technisches Paket weitergereicht. Er sorgt dafür, dass keine "Leichen" von alten, abgebrochenen Alarmen im Speicher liegen.
 - Die Tone-RICs: Diese werden vom Modul "geschluckt" (return False). Sie verschwinden kurzzeitig aus dem Datenfluss und warten im RAM.
 - Die Text-RIC: Wenn sie eintrifft, nimmt das Modul ihren Text (B3 WOHNHAUS) und kopiert ihn in die Tone-RIC-Pakete im RAM. Anschließend erfolgt die Ausgabe der Tone-RICs.
 - Die Metadaten: Erst beim Erzeugen der Output-Pakete werden Felder wie multicastRecipientIndex berechnet, damit nachfolgende Plugins wissen, dass diese Pakete zusammengehören.

@@ -10,7 +10,7 @@ r"""!
                      by Bastian Schroll
 
 @file:        router.py
-@date:        30.08.2026
+@date:        14.10.2026
 @author:      Bastian Schroll, Claus Schichl
 @description: Class for the BOSWatch packet router
 """
@@ -78,15 +78,7 @@ class Router:
         # Catch incoming lists (e.g. from cascaded routers passing a list via runRouter)
         if isinstance(bwPacket, list):
             logging.debug("[%s] Received a list of %d packets. Branching immediately.", self.name, len(bwPacket))
-            results = []
-            for single_packet in bwPacket:
-                res = self._process_route_recursive(single_packet, start_index)
-                if res is not False:
-                    if isinstance(res, list):
-                        results.extend(res)
-                    else:
-                        results.append(res)
-            return results if results else None
+            return self._process_packet_list(bwPacket, start_index)
 
         # Normal path for a single packet starts here
         current_packet = bwPacket
@@ -116,27 +108,32 @@ class Router:
             if isinstance(bwPacket_tmp, list):
                 # Branching logic: A module returned a list of packets
                 logging.debug("[%s] route %s returned a list. Branching for %d packets.", self.name, routeObject.name, len(bwPacket_tmp))
-                results = []
-
-                for single_packet in bwPacket_tmp:
-                    # Recursively process the rest of the route (starting at next index) for each packet
-                    res = self._process_route_recursive(single_packet, i + 1)
-
-                    # Aggregate results
-                    if res is not False:
-                        if isinstance(res, list):
-                            results.extend(res)
-                        else:
-                            results.append(res)
-
-                # The recursive calls already finished the rest of the route for all branches.
-                # We return the aggregated results immediately to break out of this current loop level.
-                return results if results else None
+                # every packet runs through the rest of the route on its own - this finishes the route for all branches
+                return self._process_packet_list(bwPacket_tmp, i + 1)
 
             # Normal single packet path: update the packet for the next iteration
             current_packet = bwPacket_tmp
 
         return current_packet
+
+    def _process_packet_list(self, packets, start_index):
+        r"""!Process every packet of a list on its own from the given index
+
+        @param packets: list of packets
+        @param start_index: index of the routeList to start from
+        @return list of the remaining packets, or False if no packet is left
+        """
+        results = []
+        for single_packet in packets:
+            res = self._process_route_recursive(single_packet, start_index)
+            if res is None or res is False:
+                # branch was stopped - nothing to collect
+                continue
+            if isinstance(res, list):
+                results.extend(res)
+            else:
+                results.append(res)
+        return results if results else False
 
     def _getStatistics(self):
         r"""!Returns statistical information's from last router run
