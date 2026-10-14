@@ -30,6 +30,15 @@ Nachfolgender Ablauf soll am Beispiel eines Alarms mit einem Pocsag Paket erklä
 Jetzt sind alle Routenpunkte abgearbeitet und die Alarmierung damit abgeschlossen.
 
 ---
+## Verzweigung / Listen-Verarbeitung (Fan-out)
+
+Der Routing-Mechanismus kann auch mit der Aufspaltung von Alarmen umgehen. Wenn ein Modul statt eines einzelnen Alarms eine **Liste von Paketen** zurückgibt (wie z. B. das `multicast`-Modul bei Sammelalarmen), teilt der Router den Pfad automatisch auf:
+
+- Jedes Paket aus der Liste läuft ab diesem Punkt ganz unabhängig den **verbleibenden Rest der Route** ab.
+- Dabei wird im Hintergrund sichergestellt, dass sich die einzelnen Alarme nicht gegenseitig beeinflussen oder Daten überschreiben.
+- Diese Aufteilung funktioniert auch problemlos über mehrere, ineinander verschachtelte Router hinweg.
+
+---
 ## Konfiguration
 
 Nachfolgend ist die Router Konfiguration des BW3-Servers für das obige Beispiel zu finden:
