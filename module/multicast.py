@@ -18,7 +18,6 @@ r"""!
 import logging
 import time
 import threading
-import json
 from collections import defaultdict
 import socket
 from module.moduleBase import ModuleBase
@@ -548,8 +547,7 @@ class BoswatchModule(ModuleBase):
                 "multicastRecipientCount": "0",
                 "multicastRecipientIndex": "0"
             }
-            json_str = json.dumps(payload)
-            data = json_str.encode("utf-8")
+            data = str(payload).encode("utf-8")
             header = str(len(data)).ljust(10).encode("utf-8")
 
             # Direct socket with scoped timeout - does NOT affect socket.getdefaulttimeout()
