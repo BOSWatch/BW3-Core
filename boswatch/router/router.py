@@ -10,8 +10,8 @@ r"""!
                      by Bastian Schroll
 
 @file:        router.py
-@date:        01.03.2019
-@author:      Bastian Schroll
+@date:        14.10.2026
+@author:      Bastian Schroll, Claus Schichl
 @description: Class for the BOSWatch packet router
 """
 import logging
@@ -51,32 +51,89 @@ class Router:
         r"""!Run the router
 
         @param bwPacket: instance of Packet class
-        @return a instance of Packet class
+        @return an instance of Packet class, a list of packets, or False
         """
         self._runCount += 1
         tmpTime = time.time()
 
         logging.debug("[%s] started", self.name)
 
-        for routeObject in self.routeList:
-            logging.debug("[%s] -> run route: %s", self.name, routeObject.name)
-            bwPacket_tmp = routeObject.callback(copy.deepcopy(bwPacket))  # copy bwPacket to prevent edit the original
+        # Start processing the route list recursively from index 0
+        final_result = self._process_route_recursive(bwPacket, 0)
 
-            if bwPacket_tmp is None:  # returning None doesnt change the bwPacket
-                continue
-
-            if bwPacket_tmp is False:  # returning False stops the router immediately
-                logging.debug("[%s] stopped", self.name)
-                break
-
-            bwPacket = bwPacket_tmp
-            logging.debug("[%s] bwPacket returned", self.name)
         logging.debug("[%s] finished", self.name)
 
         self._routerTime = time.time() - tmpTime
         self._cumTime += self._routerTime
 
-        return bwPacket
+        return final_result
+
+    def _process_route_recursive(self, bwPacket, start_index):
+        r"""!Recursively process the route to support list branching (e.g. for multicast)
+
+        @param bwPacket: current packet to process
+        @param start_index: index of the routeList to start from
+        @return processed bwPacket, list of packets, or False
+        """
+        # Catch incoming lists (e.g. from cascaded routers passing a list via runRouter)
+        if isinstance(bwPacket, list):
+            logging.debug("[%s] Received a list of %d packets. Branching immediately.", self.name, len(bwPacket))
+            return self._process_packet_list(bwPacket, start_index)
+
+        # Normal path for a single packet starts here
+        current_packet = bwPacket
+
+        for i in range(start_index, len(self.routeList)):
+            routeObject = self.routeList[i]
+            logging.debug("[%s] -> run route: %s", self.name, routeObject.name)
+
+            # State Isolation: pass a deep copy to prevent plugins from corrupting the RAM state of subsequent list items
+            bwPacket_tmp = routeObject.callback(copy.deepcopy(current_packet))
+
+            if bwPacket_tmp is None:
+                # returning None doesnt change the current_packet
+                continue
+
+            if bwPacket_tmp is False:
+                if routeObject.isRouter:
+                    # A nested router filtered/stopped internally for this packet.
+                    # That's just an empty branch - the parent router continues normally.
+                    logging.debug("[%s] sub-router '%s' returned False - continuing with next route point", self.name, routeObject.name)
+                    continue
+
+                # returning False stops the route immediately for this specific packet branch
+                logging.debug("[%s] stopped at route %s", self.name, routeObject.name)
+                return False
+
+            if isinstance(bwPacket_tmp, list):
+                # Branching logic: A module returned a list of packets
+                logging.debug("[%s] route %s returned a list. Branching for %d packets.", self.name, routeObject.name, len(bwPacket_tmp))
+                # every packet runs through the rest of the route on its own - this finishes the route for all branches
+                return self._process_packet_list(bwPacket_tmp, i + 1)
+
+            # Normal single packet path: update the packet for the next iteration
+            current_packet = bwPacket_tmp
+
+        return current_packet
+
+    def _process_packet_list(self, packets, start_index):
+        r"""!Process every packet of a list on its own from the given index
+
+        @param packets: list of packets
+        @param start_index: index of the routeList to start from
+        @return list of the remaining packets, or False if no packet is left
+        """
+        results = []
+        for single_packet in packets:
+            res = self._process_route_recursive(single_packet, start_index)
+            if res is None or res is False:
+                # branch was stopped - nothing to collect
+                continue
+            if isinstance(res, list):
+                results.extend(res)
+            else:
+                results.append(res)
+        return results if results else False
 
     def _getStatistics(self):
         r"""!Returns statistical information's from last router run
